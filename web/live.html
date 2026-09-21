@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Call Insights</title>
+<link rel="stylesheet" href="/static/app.css">
+<link rel="stylesheet" href="/static/live.css">
+</head>
+<body>
+<header>
+  <h1>Live Call Insights <span class="sub">real-time nudges</span></h1>
+  <div class="head-right">
+    <select id="scenario"></select>
+    <button id="run" class="primary">Run call</button>
+    <span id="status" class="badge idle">idle</span>
+  </div>
+</header>
+
+<main class="live-main">
+  <section class="panel">
+    <h2 class="sec">Live transcript</h2>
+    <div id="transcript" class="transcript live-transcript">
+      <div class="empty">Pick a call and press <strong>Run call</strong>.<br>
+        Audio is fed at real-time speed — nudges appear while the call is still running.</div>
+    </div>
+    <div class="clock"><span id="clock">0.0s</span> elapsed</div>
+  </section>
+
+  <aside class="panel">
+    <h2 class="sec">Active nudges</h2>
+    <div id="nudges" class="nudges">
+      <div class="muted">Nudges appear here and expire on their own after 90s.</div>
+    </div>
+    <h2 class="sec">Counters</h2>
+    <div class="state-row"><span>Signals seen</span><strong id="cSeen">0</strong></div>
+    <div class="state-row"><span>Nudges shown</span><strong id="cShown">0</strong></div>
+    <div class="state-row"><span>Suppressed</span><strong id="cSupp">0</strong></div>
+    <div class="state-row"><span>Last latency</span><strong id="cLat">—</strong></div>
+  </aside>
+</main>
+<script src="/static/live.js"></script>
+</body>
+</html>

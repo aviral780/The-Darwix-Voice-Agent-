@@ -1,0 +1,711 @@
+{
+  "generated_at": "2026-09-22",
+  "scenarios": [
+    {
+      "id": "live_01_missed_cross_sell",
+      "name": "Missed cross-sell opportunity",
+      "why": "the customer names a family and a health scare; both are openings the agent talks past",
+      "audio": "evidence/live_calls/live_01_missed_cross_sell.wav",
+      "duration_s": 40.4,
+      "expected": [
+        "missed_cross_sell"
+      ],
+      "fired": [
+        "missed_cross_sell"
+      ],
+      "passed": true,
+      "reason": "all expected signals detected",
+      "nudges": [
+        {
+          "id": "n001",
+          "type": "missed_cross_sell",
+          "text": "Family mentioned. Family protection or an education plan may fit.",
+          "confidence": 0.75,
+          "evidence": "My wife",
+          "detector": "rule",
+          "priority": 50,
+          "age_s": 0.0,
+          "at_seconds": 16.0,
+          "latency_ms": 473.9
+        }
+      ],
+      "transcript": [
+        {
+          "at_s": 0.0,
+          "speaker": "agent",
+          "text": "Good morning, this is Maya from PruLife UK"
+        },
+        {
+          "at_s": 4.0,
+          "speaker": "agent",
+          "text": "How can I help you today?"
+        },
+        {
+          "at_s": 4.0,
+          "speaker": "caller",
+          "text": "Hi, I just want to check the"
+        },
+        {
+          "at_s": 8.0,
+          "speaker": "agent",
+          "text": "Of course, I can help you"
+        },
+        {
+          "at_s": 8.0,
+          "speaker": "caller",
+          "text": "status of my policy payment."
+        },
+        {
+          "at_s": 12.0,
+          "speaker": "agent",
+          "text": "Let me pull up your record"
+        },
+        {
+          "at_s": 16.0,
+          "speaker": "caller",
+          "text": "Thanks. My wife has been asking about it, and we have two"
+        },
+        {
+          "at_s": 20.0,
+          "speaker": "agent",
+          "text": "Right, I can see the payment went through"
+        },
+        {
+          "at_s": 20.0,
+          "speaker": "caller",
+          "text": "kids in school now."
+        },
+        {
+          "at_s": 24.0,
+          "speaker": "agent",
+          "text": "through last week."
+        },
+        {
+          "at_s": 24.0,
+          "speaker": "caller",
+          "text": "good. my father was"
+        },
+        {
+          "at_s": 28.0,
+          "speaker": "caller",
+          "text": "in hospital last month, it made me think about all this."
+        },
+        {
+          "at_s": 32.0,
+          "speaker": "agent",
+          "text": "I understand. Is there anything else you need today?"
+        },
+        {
+          "at_s": 36.0,
+          "speaker": "caller",
+          "text": "No, that's all. Thank you."
+        }
+      ],
+      "suppression": {
+        "signals_seen": 8,
+        "dropped_low_confidence": 0,
+        "dropped_duplicate": 1,
+        "dropped_cooldown": 6,
+        "nudges_emitted": 1,
+        "suppression_rate": 0.875,
+        "asr_calls_made": 14,
+        "asr_calls_skipped_silent": 8
+      },
+      "latency": {
+        "asr": {
+          "count": 11,
+          "p50_ms": 256.7,
+          "p95_ms": 592.9,
+          "min_ms": 0.4,
+          "max_ms": 623.4,
+          "mean_ms": 336.4
+        },
+        "signals_rule": {
+          "count": 11,
+          "p50_ms": 0.2,
+          "p95_ms": 0.4,
+          "min_ms": 0.1,
+          "max_ms": 0.5,
+          "mean_ms": 0.2
+        },
+        "nudge_control": {
+          "count": 11,
+          "p50_ms": 0.1,
+          "p95_ms": 0.2,
+          "min_ms": 0.0,
+          "max_ms": 0.3,
+          "mean_ms": 0.1
+        },
+        "signal_llm": {
+          "count": 2,
+          "p50_ms": 219.7,
+          "p95_ms": 236.1,
+          "min_ms": 201.5,
+          "max_ms": 237.9,
+          "mean_ms": 219.7
+        },
+        "end_to_end": {
+          "count": 1,
+          "p50_ms": 473.9,
+          "p95_ms": 473.9,
+          "min_ms": 473.9,
+          "max_ms": 473.9,
+          "mean_ms": 473.9
+        }
+      },
+      "end_to_end_ms": [
+        473.9
+      ]
+    },
+    {
+      "id": "live_02_compliance_gap",
+      "name": "Skipped disclosure and risky statement",
+      "why": "the agent pitches an investment product without the required disclosure, then promises guaranteed returns",
+      "audio": "evidence/live_calls/live_02_compliance_gap.wav",
+      "duration_s": 33.0,
+      "expected": [
+        "compliance_gap",
+        "risky_statement"
+      ],
+      "fired": [
+        "compliance_gap",
+        "buying_signal",
+        "risky_statement"
+      ],
+      "passed": true,
+      "reason": "all expected signals detected",
+      "nudges": [
+        {
+          "id": "n001",
+          "type": "compliance_gap",
+          "text": "Investment mentioned. State that returns are not guaranteed and this is not a deposit.",
+          "confidence": 0.95,
+          "evidence": "investment",
+          "detector": "rule",
+          "priority": 100,
+          "age_s": 0.0,
+          "at_seconds": 4.0,
+          "disclosure": "not_a_deposit",
+          "latency_ms": 486.5
+        },
+        {
+          "id": "n002",
+          "type": "buying_signal",
+          "text": "Provide a specific projected return or example to address the caller's interest.",
+          "confidence": 0.9,
+          "evidence": "How much could I make?",
+          "detector": "model",
+          "priority": 60,
+          "age_s": 0.0,
+          "at_seconds": 12.0,
+          "latency_ms": 803.2
+        },
+        {
+          "id": "n003",
+          "type": "risky_statement",
+          "text": "Guarantee language used. Correct it now: returns and approval are never guaranteed.",
+          "confidence": 0.97,
+          "evidence": "guaranteed returns",
+          "detector": "rule",
+          "priority": 95,
+          "age_s": 0.0,
+          "at_seconds": 16.0,
+          "latency_ms": 260.5
+        }
+      ],
+      "transcript": [
+        {
+          "at_s": 0.0,
+          "speaker": "agent",
+          "text": "Good afternoon. I wanted to tell you about our PRU"
+        },
+        {
+          "at_s": 4.0,
+          "speaker": "agent",
+          "text": "link investment funds."
+        },
+        {
+          "at_s": 4.0,
+          "speaker": "caller",
+          "text": "Okay, I'm listening"
+        },
+        {
+          "at_s": 8.0,
+          "speaker": "agent",
+          "text": "These funds have shown very strong growth and I would recommend"
+        },
+        {
+          "at_s": 12.0,
+          "speaker": "agent",
+          "text": "and the equity fund for you."
+        },
+        {
+          "at_s": 12.0,
+          "speaker": "caller",
+          "text": "How much could I make?"
+        },
+        {
+          "at_s": 16.0,
+          "speaker": "agent",
+          "text": "Honestly, it is guaranteed returns of around 10%"
+        },
+        {
+          "at_s": 20.0,
+          "speaker": "agent",
+          "text": "there is no risk at all"
+        },
+        {
+          "at_s": 20.0,
+          "speaker": "caller",
+          "text": "That sounds too good"
+        },
+        {
+          "at_s": 24.0,
+          "speaker": "agent",
+          "text": "Trust me, you will definitely be a"
+        },
+        {
+          "at_s": 24.0,
+          "speaker": "caller",
+          "text": "too good to be true."
+        },
+        {
+          "at_s": 28.0,
+          "speaker": "agent",
+          "text": "approve and it will definitely pay out."
+        },
+        {
+          "at_s": 28.0,
+          "speaker": "caller",
+          "text": "Let me think about it"
+        }
+      ],
+      "suppression": {
+        "signals_seen": 27,
+        "dropped_low_confidence": 0,
+        "dropped_duplicate": 11,
+        "dropped_cooldown": 13,
+        "nudges_emitted": 3,
+        "suppression_rate": 0.889,
+        "asr_calls_made": 13,
+        "asr_calls_skipped_silent": 5
+      },
+      "latency": {
+        "asr": {
+          "count": 9,
+          "p50_ms": 458.9,
+          "p95_ms": 548.3,
+          "min_ms": 0.0,
+          "max_ms": 568.9,
+          "mean_ms": 373.5
+        },
+        "signals_rule": {
+          "count": 9,
+          "p50_ms": 0.3,
+          "p95_ms": 0.4,
+          "min_ms": 0.1,
+          "max_ms": 0.5,
+          "mean_ms": 0.3
+        },
+        "nudge_control": {
+          "count": 9,
+          "p50_ms": 0.1,
+          "p95_ms": 0.1,
+          "min_ms": 0.0,
+          "max_ms": 0.2,
+          "mean_ms": 0.1
+        },
+        "end_to_end": {
+          "count": 3,
+          "p50_ms": 486.5,
+          "p95_ms": 771.5,
+          "min_ms": 260.5,
+          "max_ms": 803.2,
+          "mean_ms": 516.7
+        },
+        "signal_llm": {
+          "count": 2,
+          "p50_ms": 276.8,
+          "p95_ms": 283.8,
+          "min_ms": 268.9,
+          "max_ms": 284.6,
+          "mean_ms": 276.8
+        }
+      },
+      "end_to_end_ms": [
+        486.5,
+        803.2,
+        260.5
+      ]
+    },
+    {
+      "id": "live_03_rising_frustration",
+      "name": "Rising frustration",
+      "why": "the customer repeats themselves and escalates in tone; the agent keeps talking past them",
+      "audio": "evidence/live_calls/live_03_rising_frustration.wav",
+      "duration_s": 33.4,
+      "expected": [
+        "rising_frustration"
+      ],
+      "fired": [
+        "rising_frustration",
+        "callback_needed"
+      ],
+      "passed": true,
+      "reason": "all expected signals detected",
+      "nudges": [
+        {
+          "id": "n001",
+          "type": "rising_frustration",
+          "text": "Acknowledge the repeated effort and apologize for the inconvenience.",
+          "confidence": 0.95,
+          "evidence": "three times already about this claim",
+          "detector": "model",
+          "priority": 80,
+          "age_s": 0.0,
+          "at_seconds": 12.0,
+          "latency_ms": 831.9
+        },
+        {
+          "id": "n002",
+          "type": "callback_needed",
+          "text": "Confirm the callback details and set a specific expectation for follow-up.",
+          "confidence": 0.9,
+          "evidence": "Nobody ever calls me back",
+          "detector": "model",
+          "priority": 40,
+          "age_s": 0.0,
+          "at_seconds": 28.0,
+          "latency_ms": 658.5
+        }
+      ],
+      "transcript": [
+        {
+          "at_s": 0.0,
+          "speaker": "agent",
+          "text": "Thanks for calling, how can I help?"
+        },
+        {
+          "at_s": 0.0,
+          "speaker": "caller",
+          "text": "I have called"
+        },
+        {
+          "at_s": 4.0,
+          "speaker": "agent",
+          "text": "Let me check the reference"
+        },
+        {
+          "at_s": 4.0,
+          "speaker": "caller",
+          "text": "three times already about this claim."
+        },
+        {
+          "at_s": 8.0,
+          "speaker": "agent",
+          "text": "number for you."
+        },
+        {
+          "at_s": 8.0,
+          "speaker": "caller",
+          "text": "I gave the reference number to the last two pieces"
+        },
+        {
+          "at_s": 12.0,
+          "speaker": "agent",
+          "text": "I understand. Could you"
+        },
+        {
+          "at_s": 12.0,
+          "speaker": "caller",
+          "text": "people I spoke to."
+        },
+        {
+          "at_s": 16.0,
+          "speaker": "agent",
+          "text": "confirm it once more for me."
+        },
+        {
+          "at_s": 16.0,
+          "speaker": "caller",
+          "text": "This is honestly ridiculous"
+        },
+        {
+          "at_s": 20.0,
+          "speaker": "caller",
+          "text": "Nobody ever calls me back and I keep repeating myself"
+        },
+        {
+          "at_s": 24.0,
+          "speaker": "agent",
+          "text": "I do apologize for the inconvenience"
+        },
+        {
+          "at_s": 28.0,
+          "speaker": "caller",
+          "text": "Fine, whatever. Just tell me when it will be"
+        },
+        {
+          "at_s": 32.0,
+          "speaker": "caller",
+          "text": "be sorted."
+        }
+      ],
+      "suppression": {
+        "signals_seen": 3,
+        "dropped_low_confidence": 0,
+        "dropped_duplicate": 0,
+        "dropped_cooldown": 1,
+        "nudges_emitted": 2,
+        "suppression_rate": 0.333,
+        "asr_calls_made": 14,
+        "asr_calls_skipped_silent": 4
+      },
+      "latency": {
+        "asr": {
+          "count": 9,
+          "p50_ms": 455.7,
+          "p95_ms": 569.9,
+          "min_ms": 213.7,
+          "max_ms": 591.9,
+          "mean_ms": 387.5
+        },
+        "signals_rule": {
+          "count": 9,
+          "p50_ms": 0.2,
+          "p95_ms": 0.3,
+          "min_ms": 0.1,
+          "max_ms": 0.3,
+          "mean_ms": 0.2
+        },
+        "nudge_control": {
+          "count": 9,
+          "p50_ms": 0.0,
+          "p95_ms": 0.1,
+          "min_ms": 0.0,
+          "max_ms": 0.1,
+          "mean_ms": 0.0
+        },
+        "signal_llm": {
+          "count": 2,
+          "p50_ms": 398.4,
+          "p95_ms": 419.0,
+          "min_ms": 375.5,
+          "max_ms": 421.3,
+          "mean_ms": 398.4
+        },
+        "end_to_end": {
+          "count": 2,
+          "p50_ms": 745.2,
+          "p95_ms": 823.2,
+          "min_ms": 658.5,
+          "max_ms": 831.9,
+          "mean_ms": 745.2
+        }
+      },
+      "end_to_end_ms": [
+        831.9,
+        658.5
+      ]
+    },
+    {
+      "id": "live_04_noisy_ambiguous",
+      "name": "Noisy and ambiguous call",
+      "why": "small talk, hesitation and half-finished sentences; a keyword-triggered system would fire repeatedly here and it must not",
+      "audio": "evidence/live_calls/live_04_noisy_ambiguous.wav",
+      "duration_s": 42.7,
+      "expected": [],
+      "fired": [],
+      "passed": true,
+      "reason": "stayed silent as required",
+      "nudges": [],
+      "transcript": [
+        {
+          "at_s": 0.0,
+          "speaker": "agent",
+          "text": "Good morning, Maya speaking"
+        },
+        {
+          "at_s": 0.0,
+          "speaker": "caller",
+          "text": "Hi, sorry"
+        },
+        {
+          "at_s": 4.0,
+          "speaker": "agent",
+          "text": "No problem."
+        },
+        {
+          "at_s": 4.0,
+          "speaker": "caller",
+          "text": "one second, the signal here is not great"
+        },
+        {
+          "at_s": 8.0,
+          "speaker": "agent",
+          "text": "Take your time"
+        },
+        {
+          "at_s": 8.0,
+          "speaker": "caller",
+          "text": "Yeah, so, um, I was just"
+        },
+        {
+          "at_s": 12.0,
+          "speaker": "agent",
+          "text": "Take your time"
+        },
+        {
+          "at_s": 12.0,
+          "speaker": "caller",
+          "text": "well, I wanted to ask about, hold on."
+        },
+        {
+          "at_s": 16.0,
+          "speaker": "agent",
+          "text": "I'm here"
+        },
+        {
+          "at_s": 16.0,
+          "speaker": "caller",
+          "text": "Sorry about that."
+        },
+        {
+          "at_s": 20.0,
+          "speaker": "caller",
+          "text": "Traffic today is unbelievable Anyway, where was I?"
+        },
+        {
+          "at_s": 24.0,
+          "speaker": "agent",
+          "text": "You were about to ask me something"
+        },
+        {
+          "at_s": 28.0,
+          "speaker": "caller",
+          "text": "Right, yes, it was, hmm, actually I think I already sorted it out."
+        },
+        {
+          "at_s": 32.0,
+          "speaker": "agent",
+          "text": "not a problem at all"
+        },
+        {
+          "at_s": 32.0,
+          "speaker": "caller",
+          "text": "Never mind"
+        },
+        {
+          "at_s": 36.0,
+          "speaker": "agent",
+          "text": "Anything else?"
+        },
+        {
+          "at_s": 36.0,
+          "speaker": "caller",
+          "text": "No, that's it"
+        },
+        {
+          "at_s": 40.0,
+          "speaker": "caller",
+          "text": "Thanks, bye"
+        }
+      ],
+      "suppression": {
+        "signals_seen": 0,
+        "dropped_low_confidence": 0,
+        "dropped_duplicate": 0,
+        "dropped_cooldown": 0,
+        "nudges_emitted": 0,
+        "suppression_rate": 0.0,
+        "asr_calls_made": 18,
+        "asr_calls_skipped_silent": 4
+      },
+      "latency": {
+        "asr": {
+          "count": 11,
+          "p50_ms": 3349.8,
+          "p95_ms": 6691.0,
+          "min_ms": 456.5,
+          "max_ms": 6726.9,
+          "mean_ms": 2958.8
+        },
+        "signals_rule": {
+          "count": 11,
+          "p50_ms": 0.2,
+          "p95_ms": 0.2,
+          "min_ms": 0.1,
+          "max_ms": 0.2,
+          "mean_ms": 0.2
+        },
+        "nudge_control": {
+          "count": 11,
+          "p50_ms": 0.0,
+          "p95_ms": 0.1,
+          "min_ms": 0.0,
+          "max_ms": 0.1,
+          "mean_ms": 0.0
+        },
+        "signal_llm": {
+          "count": 2,
+          "p50_ms": 212.7,
+          "p95_ms": 247.3,
+          "min_ms": 174.2,
+          "max_ms": 251.2,
+          "mean_ms": 212.7
+        }
+      },
+      "end_to_end_ms": []
+    }
+  ],
+  "passed": 4,
+  "total": 4,
+  "aggregate_latency": {
+    "asr": {
+      "count": 40,
+      "p50_ms": 380.5,
+      "p95_ms": 2958.8,
+      "min_ms": 336.4,
+      "max_ms": 2958.8,
+      "mean_ms": 1077.4
+    },
+    "signals_rule": {
+      "count": 40,
+      "p50_ms": 0.2,
+      "p95_ms": 0.3,
+      "min_ms": 0.2,
+      "max_ms": 0.3,
+      "mean_ms": 0.2
+    },
+    "nudge_control": {
+      "count": 40,
+      "p50_ms": 0.1,
+      "p95_ms": 0.1,
+      "min_ms": 0.0,
+      "max_ms": 0.1,
+      "mean_ms": 0.1
+    },
+    "signal_llm": {
+      "count": 8,
+      "p50_ms": 248.2,
+      "p95_ms": 398.4,
+      "min_ms": 212.7,
+      "max_ms": 398.4,
+      "mean_ms": 276.9
+    },
+    "end_to_end": {
+      "count": 6,
+      "p50_ms": 516.7,
+      "p95_ms": 745.2,
+      "min_ms": 473.9,
+      "max_ms": 745.2,
+      "mean_ms": 585.7
+    }
+  },
+  "end_to_end": {
+    "count": 6,
+    "p50_ms": 572.5,
+    "p95_ms": 824.7,
+    "max_ms": 831.9
+  }
+}

@@ -65,6 +65,78 @@ def index() -> FileResponse:
     return FileResponse(WEB_DIR / "index.html")
 
 
+@app.get("/live")
+def live_dashboard() -> FileResponse:
+    return FileResponse(WEB_DIR / "live.html")
+
+
+@app.get("/api/live_scenarios")
+def live_scenarios() -> dict:
+    path = config.EVIDENCE_DIR / "live_calls" / "scenarios.json"
+    if not path.exists():
+        return {"scenarios": []}
+    import json as _json
+    scenarios = _json.loads(path.read_text())
+    return {"scenarios": [
+        {"id": s["id"], "name": s["name"], "why": s["why"],
+         "expect": s["expect"], "duration_s": s["duration_s"]}
+        for s in scenarios
+    ]}
+
+
+@app.websocket("/ws/live")
+async def live_stream(websocket: WebSocket) -> None:
+    """Stream a call and push nudges to the dashboard as they are generated.
+
+    The stream runs in a worker thread because live/stream.py is synchronous and
+    paces itself against the audio clock. Events are handed back through a queue
+    so the socket keeps sending while the thread blocks on its next chunk.
+    """
+    await websocket.accept()
+    try:
+        message = json.loads(await websocket.receive_text())
+        scenario_id = message.get("scenario", "")
+
+        import json as _json
+        scenarios = _json.loads(
+            (config.EVIDENCE_DIR / "live_calls" / "scenarios.json").read_text())
+        match = next((s for s in scenarios if s["id"] == scenario_id), None)
+        if match is None:
+            await websocket.send_json({"type": "error", "message": "Unknown scenario"})
+            return
+
+        from live.stream import process
+
+        loop = asyncio.get_running_loop()
+        queue: asyncio.Queue = asyncio.Queue()
+
+        def on_event(event: dict) -> None:
+            loop.call_soon_threadsafe(queue.put_nowait, event)
+
+        task = asyncio.create_task(asyncio.to_thread(
+            process, config.ROOT / match["path"], match["id"], True, on_event))
+
+        while True:
+            if task.done() and queue.empty():
+                break
+            try:
+                event = await asyncio.wait_for(queue.get(), timeout=0.5)
+            except asyncio.TimeoutError:
+                continue
+            await websocket.send_json(event)
+
+        result = await task
+        await websocket.send_json({
+            "type": "done",
+            "expected": match["expect"],
+            "fired": [n["type"] for n in result.nudges],
+            "suppression": result.suppression,
+            "latency": result.latency,
+        })
+    except WebSocketDisconnect:
+        pass
+
+
 @app.get("/api/markets")
 def markets() -> dict:
     from core.config import MarketConfig, available_markets

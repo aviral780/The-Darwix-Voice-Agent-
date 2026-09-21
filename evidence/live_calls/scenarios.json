@@ -1,0 +1,189 @@
+[
+  {
+    "id": "live_01_missed_cross_sell",
+    "name": "Missed cross-sell opportunity",
+    "why": "the customer names a family and a health scare; both are openings the agent talks past",
+    "expect": [
+      "missed_cross_sell"
+    ],
+    "path": "evidence/live_calls/live_01_missed_cross_sell.wav",
+    "duration_s": 40.4,
+    "channels": 2,
+    "turns": [
+      [
+        "agent",
+        "Good morning, this is Maya from Pru Life UK. How can I help you today?"
+      ],
+      [
+        "caller",
+        "Hi, I just want to check the status of my policy payment."
+      ],
+      [
+        "agent",
+        "Of course, I can help with that. Let me pull up your record."
+      ],
+      [
+        "caller",
+        "Thanks. My wife has been asking about it, and we have two kids in school now."
+      ],
+      [
+        "agent",
+        "Right, I can see the payment went through last week."
+      ],
+      [
+        "caller",
+        "Good. My father was in hospital last month, it made me think about all this."
+      ],
+      [
+        "agent",
+        "I understand. Is there anything else you need today?"
+      ],
+      [
+        "caller",
+        "No, that's all. Thank you."
+      ]
+    ]
+  },
+  {
+    "id": "live_02_compliance_gap",
+    "name": "Skipped disclosure and risky statement",
+    "why": "the agent pitches an investment product without the required disclosure, then promises guaranteed returns",
+    "expect": [
+      "compliance_gap",
+      "risky_statement"
+    ],
+    "path": "evidence/live_calls/live_02_compliance_gap.wav",
+    "duration_s": 33.0,
+    "channels": 2,
+    "turns": [
+      [
+        "agent",
+        "Good afternoon! I wanted to tell you about our PRULink investment funds."
+      ],
+      [
+        "caller",
+        "Okay, I'm listening."
+      ],
+      [
+        "agent",
+        "These funds have shown very strong growth and I would recommend the equity fund for you."
+      ],
+      [
+        "caller",
+        "How much could I make?"
+      ],
+      [
+        "agent",
+        "Honestly, it is guaranteed returns of around ten percent. There is no risk at all."
+      ],
+      [
+        "caller",
+        "That sounds too good to be true."
+      ],
+      [
+        "agent",
+        "Trust me, you will definitely be approved and it will definitely pay out."
+      ],
+      [
+        "caller",
+        "Let me think about it."
+      ]
+    ]
+  },
+  {
+    "id": "live_03_rising_frustration",
+    "name": "Rising frustration",
+    "why": "the customer repeats themselves and escalates in tone; the agent keeps talking past them",
+    "expect": [
+      "rising_frustration"
+    ],
+    "path": "evidence/live_calls/live_03_rising_frustration.wav",
+    "duration_s": 33.4,
+    "channels": 2,
+    "turns": [
+      [
+        "agent",
+        "Thanks for calling, how can I help?"
+      ],
+      [
+        "caller",
+        "I have called three times already about this claim."
+      ],
+      [
+        "agent",
+        "Let me check the reference number for you."
+      ],
+      [
+        "caller",
+        "I gave the reference number to the last two people I spoke to."
+      ],
+      [
+        "agent",
+        "I understand. Could you confirm it once more for me?"
+      ],
+      [
+        "caller",
+        "This is honestly ridiculous. Nobody ever calls me back and I keep repeating myself."
+      ],
+      [
+        "agent",
+        "I do apologise for the inconvenience."
+      ],
+      [
+        "caller",
+        "Fine, whatever. Just tell me when it will be sorted."
+      ]
+    ]
+  },
+  {
+    "id": "live_04_noisy_ambiguous",
+    "name": "Noisy and ambiguous call",
+    "why": "small talk, hesitation and half-finished sentences; a keyword-triggered system would fire repeatedly here and it must not",
+    "expect": [],
+    "path": "evidence/live_calls/live_04_noisy_ambiguous.wav",
+    "duration_s": 42.7,
+    "channels": 2,
+    "turns": [
+      [
+        "agent",
+        "Good morning, Maya speaking."
+      ],
+      [
+        "caller",
+        "Hi, sorry, one second, the signal here is not great."
+      ],
+      [
+        "agent",
+        "No problem, take your time."
+      ],
+      [
+        "caller",
+        "Yeah so, um, I was just, well, I wanted to ask about, hold on."
+      ],
+      [
+        "agent",
+        "Take your time, I'm here."
+      ],
+      [
+        "caller",
+        "Sorry about that. The traffic today is unbelievable. Anyway, where was I."
+      ],
+      [
+        "agent",
+        "You were about to ask me something."
+      ],
+      [
+        "caller",
+        "Right, yes, it was, hmm, actually I think I already sorted it out. Never mind."
+      ],
+      [
+        "agent",
+        "Not a problem at all. Anything else?"
+      ],
+      [
+        "caller",
+        "No, that's it. Thanks, bye."
+      ]
+    ]
+  }
+]

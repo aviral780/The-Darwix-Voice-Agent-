@@ -1,0 +1,22 @@
+.live-main{display:grid;grid-template-columns:1fr 380px;gap:16px;padding:16px;max-width:1240px;margin:0 auto;align-items:start}
+.sec{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px;font-weight:600}
+.live-transcript{height:58vh}
+.line{padding:6px 10px;border-radius:7px;font-size:13px;display:flex;gap:9px}
+.line .t{color:var(--muted);flex:0 0 46px;font-variant-numeric:tabular-nums;font-size:12px}
+.line .s{flex:0 0 58px;font-size:11px;letter-spacing:.04em}
+.line.agent{background:var(--agent)}
+.line.agent .s{color:#7aa2f7}
+.line.caller{background:var(--caller)}
+.line.caller .s{color:#7ee787}
+.clock{margin-top:10px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.nudges{display:flex;flex-direction:column;gap:9px;min-height:60px;margin-bottom:6px}
+.nudge{border-radius:9px;padding:11px 12px;border-left:3px solid var(--accent);background:#0d1117;animation:pop .28s ease}
+@keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.nudge.compliance_gap,.nudge.risky_statement{border-left-color:var(--bad);background:#1c1113}
+.nudge.rising_frustration{border-left-color:var(--warn);background:#1b1710}
+.nudge.buying_signal,.nudge.missed_cross_sell{border-left-color:var(--ok);background:#0f1a12}
+.nudge .top{display:flex;justify-content:space-between;font-size:10px;text-transform:uppercase;
+            letter-spacing:.05em;color:var(--muted);margin-bottom:5px}
+.nudge .txt{font-size:13px;line-height:1.45}
+.nudge .meta{margin-top:7px;font-size:11px;color:var(--muted)}
+.nudge.fading{opacity:.35}
