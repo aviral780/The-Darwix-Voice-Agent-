@@ -53,9 +53,23 @@ How to write the answer:
 class Answer:
     text: str
     refused: bool
-    citations: list[str] = field(default_factory=list)
+    citations: list[str] = field(default_factory=list)      # ids the model stated
+    retrieved_ids: list[str] = field(default_factory=list)  # ids that were in context
+    invalid_citations: list[str] = field(default_factory=list)
     results: list[Result] = field(default_factory=list)
     gate: str = ""            # which gate refused: retrieval | generation | none
+
+    @property
+    def grounded(self) -> bool:
+        """Whether this answer was produced from retrieved context.
+
+        Distinct from having citation markers. The model emits markers most of
+        the time but not every time, and an answer is grounded by construction
+        because the context is all it was given. Treating a missing marker as
+        "not grounded" would under-report grounding; treating it as a citation
+        would invent provenance. Both are recorded separately instead.
+        """
+        return not self.refused and bool(self.retrieved_ids)
 
     @property
     def sources(self) -> list[dict]:
@@ -119,10 +133,21 @@ def answer_question(
     if REFUSAL_TOKEN in raw:
         return Answer(text="", refused=True, results=results, gate="generation")
 
+    retrieved_ids = [r.chunk["chunk_id"] for r in results]
+    stated = extract_citations(raw)
+
+    # A citation naming a chunk that was never in context is a fabricated
+    # reference. It has not been seen in testing, but an unverified citation is
+    # worse than none: it looks like provenance while pointing nowhere.
+    valid = [c for c in stated if c in retrieved_ids]
+    invalid = [c for c in stated if c not in retrieved_ids]
+
     return Answer(
         text=raw.strip(),
         refused=False,
-        citations=extract_citations(raw),
+        citations=valid,
+        retrieved_ids=retrieved_ids,
+        invalid_citations=invalid,
         results=results,
         gate="none",
     )

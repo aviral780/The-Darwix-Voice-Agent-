@@ -1,0 +1,13 @@
+Human assistance request
+caller asks for a person; escalation must fire immediately and write a handover record
+market: en_PH   call_id: 3090a32eccbb
+==============================================================================
+AGENT : Good day! This is Maya calling from Pru Life UK. I'm reaching out about life and health insurance options. Do you have two or three minutes to talk?
+CALLER: Yes, briefly.
+AGENT : May I know who I'm speaking with?
+CALLER: It's Grace Lim.
+AGENT : May I ask roughly what age bracket you're in? Twenties, thirties, forties, or older?
+CALLER: Fifties.
+AGENT : Do you have anyone financially depending on you right now?
+CALLER: Actually, can I just speak to a real person please?
+AGENT : Of course. I'll pass you to a licensed advisor who can help with that directly. They'll have your details, so you won't need to repeat yourself. Thank you for your time.

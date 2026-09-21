@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voice Agent — Lead Qualification</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header>
+  <h1>Voice Agent <span class="sub">lead qualification</span></h1>
+  <div class="head-right">
+    <select id="market"></select>
+    <span id="status" class="badge idle">idle</span>
+  </div>
+</header>
+
+<main>
+  <section class="panel conversation">
+    <div id="transcript" class="transcript">
+      <div class="empty">Press <strong>Start call</strong> to begin. The agent speaks first.</div>
+    </div>
+
+    <div class="composer">
+      <button id="talk" class="talk" disabled>Hold to talk</button>
+      <input id="textInput" type="text" placeholder="…or type here and press Enter" disabled autocomplete="off">
+    </div>
+    <div class="controls">
+      <button id="start" class="primary">Start call</button>
+      <button id="end" class="ghost" disabled>End call</button>
+      <span class="hint">Hold the button, or hold <kbd>Space</kbd>, while you speak.</span>
+    </div>
+  </section>
+
+  <aside class="panel side">
+    <h2>Call state</h2>
+    <div class="state-row"><span>State</span><strong id="state">—</strong></div>
+    <div class="state-row"><span>Call ID</span><strong id="callId">—</strong></div>
+    <div class="state-row"><span>Voice</span><strong id="voice">—</strong></div>
+
+    <h2>Qualification</h2>
+    <ul id="slots" class="slots"></ul>
+
+    <h2>Grounding</h2>
+    <div id="grounding" class="grounding">
+      <div class="muted">Sources cited by the agent appear here.</div>
+    </div>
+  </aside>
+</main>
+
+<div id="summary" class="summary hidden">
+  <div class="summary-card">
+    <h2>Call complete</h2>
+    <div id="summaryBody"></div>
+    <button id="closeSummary" class="primary">Close</button>
+  </div>
+</div>
+
+<audio id="player"></audio>
+<script src="/static/app.js"></script>
+</body>
+</html>

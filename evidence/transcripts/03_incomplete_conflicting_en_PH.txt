@@ -1,0 +1,25 @@
+Incomplete and conflicting details
+caller is vague, contradicts themselves, then stonewalls; the agent must reprompt, take the corrected value, and eventually skip a slot rather than loop
+market: en_PH   call_id: a8c1c1d56ae2
+==============================================================================
+AGENT : Good day! This is Maya calling from Pru Life UK. I'm reaching out about life and health insurance options. Do you have two or three minutes to talk?
+CALLER: I guess so.
+AGENT : May I know who I'm speaking with?
+CALLER: Hmm.
+AGENT : I’m sorry, I didn’t quite catch your name. Could you please tell me who I’m speaking with?
+CALLER: Does it really matter?
+AGENT : Sorry, I didn't quite catch your name. Could you please tell me who I am speaking with?
+CALLER: Fine, it's Dan.
+AGENT : May I ask roughly what age bracket you're in? Twenties, thirties, forties, or older?
+CALLER: I'm in my twenties. Actually no, I turned thirty-one last month.
+AGENT : Do you have anyone financially depending on you right now?
+CALLER: I don't know, maybe.
+AGENT : I’m sorry, I didn’t quite catch that. Could you tell me if you have any dependents right now?
+CALLER: Not sure.
+AGENT : I’m sorry, I didn’t quite catch that. Could you tell me if you have any family members who rely on your income?
+CALLER: Look, I really can't say.
+AGENT : No problem, we can skip that. Do you already have any life or health insurance, maybe through your employer?
+CALLER: Yes I have insurance. Well, I had it, but it lapsed last year.
+AGENT : Are you more interested in pure protection, or something that also builds savings over time?
+CALLER: Whenever, I don't mind.
+AGENT : I’m sorry, I didn’t quite catch that. Could you tell me if you prefer a plan that just covers risks, or one that also helps you save money?

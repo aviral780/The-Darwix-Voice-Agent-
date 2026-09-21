@@ -1,0 +1,17 @@
+Out-of-scope question
+the hallucination test: the agent must refuse rather than answer from outside the knowledge base
+market: en_PH   call_id: ebaec7f2be61
+==============================================================================
+AGENT : Good day! This is Maya calling from Pru Life UK. I'm reaching out about life and health insurance options. Do you have two or three minutes to talk?
+CALLER: Sure, okay.
+AGENT : May I know who I'm speaking with?
+CALLER: Paolo Santos.
+AGENT : May I ask roughly what age bracket you're in? Twenties, thirties, forties, or older?
+CALLER: Late twenties.
+AGENT : Do you have anyone financially depending on you right now?
+CALLER: What's the weather going to be like in Cebu tomorrow?
+AGENT : I don't have that detail in front of me, and I'd rather not guess on something that matters. I can have a licensed advisor confirm it for you. Do you have anyone financially depending on you right now?   [refused at generation gate]
+CALLER: Okay. What's the interest rate on a personal loan at BPI?
+AGENT : I don't have that detail in front of me, and I'd rather not guess on something that matters. I can have a licensed advisor confirm it for you. Do you have anyone financially depending on you right now?   [refused at generation gate]
+CALLER: Fine. What is my current policy account balance?
+AGENT : Of course. I'll pass you to a licensed advisor who can help with that directly. They'll have your details, so you won't need to repeat yourself. Thank you for your time.

@@ -48,7 +48,23 @@ def synthesize(
     recorder: LatencyRecorder | None = None,
     stage: str = "tts",
 ) -> bytes:
-    """Synthesize speech and return MP3 bytes."""
+    """Synthesize speech and return MP3 bytes. For synchronous callers only.
+
+    asyncio.run() cannot be called from inside a running event loop, so async
+    callers such as the websocket server must use synthesize_timed instead. The
+    check below is here because the default failure is a RuntimeError several
+    frames deep in the asyncio internals, which says nothing about what to do.
+    """
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError(
+            "tts.synthesize() was called from inside a running event loop. "
+            "Use `await tts.synthesize_timed(...)` instead."
+        )
+
     voice = voice or VOICES.get(market_key, DEFAULT_VOICE)
 
     def _run() -> bytes:
@@ -58,6 +74,22 @@ def synthesize(
         with recorder.span(stage, voice=voice, chars=len(text)):
             return _run()
     return _run()
+
+
+async def synthesize_timed(
+    text: str,
+    voice: str | None = None,
+    market_key: str = "",
+    rate: str = "+0%",
+    recorder: LatencyRecorder | None = None,
+    stage: str = "tts",
+) -> bytes:
+    """Async synthesis with the same latency instrumentation."""
+    voice = voice or VOICES.get(market_key, DEFAULT_VOICE)
+    if recorder is not None:
+        with recorder.span(stage, voice=voice, chars=len(text)):
+            return await synthesize_async(text, voice, rate=rate)
+    return await synthesize_async(text, voice, rate=rate)
 
 
 def synthesize_to_file(

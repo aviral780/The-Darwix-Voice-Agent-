@@ -1,0 +1,21 @@
+Price objection
+caller pushes back on cost; agent must acknowledge and answer from the knowledge base, not improvise a price
+market: en_PH   call_id: e0384152ff5b
+==============================================================================
+AGENT : Good day! This is Maya calling from Pru Life UK. I'm reaching out about life and health insurance options. Do you have two or three minutes to talk?
+CALLER: Okay, go ahead.
+AGENT : May I know who I'm speaking with?
+CALLER: I'm Elena Cruz.
+AGENT : May I ask roughly what age bracket you're in? Twenties, thirties, forties, or older?
+CALLER: Forties.
+AGENT : Do you have anyone financially depending on you right now?
+CALLER: Honestly, insurance is too expensive for me right now.
+AGENT : I hear you, and it is completely understandable to feel that way. Insurance plans vary widely, and coverage can start small with several smaller payments spread out over multiple years so it won't be too heavy on your wallet. Do you have anyone financially depending on you right now?   [cited: kb_education_finance_096_c03]
+CALLER: Yes, one son in college.
+AGENT : Do you already have any life or health insurance, maybe through your employer?
+CALLER: Only what my employer provides.
+AGENT : Are you more interested in pure protection, or something that also builds savings over time?
+CALLER: Something that also builds savings, maybe.
+AGENT : If a licensed advisor were to follow up, would morning or afternoon suit you better?
+CALLER: Morning is fine.
+AGENT : Thank you for your time. I'll have a licensed advisor follow up with the details we discussed. Have a good day!
