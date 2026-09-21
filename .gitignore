@@ -1,0 +1,28 @@
+# Secrets - never commit these
+.env
+.env.local
+*.key
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Model cache (fastembed downloads ONNX weights here)
+.fastembed_cache/
+models/
+
+# Generated data - regenerate with the pipeline, don't version it
+data/raw/
+data/index/
+data/leads/
+
+# Audio working files. Curated evidence under evidence/ IS committed,
+# but scratch recordings are not.
+*.tmp.wav
+tmp_audio/
+
+# macOS
+.DS_Store
