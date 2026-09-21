@@ -35,8 +35,10 @@ ESCALATION_WEBHOOK_URL = os.getenv("ESCALATION_WEBHOOK_URL", "").strip()
 CHAT_MODEL = "qwen/qwen3.8-27b"      # fastest and strongest available; see docs/model_selection.md
 FALLBACK_MODEL = "openai/gpt-oss-20b"  # different family, so a Qwen-side outage does not stop the demo
 ASR_MODEL = "whisper-large-v3-turbo"
-EMBED_MODEL = "intfloat/multilingual-e5-small"  # ONNX via fastembed, 384 dims
+EMBED_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 EMBED_DIMS = 384
+# 0.22GB ONNX, ~50 languages including Indonesian and Tagalog. multilingual-e5-small
+# is not in fastembed's catalogue, and e5-large is 2.24GB - too heavy for 8GB RAM.
 
 # --- Paths -----------------------------------------------------------------
 DATA_DIR = ROOT / "data"
@@ -54,12 +56,24 @@ MARKETS_DIR = ROOT / "agent" / "markets"
 # evaluation set in kb/eval_queries.py.
 VECTOR_WEIGHT = 0.6
 BM25_WEIGHT = 0.4
-TOP_K = 4
+# Raised from 4 after the evaluation showed real answers sitting just outside the
+# window: "how long does a claim take" has its answer in kb_claims_043_c05, which
+# ranked 7th, so the agent refused a question the corpus could answer. Eight chunks
+# is roughly 1,500 words against a 131k context, so the cost is negligible.
+TOP_K = 8
 
-# Below this fused score the agent refuses to answer and offers escalation,
-# rather than letting the model improvise. Tuned so the deliberately
-# out-of-scope evaluation queries fall under it.
-MIN_RETRIEVAL_SCORE = 0.30
+# First of two gates against answering ungrounded. Set from the measured score
+# distribution in docs/retrieval_results.md, not by intuition: the lowest-scoring
+# genuinely answerable query in the evaluation set lands at 0.529, so the gate
+# sits just under that at 0.50. Anything higher starts refusing fair questions.
+#
+# This gate is deliberately not the whole defence. The answerable and
+# out-of-scope populations overlap - "tomorrow's weather in Cebu" retrieves a
+# typhoon advisory at 0.568, above several legitimate queries - so no threshold
+# separates them. The second gate is in the answering prompt, where the model
+# reads the retrieved text and must reply NO_ANSWER_IN_CONTEXT if the answer is
+# not there. A score cannot read; the model can.
+MIN_RETRIEVAL_SCORE = 0.50
 
 
 @dataclass

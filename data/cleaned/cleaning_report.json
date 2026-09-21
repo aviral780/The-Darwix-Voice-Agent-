@@ -1,0 +1,197 @@
+{
+  "generated_at": "2026-09-21T12:44:52.525854+00:00",
+  "source": "https://www.prulifeuk.com.ph",
+  "stages": {
+    "fetched": 139,
+    "fetch_failures": 0,
+    "extracted": 139,
+    "boilerplate_lines_identified": 6,
+    "boilerplate_lines_removed": 237,
+    "dates_normalised": 48,
+    "pii_records_flagged": 23,
+    "pii_types_seen": [
+      "email",
+      "ph_landline",
+      "ph_mobile",
+      "policy_number"
+    ],
+    "final_records": 116
+  },
+  "dropped": {
+    "extraction_failed": [],
+    "irrelevant_category": [
+      {
+        "record_id": "kb_newsroom_128",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/",
+        "category": "newsroom"
+      },
+      {
+        "record_id": "kb_newsroom_129",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/pru-life-uk-inaugurates-additional-sales-offices/",
+        "category": "newsroom"
+      },
+      {
+        "record_id": "kb_newsroom_130",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/pru-life-uk-cha-ching-enriches-sessions-at-galileo-learning-centers/",
+        "category": "newsroom"
+      },
+      {
+        "record_id": "kb_newsroom_131",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/pru-life-uk-advocates-safe-cycling-in-pruride-to-london-mckinleys-first-ever-cycling-event/",
+        "category": "newsroom"
+      },
+      {
+        "record_id": "kb_newsroom_132",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/pru-life-uk-makes-life-insurance-more-accessible-to-filipinos-with-prumax-invest/",
+        "category": "newsroom"
+      },
+      {
+        "record_id": "kb_newsroom_133",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/pru-life-uk-fetes-national-cycling-champs-off-to-prudential-ridelondon-2018/",
+        "category": "newsroom"
+      },
+      {
+        "record_id": "kb_newsroom_134",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/pru-life-uk-launches-imlinked-hub/",
+        "category": "newsroom"
+      },
+      {
+        "record_id": "kb_newsroom_135",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/pru-life-uk-continues-support-for-bantayan-brings-residents-christmas-cheer/",
+        "category": "newsroom"
+      },
+      {
+        "record_id": "kb_newsroom_136",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/pru-life-uk-continues-to-support-brigada-eskwela/",
+        "category": "newsroom"
+      },
+      {
+        "record_id": "kb_newsroom_137",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/pru-life-uk-donates-100-bikes-to-sbma/",
+        "category": "newsroom"
+      },
+      {
+        "record_id": "kb_newsroom_138",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/pru-life-uk-grants-chevening-scholarship-to-bikolano-finlit-advocate/",
+        "category": "newsroom"
+      },
+      {
+        "record_id": "kb_newsroom_139",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/newsroom/prudence-foundation-funds-two-filipino-chevening-scholars/",
+        "category": "newsroom"
+      }
+    ],
+    "thin_content": [],
+    "failed_extraction": [
+      {
+        "record_id": "kb_product_investment_023",
+        "source_url": "https://www.prulifeuk.com.ph/en/products/investment/prulink-funds/fund-reports/",
+        "warnings": [
+          "highly repetitive content, extraction may have failed"
+        ]
+      },
+      {
+        "record_id": "kb_claims_044",
+        "source_url": "https://www.prulifeuk.com.ph/en/services-and-claims/claims/claims-guide/",
+        "warnings": [
+          "placeholder text detected",
+          "highly repetitive content, extraction may have failed"
+        ]
+      }
+    ],
+    "duplicates": [
+      {
+        "record_id": "kb_product_life_004",
+        "source_url": "https://www.prulifeuk.com.ph/en/products/life-protection/endowment/pruwealth-10/",
+        "duplicate_of": "kb_product_life_003",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_payments_052",
+        "source_url": "https://www.prulifeuk.com.ph/en/services-and-claims/payments/agent-payments-request/",
+        "duplicate_of": "kb_product_enquiry_041",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_services_068",
+        "source_url": "https://www.prulifeuk.com.ph/en/services-and-claims/pruservices/customer-advisories/scan-and-pay/",
+        "duplicate_of": "kb_product_enquiry_041",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_company_112",
+        "source_url": "https://www.prulifeuk.com.ph/en/about-us/know-more-about-pru/our-growth/",
+        "duplicate_of": "kb_product_enquiry_041",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_customer_support_121",
+        "source_url": "https://www.prulifeuk.com.ph/en/customer-support/contact-us/sorry/",
+        "duplicate_of": "kb_product_investment_028",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_takaful_125",
+        "source_url": "https://www.prulifeuk.com.ph/en/takaful/pru-life-uk-takaful/sorry/",
+        "duplicate_of": "kb_product_investment_028",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_enquiry_042",
+        "source_url": "https://www.prulifeuk.com.ph/en/products/product-enquiry/thank-you/",
+        "duplicate_of": "kb_product_investment_027",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_customer_support_122",
+        "source_url": "https://www.prulifeuk.com.ph/en/customer-support/contact-us/thank-you/",
+        "duplicate_of": "kb_product_investment_027",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_takaful_126",
+        "source_url": "https://www.prulifeuk.com.ph/en/takaful/pru-life-uk-takaful/thank-you/",
+        "duplicate_of": "kb_product_investment_027",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      }
+    ]
+  },
+  "warnings": [
+    {
+      "record_id": "kb_services_055",
+      "warnings": [
+        "placeholder text detected"
+      ]
+    },
+    {
+      "record_id": "kb_product_health_040",
+      "warnings": [
+        "placeholder text detected"
+      ]
+    }
+  ],
+  "by_category": {
+    "customer_support": 3,
+    "payments": 2,
+    "education_insurance": 13,
+    "product_life": 11,
+    "product_investment": 17,
+    "company": 8,
+    "services": 16,
+    "education_finance": 27,
+    "claims": 6,
+    "product_health": 9,
+    "product_takaful": 2,
+    "product_enquiry": 1,
+    "product_comparison": 1
+  }
+}

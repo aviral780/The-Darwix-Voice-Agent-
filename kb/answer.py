@@ -1,0 +1,142 @@
+"""Grounded answer generation: the second gate.
+
+Retrieval decides which passages the model may look at. This decides whether
+those passages actually answer the question, and it is the gate that matters,
+because the first one cannot read.
+
+The evaluation in kb/eval_queries.py shows why both are needed. Asking for
+tomorrow's weather in Cebu retrieves a typhoon customer-support advisory with a
+higher similarity score than several legitimate questions about premiums. The
+vocabulary genuinely overlaps. Only something that reads the passage can tell
+that it does not answer the question.
+
+The prompt therefore forbids outside knowledge, requires a citation for every
+claim, and requires the exact token NO_ANSWER_IN_CONTEXT when the passages fall
+short. Qwen follows this reliably; it was one of the four axes the model
+benchmark tested for precisely this reason.
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+
+from core import config
+from core.llm import chat
+from core.timing import LatencyRecorder
+from kb.retrieve import Result, get_retriever
+
+REFUSAL_TOKEN = "NO_ANSWER_IN_CONTEXT"
+
+SYSTEM_PROMPT = """You answer questions using ONLY the numbered CONTEXT passages provided.
+
+How to decide whether you can answer:
+- If any passage contains the answer, or part of it, ANSWER. Give the part that is
+  supported, cite it, and say plainly which part you do not have.
+- Only if no passage contains any part of the answer, reply with exactly {token}
+  and nothing else.
+- A passage that shares a topic with the question but does not address what was
+  asked is not an answer. Weather, other companies' products, other countries'
+  rules, and anything specific to one customer's account are not in scope here.
+
+How to write the answer:
+- Never use knowledge from outside the CONTEXT. Never guess, estimate or infer a
+  figure, date, percentage or condition that is not written in the passages.
+- Cite the passage id in square brackets after each claim, like [kb_payments_050_c03].
+- At most {max_sentences} sentences, in plain spoken language suitable for reading
+  aloud on a phone call. No markdown, no bullet points, no headings.
+
+{extra}"""
+
+
+@dataclass
+class Answer:
+    text: str
+    refused: bool
+    citations: list[str] = field(default_factory=list)
+    results: list[Result] = field(default_factory=list)
+    gate: str = ""            # which gate refused: retrieval | generation | none
+
+    @property
+    def sources(self) -> list[dict]:
+        """Unique source pages behind the cited chunks, for display or logging."""
+        wanted = set(self.citations)
+        seen: dict[str, dict] = {}
+        for result in self.results:
+            if result.chunk["chunk_id"] in wanted or not wanted:
+                seen.setdefault(result.source_url, {
+                    "title": result.chunk["title"],
+                    "url": result.source_url,
+                    "citation": result.citation,
+                })
+        return list(seen.values())
+
+
+def extract_citations(text: str) -> list[str]:
+    return sorted(set(re.findall(r"\[([a-z0-9_]+_c\d+)\]", text)))
+
+
+def strip_citations(text: str) -> str:
+    """Remove citation markers for the spoken version.
+
+    A caller should not hear "kb payments zero five zero c zero three" read out,
+    but the markers have to survive long enough to be verified and logged, so
+    they are stripped at the point of speech rather than at generation.
+    """
+    return re.sub(r"\s*\[[a-z0-9_]+_c\d+\]", "", text).strip()
+
+
+def answer_question(
+    question: str,
+    top_k: int | None = None,
+    max_sentences: int = 3,
+    extra_instructions: str = "",
+    recorder: LatencyRecorder | None = None,
+) -> Answer:
+    retriever = get_retriever()
+    results = retriever.search(question, top_k=top_k, recorder=recorder)
+
+    # Gate 1: retrieval confidence.
+    if not retriever.is_answerable(results):
+        return Answer(text="", refused=True, results=results, gate="retrieval")
+
+    system = SYSTEM_PROMPT.format(
+        token=REFUSAL_TOKEN,
+        max_sentences=max_sentences,
+        extra=extra_instructions,
+    )
+    user = f"CONTEXT:\n{retriever.context_block(results)}\n\nQUESTION: {question}"
+
+    raw = chat(
+        [{"role": "system", "content": system}, {"role": "user", "content": user}],
+        temperature=0.1,
+        max_tokens=320,
+        recorder=recorder,
+        stage="generation",
+    )
+
+    # Gate 2: the model read the passages and judged them insufficient.
+    if REFUSAL_TOKEN in raw:
+        return Answer(text="", refused=True, results=results, gate="generation")
+
+    return Answer(
+        text=raw.strip(),
+        refused=False,
+        citations=extract_citations(raw),
+        results=results,
+        gate="none",
+    )
+
+
+if __name__ == "__main__":
+    import sys
+    q = " ".join(sys.argv[1:]) or "What happens if I miss a premium payment?"
+    a = answer_question(q)
+    print(f"Q: {q}")
+    if a.refused:
+        print(f"REFUSED at the {a.gate} gate")
+    else:
+        print(f"A: {a.text}")
+        print(f"cited: {a.citations}")
+        for s in a.sources:
+            print(f"  - {s['citation']}  {s['url']}")
