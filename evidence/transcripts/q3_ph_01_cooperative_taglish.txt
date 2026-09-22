@@ -1,0 +1,19 @@
+Cooperative customer, natural Taglish
+the baseline localised path, with the caller code-switching the way a real caller does
+market: fil_PH   caller voice: fil-PH-AngeloNeural   call_id: 63c20c8e8042
+==============================================================================
+AGENT : Magandang araw po! Si Maya po ito from Pru Life UK. Tumatawag po ako tungkol sa inyong life insurance coverage. May two to three minutes po ba kayo?
+CALLER: Opo, meron po akong konting oras.
+AGENT : Sino po ang kausap ko?
+CALLER: Si Marco Reyes po.
+AGENT : Pwede po bang malaman kung anong age bracket kayo? Twenties, thirties, forties, o mas matanda po?
+CALLER: Nasa thirties po ako.
+AGENT : May umaasa po ba sa inyo financially ngayon? Asawa, anak, o magulang po?
+CALLER: Opo, yung asawa ko po at dalawang anak.
+AGENT : May existing life o health insurance na po ba kayo, baka through sa inyong employer o sa bank?
+CALLER: Wala pa po, yung sa company lang po namin.
+AGENT : Mas interesado po ba kayo sa pure protection, o sa may savings component din?
+CALLER: Yung protection po siguro, yung sigurado.
+AGENT : Kung may licensed advisor na tatawag po, mas okay ba sa inyo ng umaga o hapon?
+CALLER: Hapon po mas okay sa akin.
+AGENT : Maraming salamat po sa oras ninyo. May licensed advisor po na mag-fo-follow up sa inyo tungkol sa mga napag-usapan natin. Magandang araw po!

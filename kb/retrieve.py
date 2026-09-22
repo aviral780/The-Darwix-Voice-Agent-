@@ -26,6 +26,7 @@ from functools import lru_cache
 import numpy as np
 
 from core import config
+from kb.sources import get as get_source
 from core.timing import LatencyRecorder
 
 # Saturation constant for BM25. Set so that a typical strong lexical match on
@@ -69,13 +70,17 @@ class Result:
 
 
 class Retriever:
-    def __init__(self) -> None:
-        if not (config.INDEX_DIR / "meta.json").exists():
-            raise FileNotFoundError("No index. Run `python -m kb.build_index` first.")
-        self.chunks = json.loads((config.INDEX_DIR / "chunks.json").read_text())
-        self.vectors = np.load(config.INDEX_DIR / "vectors.npz")["vectors"]
-        self.bm25 = pickle.loads((config.INDEX_DIR / "bm25.pkl").read_bytes())
-        self.meta = json.loads((config.INDEX_DIR / "meta.json").read_text())
+    def __init__(self, source_key: str = "prulife_ph") -> None:
+        source = get_source(source_key)
+        if not (source.index_dir / "meta.json").exists():
+            raise FileNotFoundError(
+                f"No index for {source_key}. Run `python -m kb.build_index {source_key}` first.")
+        self.source_key = source_key
+        self.min_score = source.min_retrieval_score
+        self.chunks = json.loads((source.index_dir / "chunks.json").read_text())
+        self.vectors = np.load(source.index_dir / "vectors.npz")["vectors"]
+        self.bm25 = pickle.loads((source.index_dir / "bm25.pkl").read_bytes())
+        self.meta = json.loads((source.index_dir / "meta.json").read_text())
 
     def search(
         self,
@@ -118,6 +123,63 @@ class Retriever:
                 return _run()
         return _run()
 
+    def search_cross_lingual(
+        self,
+        query: str,
+        corpus_language: str,
+        top_k: int | None = None,
+        recorder: LatencyRecorder | None = None,
+    ) -> list[Result]:
+        """Search a corpus written in a different language from the question.
+
+        The Taglish and Bahasa markets both read from corpora that are not in
+        the caller's language, and searching directly degrades in two ways at
+        once. BM25 can only match the English loanwords that survive in the
+        question - "premium" in a Filipino sentence - so its signal comes from
+        one token. The multilingual embedding does carry across, but less
+        sharply than a same-language pair.
+
+        Measured: "What happens if I miss a premium payment?" retrieved the right
+        chunk at 0.591, while the same question in Taglish retrieved a different,
+        worse chunk at 0.510 - still above the gate, so the agent did not refuse
+        for lack of confidence. It answered from the wrong passage, and the
+        generation gate then refused a question the corpus could answer.
+
+        So the question is also asked in the corpus's language and the two result
+        sets are merged on the better score per chunk. One extra model call and
+        one extra embedding, for a retrieval that finds the passage that exists.
+        """
+        from core.llm import chat
+
+        translated = ""
+        try:
+            translated = chat(
+                [{"role": "system", "content":
+                  f"Translate the user's question into {corpus_language}. Keep financial "
+                  "and product terms exactly as written. Reply with the translation only."},
+                 {"role": "user", "content": query}],
+                temperature=0.0,
+                max_tokens=90,
+                recorder=recorder,
+                stage="query_translate",
+            ).strip()
+        except Exception:
+            # Translation is an enhancement, not a dependency. If it fails the
+            # original query still runs and retrieval degrades rather than dies.
+            translated = ""
+
+        merged: dict[str, Result] = {}
+        for variant in filter(None, [query, translated]):
+            for result in self.search(variant, top_k=top_k, recorder=recorder):
+                existing = merged.get(result.chunk["chunk_id"])
+                if existing is None or result.score > existing.score:
+                    merged[result.chunk["chunk_id"]] = result
+
+        ranked = sorted(merged.values(), key=lambda r: -r.score)[: (top_k or config.TOP_K)]
+        for rank, result in enumerate(ranked, 1):
+            result.rank = rank
+        return ranked
+
     def is_answerable(self, results: list[Result]) -> bool:
         """Whether the corpus actually supports an answer.
 
@@ -125,7 +187,7 @@ class Retriever:
         says it does not have the information and offers escalation, which is
         what keeps an ungrounded answer from being invented.
         """
-        return bool(results) and results[0].score >= config.MIN_RETRIEVAL_SCORE
+        return bool(results) and results[0].score >= self.min_score
 
     def context_block(self, results: list[Result]) -> str:
         """Format results for the model, tagged so answers can cite a source."""
@@ -136,11 +198,11 @@ class Retriever:
         return "\n\n".join(blocks)
 
 
-@lru_cache(maxsize=1)
-def get_retriever() -> Retriever:
-    """Process-wide singleton. Loading the index and ONNX model takes seconds,
-    which would otherwise be paid on every turn of a live call."""
-    return Retriever()
+@lru_cache(maxsize=4)
+def get_retriever(source_key: str = "prulife_ph") -> Retriever:
+    """One cached retriever per corpus. Loading an index and the ONNX model
+    takes seconds, which would otherwise be paid on every turn of a live call."""
+    return Retriever(source_key)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,857 @@
+{
+  "generated_at": "2026-09-22",
+  "provider": "Groq",
+  "model": "whisper-large-v3-turbo",
+  "trials": [
+    {
+      "market": "fil_PH",
+      "utterance_id": "pure_filipino",
+      "spoken": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "tl",
+      "transcript": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "pure_filipino",
+      "spoken": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "en",
+      "transcript": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "pure_filipino",
+      "spoken": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "auto-detect",
+      "transcript": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "pure_filipino",
+      "spoken": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "tl",
+      "transcript": "Magandang umaga po, kumusta po kayo mayong araw na ito?",
+      "wer": 0.1
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "pure_filipino",
+      "spoken": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "en",
+      "transcript": "Magandang umaga po, kumusta po kayo mayong araw na ito?",
+      "wer": 0.1
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "pure_filipino",
+      "spoken": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "auto-detect",
+      "transcript": "Magandang umaga po, kumusta po kayo mayong araw na ito?",
+      "wer": 0.1
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "pure_filipino",
+      "spoken": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "tl",
+      "transcript": "Magandang umaga pa, kumasta pa kayo na iyong araw na ito?",
+      "wer": 0.5
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "pure_filipino",
+      "spoken": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "en",
+      "transcript": "Magandang umaga pa, kumasta pa kayo na yung araw na ito?",
+      "wer": 0.5
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "pure_filipino",
+      "spoken": "Magandang umaga po, kumusta po kayo ngayong araw na ito?",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "auto-detect",
+      "transcript": "Magandang umaga pa, kumasta pa kayo na iyong araw na ito?",
+      "wer": 0.5
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_light",
+      "spoken": "Opo, na-receive ko po yung letter tungkol sa policy ko.",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "tl",
+      "transcript": "Opo, na-receive ko po yung letter tungkol sa policy ko",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_light",
+      "spoken": "Opo, na-receive ko po yung letter tungkol sa policy ko.",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "en",
+      "transcript": "Opo, na-receive ko po yung letter tungkol sa policy ko.",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_light",
+      "spoken": "Opo, na-receive ko po yung letter tungkol sa policy ko.",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "auto-detect",
+      "transcript": "Opo, na-receive ko po yung letter tungkol sa policy ko",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_light",
+      "spoken": "Opo, na-receive ko po yung letter tungkol sa policy ko.",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "tl",
+      "transcript": "Opo, na-receive ko po yung letter tungkol sa policy ko",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_light",
+      "spoken": "Opo, na-receive ko po yung letter tungkol sa policy ko.",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "en",
+      "transcript": "Opo, na-receive ko po yung letter tungkol sa policy ko.",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_light",
+      "spoken": "Opo, na-receive ko po yung letter tungkol sa policy ko.",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "auto-detect",
+      "transcript": "Opo, na-receive ko po yung letter tungkol sa policy ko",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_light",
+      "spoken": "Opo, na-receive ko po yung letter tungkol sa policy ko.",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "tl",
+      "transcript": "Opo, na-receive KO pa yang letter tungkol SA Policy KO",
+      "wer": 0.18181818181818182
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_light",
+      "spoken": "Opo, na-receive ko po yung letter tungkol sa policy ko.",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "en",
+      "transcript": "Oppo, na-receive KO pa yang letter tungkol SA Policy KO",
+      "wer": 0.2727272727272727
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_light",
+      "spoken": "Opo, na-receive ko po yung letter tungkol sa policy ko.",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "auto-detect",
+      "transcript": "Opo, na-receive KO pa yang letter tungkol SA Policy KO",
+      "wer": 0.18181818181818182
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_heavy",
+      "spoken": "Due na po ba yung premium payment ko next week, or may grace period pa po?",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "tl",
+      "transcript": "Duna po ba yung premium payment ko next week, or may grace period pa po?",
+      "wer": 0.125
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_heavy",
+      "spoken": "Due na po ba yung premium payment ko next week, or may grace period pa po?",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "en",
+      "transcript": "due na po ba yung premium payment ko next week or may grace period pa po?",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_heavy",
+      "spoken": "Due na po ba yung premium payment ko next week, or may grace period pa po?",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "auto-detect",
+      "transcript": "Duna po ba yung premium payment ko next week, or may grace period pa po?",
+      "wer": 0.125
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_heavy",
+      "spoken": "Due na po ba yung premium payment ko next week, or may grace period pa po?",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "tl",
+      "transcript": "Due na po ba yung premium payment ko next week? Or may grace period pa po?",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_heavy",
+      "spoken": "Due na po ba yung premium payment ko next week, or may grace period pa po?",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "en",
+      "transcript": "Due na po ba yung premium payment ko next week or may grace period pa po?",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_heavy",
+      "spoken": "Due na po ba yung premium payment ko next week, or may grace period pa po?",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "auto-detect",
+      "transcript": "Due na po ba yung premium payment ko next week? Or may grace period pa po?",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_heavy",
+      "spoken": "Due na po ba yung premium payment ko next week, or may grace period pa po?",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "tl",
+      "transcript": "Do na pa be a young premium payment ko next week, or may grace period pa pa",
+      "wer": 0.375
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_heavy",
+      "spoken": "Due na po ba yung premium payment ko next week, or may grace period pa po?",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "en",
+      "transcript": "Do na pa be a young premium payment ko next week, or may grace period pa pa",
+      "wer": 0.375
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "taglish_heavy",
+      "spoken": "Due na po ba yung premium payment ko next week, or may grace period pa po?",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "auto-detect",
+      "transcript": "Do na pa be a young premium payment ko next week, or may grace period pa pa",
+      "wer": 0.375
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "finance_terms",
+      "spoken": "Gusto ko po sanang malaman kung magkano ang sum assured at kung may rider po ba.",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "tl",
+      "transcript": "Gusto ko po sanang malaman kung magkano ang Sum Assured at kung may rider po ba",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "finance_terms",
+      "spoken": "Gusto ko po sanang malaman kung magkano ang sum assured at kung may rider po ba.",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "en",
+      "transcript": "Gusto ko po sanang malaman kung magkano ang Sum Assured at kung may rider po ba",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "finance_terms",
+      "spoken": "Gusto ko po sanang malaman kung magkano ang sum assured at kung may rider po ba.",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "auto-detect",
+      "transcript": "Gusto ko po sanang malaman kung magkano ang Sum Assured at kung may rider po ba",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "finance_terms",
+      "spoken": "Gusto ko po sanang malaman kung magkano ang sum assured at kung may rider po ba.",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "tl",
+      "transcript": "Gusto ko po sanang malaman kung magkano ang Sum Assured at kung may rider po ba",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "finance_terms",
+      "spoken": "Gusto ko po sanang malaman kung magkano ang sum assured at kung may rider po ba.",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "en",
+      "transcript": "Gusto ko po sanang malaman kung magkano ang Sum Assured at kung may rider po ba",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "finance_terms",
+      "spoken": "Gusto ko po sanang malaman kung magkano ang sum assured at kung may rider po ba.",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "auto-detect",
+      "transcript": "Gusto ko po sanang malaman kung magkano ang Sum Assured at kung may rider po ba",
+      "wer": 0.0
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "finance_terms",
+      "spoken": "Gusto ko po sanang malaman kung magkano ang sum assured at kung may rider po ba.",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "tl",
+      "transcript": "Gusto kayo pa sanong malamon kang magano ang sum assured at kang may rider pa BA.",
+      "wer": 0.5
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "finance_terms",
+      "spoken": "Gusto ko po sanang malaman kung magkano ang sum assured at kung may rider po ba.",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "en",
+      "transcript": "Gusto kayo pa sanong malamon kang magano ang sum assured at kang may rider pa BA.",
+      "wer": 0.5
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "finance_terms",
+      "spoken": "Gusto ko po sanang malaman kung magkano ang sum assured at kung may rider po ba.",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "auto-detect",
+      "transcript": "Gusto kayo pa sanong malamon kang magano ang sum assured at kang may rider pa BA.",
+      "wer": 0.5
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "colloquial",
+      "spoken": "Ay naku po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "tl",
+      "transcript": "ay nako po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "wer": 0.0625
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "colloquial",
+      "spoken": "Ay naku po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "en",
+      "transcript": "ay nako po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "wer": 0.0625
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "colloquial",
+      "spoken": "Ay naku po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "voice": "fil-PH-BlessicaNeural",
+      "voice_note": "Filipino, female, standard",
+      "language_hint": "auto-detect",
+      "transcript": "ay nako po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "wer": 0.0625
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "colloquial",
+      "spoken": "Ay naku po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "tl",
+      "transcript": "ay naku po, medyo type po talaga budget namin ngayon, baka next month na lang po",
+      "wer": 0.0625
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "colloquial",
+      "spoken": "Ay naku po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "en",
+      "transcript": "ay naku po, medyo type po talaga budget namin ngayon, baka next month na lang po.",
+      "wer": 0.0625
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "colloquial",
+      "spoken": "Ay naku po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "voice": "fil-PH-AngeloNeural",
+      "voice_note": "Filipino, male, standard",
+      "language_hint": "auto-detect",
+      "transcript": "ay naku po, medyo type po talaga budget namin ngayon, baka next month na lang po",
+      "wer": 0.0625
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "colloquial",
+      "spoken": "Ay naku po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "tl",
+      "transcript": "I nakupa, mi jyotai patalaga budget na min naion, baka next month na langpa",
+      "wer": 0.75
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "colloquial",
+      "spoken": "Ay naku po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "en",
+      "transcript": "I'm going to go to the next month",
+      "wer": 0.875
+    },
+    {
+      "market": "fil_PH",
+      "utterance_id": "colloquial",
+      "spoken": "Ay naku po, medyo tight po talaga budget namin ngayon, baka next month na lang po.",
+      "voice": "en-PH-RosaNeural",
+      "voice_note": "Philippine English, female",
+      "language_hint": "auto-detect",
+      "transcript": "I'm going to go to the next month",
+      "wer": 0.875
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "formal_bahasa",
+      "spoken": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "voice": "id-ID-GadisNeural",
+      "voice_note": "Indonesian, female, Jakarta standard",
+      "language_hint": "id",
+      "transcript": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "formal_bahasa",
+      "spoken": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "voice": "id-ID-GadisNeural",
+      "voice_note": "Indonesian, female, Jakarta standard",
+      "language_hint": "auto-detect",
+      "transcript": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "formal_bahasa",
+      "spoken": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "voice": "id-ID-ArdiNeural",
+      "voice_note": "Indonesian, male, Jakarta standard",
+      "language_hint": "id",
+      "transcript": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "formal_bahasa",
+      "spoken": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "voice": "id-ID-ArdiNeural",
+      "voice_note": "Indonesian, male, Jakarta standard",
+      "language_hint": "auto-detect",
+      "transcript": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "formal_bahasa",
+      "spoken": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "voice": "jv-ID-SitiNeural",
+      "voice_note": "Javanese accent, female, non-Jakarta",
+      "language_hint": "id",
+      "transcript": "Selamat pagi, Soyo ingin menanyakan mengenai angsuran bulan ini.",
+      "wer": 0.1111111111111111
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "formal_bahasa",
+      "spoken": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "voice": "jv-ID-SitiNeural",
+      "voice_note": "Javanese accent, female, non-Jakarta",
+      "language_hint": "auto-detect",
+      "transcript": "Selamat pagi, Soyo ingin menanyakan mengenai angsuran bulan ini.",
+      "wer": 0.1111111111111111
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "formal_bahasa",
+      "spoken": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "voice": "su-ID-TutiNeural",
+      "voice_note": "Sundanese accent, female, non-Jakarta",
+      "language_hint": "id",
+      "transcript": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "formal_bahasa",
+      "spoken": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "voice": "su-ID-TutiNeural",
+      "voice_note": "Sundanese accent, female, non-Jakarta",
+      "language_hint": "auto-detect",
+      "transcript": "Selamat pagi, saya ingin menanyakan mengenai angsuran bulan ini.",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "colloquial",
+      "spoken": "Mbak, cicilan saya telat tiga hari, kena denda berapa ya?",
+      "voice": "id-ID-GadisNeural",
+      "voice_note": "Indonesian, female, Jakarta standard",
+      "language_hint": "id",
+      "transcript": "Bak, cicilan saya telat tiga hari, kena denda berapa ya?",
+      "wer": 0.1
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "colloquial",
+      "spoken": "Mbak, cicilan saya telat tiga hari, kena denda berapa ya?",
+      "voice": "id-ID-GadisNeural",
+      "voice_note": "Indonesian, female, Jakarta standard",
+      "language_hint": "auto-detect",
+      "transcript": "Bak, cicilan saya telat tiga hari, kena denda berapa ya?",
+      "wer": 0.1
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "colloquial",
+      "spoken": "Mbak, cicilan saya telat tiga hari, kena denda berapa ya?",
+      "voice": "id-ID-ArdiNeural",
+      "voice_note": "Indonesian, male, Jakarta standard",
+      "language_hint": "id",
+      "transcript": "Mbak, cicilan saya telat 3 hari, kena denda berapa ya?",
+      "wer": 0.1
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "colloquial",
+      "spoken": "Mbak, cicilan saya telat tiga hari, kena denda berapa ya?",
+      "voice": "id-ID-ArdiNeural",
+      "voice_note": "Indonesian, male, Jakarta standard",
+      "language_hint": "auto-detect",
+      "transcript": "Mbak, cicilan saya telat 3 hari, kena denda berapa ya?",
+      "wer": 0.1
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "colloquial",
+      "spoken": "Mbak, cicilan saya telat tiga hari, kena denda berapa ya?",
+      "voice": "jv-ID-SitiNeural",
+      "voice_note": "Javanese accent, female, non-Jakarta",
+      "language_hint": "id",
+      "transcript": "Mbak, cicilan soya telat tiga hari, kena denda, DP, jatuh tempo, pembiayaan, plafond, BPKB",
+      "wer": 0.7
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "colloquial",
+      "spoken": "Mbak, cicilan saya telat tiga hari, kena denda berapa ya?",
+      "voice": "jv-ID-SitiNeural",
+      "voice_note": "Javanese accent, female, non-Jakarta",
+      "language_hint": "auto-detect",
+      "transcript": "Mbak, cicilan soya telat tiga hari, kena denda, DP, jatuh tempo, pembiayaan, plafond, BPKB",
+      "wer": 0.7
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "colloquial",
+      "spoken": "Mbak, cicilan saya telat tiga hari, kena denda berapa ya?",
+      "voice": "su-ID-TutiNeural",
+      "voice_note": "Sundanese accent, female, non-Jakarta",
+      "language_hint": "id",
+      "transcript": "Bak, cicilan saya telat tiga hari, kena denda berapaya",
+      "wer": 0.3
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "colloquial",
+      "spoken": "Mbak, cicilan saya telat tiga hari, kena denda berapa ya?",
+      "voice": "su-ID-TutiNeural",
+      "voice_note": "Sundanese accent, female, non-Jakarta",
+      "language_hint": "auto-detect",
+      "transcript": "Bak, cicilan saya telat tiga hari, kena denda berapaya",
+      "wer": 0.3
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "finance_terms",
+      "spoken": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "voice": "id-ID-GadisNeural",
+      "voice_note": "Indonesian, female, Jakarta standard",
+      "language_hint": "id",
+      "transcript": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "finance_terms",
+      "spoken": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "voice": "id-ID-GadisNeural",
+      "voice_note": "Indonesian, female, Jakarta standard",
+      "language_hint": "auto-detect",
+      "transcript": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "finance_terms",
+      "spoken": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "voice": "id-ID-ArdiNeural",
+      "voice_note": "Indonesian, male, Jakarta standard",
+      "language_hint": "id",
+      "transcript": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "finance_terms",
+      "spoken": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "voice": "id-ID-ArdiNeural",
+      "voice_note": "Indonesian, male, Jakarta standard",
+      "language_hint": "auto-detect",
+      "transcript": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "finance_terms",
+      "spoken": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "voice": "jv-ID-SitiNeural",
+      "voice_note": "Javanese accent, female, non-Jakarta",
+      "language_hint": "id",
+      "transcript": "Berapa tenor pembiayaan dan berapa yang harus soyo bayar di awal?",
+      "wer": 0.16666666666666666
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "finance_terms",
+      "spoken": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "voice": "jv-ID-SitiNeural",
+      "voice_note": "Javanese accent, female, non-Jakarta",
+      "language_hint": "auto-detect",
+      "transcript": "Berapa tenor pembiayaan dan berapa yang harus soyo bayar di awal?",
+      "wer": 0.16666666666666666
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "finance_terms",
+      "spoken": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "voice": "su-ID-TutiNeural",
+      "voice_note": "Sundanese accent, female, non-Jakarta",
+      "language_hint": "id",
+      "transcript": "Berapa tenor pembiayaan dan berapa DPI yang harus saya bayar di awal?",
+      "wer": 0.08333333333333333
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "finance_terms",
+      "spoken": "Berapa tenor pembiayaan dan berapa DP yang harus saya bayar di awal?",
+      "voice": "su-ID-TutiNeural",
+      "voice_note": "Sundanese accent, female, non-Jakarta",
+      "language_hint": "auto-detect",
+      "transcript": "Berapa tenor pembiayaan dan berapa DPI yang harus saya bayar di awal?",
+      "wer": 0.08333333333333333
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "mixed_english",
+      "spoken": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending.",
+      "voice": "id-ID-GadisNeural",
+      "voice_note": "Indonesian, female, Jakarta standard",
+      "language_hint": "id",
+      "transcript": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "mixed_english",
+      "spoken": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending.",
+      "voice": "id-ID-GadisNeural",
+      "voice_note": "Indonesian, female, Jakarta standard",
+      "language_hint": "auto-detect",
+      "transcript": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "mixed_english",
+      "spoken": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending.",
+      "voice": "id-ID-ArdiNeural",
+      "voice_note": "Indonesian, male, Jakarta standard",
+      "language_hint": "id",
+      "transcript": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "mixed_english",
+      "spoken": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending.",
+      "voice": "id-ID-ArdiNeural",
+      "voice_note": "Indonesian, male, Jakarta standard",
+      "language_hint": "auto-detect",
+      "transcript": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "mixed_english",
+      "spoken": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending.",
+      "voice": "jv-ID-SitiNeural",
+      "voice_note": "Javanese accent, female, non-Jakarta",
+      "language_hint": "id",
+      "transcript": "Soyo sudah transfer lewat mobile banking tapi statusnya masih pending",
+      "wer": 0.1
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "mixed_english",
+      "spoken": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending.",
+      "voice": "jv-ID-SitiNeural",
+      "voice_note": "Javanese accent, female, non-Jakarta",
+      "language_hint": "auto-detect",
+      "transcript": "Soyo sudah transfer lewat mobile banking tapi statusnya masih pending",
+      "wer": 0.1
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "mixed_english",
+      "spoken": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending.",
+      "voice": "su-ID-TutiNeural",
+      "voice_note": "Sundanese accent, female, non-Jakarta",
+      "language_hint": "id",
+      "transcript": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "mixed_english",
+      "spoken": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending.",
+      "voice": "su-ID-TutiNeural",
+      "voice_note": "Sundanese accent, female, non-Jakarta",
+      "language_hint": "auto-detect",
+      "transcript": "Saya sudah transfer lewat mobile banking tapi statusnya masih pending",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "difficulty",
+      "spoken": "Maaf Pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo.",
+      "voice": "id-ID-GadisNeural",
+      "voice_note": "Indonesian, female, Jakarta standard",
+      "language_hint": "id",
+      "transcript": "Maaf pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "difficulty",
+      "spoken": "Maaf Pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo.",
+      "voice": "id-ID-GadisNeural",
+      "voice_note": "Indonesian, female, Jakarta standard",
+      "language_hint": "auto-detect",
+      "transcript": "Maaf pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "difficulty",
+      "spoken": "Maaf Pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo.",
+      "voice": "id-ID-ArdiNeural",
+      "voice_note": "Indonesian, male, Jakarta standard",
+      "language_hint": "id",
+      "transcript": "Maaf pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "difficulty",
+      "spoken": "Maaf Pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo.",
+      "voice": "id-ID-ArdiNeural",
+      "voice_note": "Indonesian, male, Jakarta standard",
+      "language_hint": "auto-detect",
+      "transcript": "Maaf pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo",
+      "wer": 0.0
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "difficulty",
+      "spoken": "Maaf Pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo.",
+      "voice": "jv-ID-SitiNeural",
+      "voice_note": "Javanese accent, female, non-Jakarta",
+      "language_hint": "id",
+      "transcript": "Maaf, Pak, soya lagi kesulitan, baru keno pejadi belung biso bayar jatuh tempo.",
+      "wer": 0.42857142857142855
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "difficulty",
+      "spoken": "Maaf Pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo.",
+      "voice": "jv-ID-SitiNeural",
+      "voice_note": "Javanese accent, female, non-Jakarta",
+      "language_hint": "auto-detect",
+      "transcript": "Maaf, Pak, soya lagi kesulitan, baru keno pejadi belung biso bayar jatuh tempo.",
+      "wer": 0.42857142857142855
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "difficulty",
+      "spoken": "Maaf Pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo.",
+      "voice": "su-ID-TutiNeural",
+      "voice_note": "Sundanese accent, female, non-Jakarta",
+      "language_hint": "id",
+      "transcript": "Maapak, saya lagi kesulitan, baru kenap, jadi belum bisa bayar jatuh tempo.",
+      "wer": 0.2857142857142857
+    },
+    {
+      "market": "id_ID",
+      "utterance_id": "difficulty",
+      "spoken": "Maaf Pak, saya lagi kesulitan, baru kena PHK jadi belum bisa bayar jatuh tempo.",
+      "voice": "su-ID-TutiNeural",
+      "voice_note": "Sundanese accent, female, non-Jakarta",
+      "language_hint": "auto-detect",
+      "transcript": "Maapak, saya lagi kesulitan, baru kenap, jadi belum bisa bayar jatuh tempo.",
+      "wer": 0.2857142857142857
+    }
+  ]
+}

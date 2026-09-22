@@ -1,0 +1,17 @@
+Price objection, finance terms, then asks for a person
+sector objection and mixed English finance vocabulary, ending in escalation that must stay in Taglish
+market: fil_PH   caller voice: fil-PH-AngeloNeural   call_id: c453201a02a7
+==============================================================================
+AGENT : Magandang araw po! Si Maya po ito from Pru Life UK. Tumatawag po ako tungkol sa inyong life insurance coverage. May two to three minutes po ba kayo?
+CALLER: Sige po, pakinggan ko muna.
+AGENT : Sino po ang kausap ko?
+CALLER: Si Elena po.
+AGENT : Pwede po bang malaman kung anong age bracket kayo? Twenties, thirties, forties, o mas matanda po?
+CALLER: Forties na po ako.
+AGENT : May umaasa po ba sa inyo financially ngayon? Asawa, anak, o magulang po?
+CALLER: Ano po ba yung sum assured tapos may rider pa po ba dun?
+AGENT : Opo, ang sum assured ay yung guaranteed amount na nakasaad sa policy contract na tatanggapin ng policyowner o beneficiary kapag nangyari ang isang event, tulad ng death. Opo, may mga optional na rider na maaari ninyong i-attach sa life insurance plan para palawakin ang coverage ninyo. May umaasa po ba sa inyo financially ngayon? Asawa, anak, o magulang po?   [cited: kb_product_life_012_c09]
+CALLER: Ay naku po, medyo mahal po yata yan para sa amin ngayon.
+AGENT : Naririnig ko po ang concern niyo, at valid naman po iyon. Iba-iba po ang mga plans at pwede po ninyong magsimula sa maliit na premium para hindi mabigat sa budget niyo ngayon. May umaasa po ba sa inyo financially ngayon? Asawa, anak, o magulang po?   [grounded in: kb_education_insurance_077_c05, kb_education_insurance_077_c02, kb_education_finance_094_c01]
+CALLER: Pwede po ba akong makausap na lang ng totoong tao?
+AGENT : Opo, naiintindihan ko po. Ipapasa ko po kayo sa isang licensed advisor na makakatulong po diyan nang diretso. Nasa kanila na po ang inyong details kaya hindi na po kayo mauulit magkuwento. Maraming salamat po sa oras ninyo.

@@ -92,6 +92,10 @@ class MarketConfig:
     tts_voice: str
     tts_voice_alt: str = ""
     currency_symbol: str = ""
+    # Which corpus this market answers from. Markets in the same country can
+    # share one; the Indonesian market has its own because a Philippine
+    # life-insurance answer has no business on a multifinance call.
+    kb_source: str = "prulife_ph"
     greeting: str = ""
     persona: str = ""
     style_rules: list[str] = field(default_factory=list)
@@ -101,6 +105,16 @@ class MarketConfig:
     escalation_triggers: list[str] = field(default_factory=list)
     refusal_line: str = ""
     closing: str = ""
+    # Everything the agent can say must come from here. Four of these lines were
+    # hardcoded English in flow.py, which meant a Taglish or Bahasa call switched
+    # to English at exactly the moments that matter most - escalation and
+    # refusal. The brief names unexpected English switching as a failure, and a
+    # caller who has spoken Bahasa for four turns being answered in English at
+    # the handover is the clearest possible version of it.
+    escalation_line: str = ""
+    objection_ack: str = ""
+    skip_line: str = ""
+    declined_line: str = ""
 
     @classmethod
     def load(cls, key: str) -> "MarketConfig":

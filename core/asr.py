@@ -2,12 +2,22 @@
 
 Two things here matter more than the API call itself.
 
-Language hinting: Whisper auto-detects language, and on short Taglish or
-code-switched utterances it frequently guesses wrong and then transcribes
-phonetically into the wrong script. Passing an explicit language code per
-market fixes most of that. The Philippines market is the awkward case, since
-Whisper has no Taglish code, so it is hinted as Tagalog and the observed
-behaviour is documented in the Q3 write-up rather than hidden.
+Language hinting: an explicit language code is passed per market. It is worth
+being precise about what that buys, because the measurement in
+scripts/asr_report.py did not support the original reason for adding it.
+
+The assumption was that auto-detect misfires on short code-switched utterances
+and that hinting fixes it. Across 85 trials on clean synthetic speech the hint
+made almost no difference: mean WER 0.177 with `tl` against 0.185 auto-detect
+for Filipino, and identical at 0.119 for Indonesian. Whisper's auto-detect is
+simply good on clean audio.
+
+The hint is kept for two narrower reasons. It removes a failure mode rather
+than improving the average - auto-detect has to commit to one language for the
+segment, and a wrong commitment on a short utterance mistranscribes the whole
+of it - and it makes behaviour deterministic per market, which matters when
+comparing runs. It is not the accuracy win it was introduced as, and the report
+says so.
 
 Chunk sizing: Question 4 feeds audio in short segments. Whisper degrades badly
 on segments under roughly one second because it has too little context, so the

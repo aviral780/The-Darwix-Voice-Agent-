@@ -100,3 +100,18 @@ refusal_line: >-
 closing: >-
   Thank you for your time. I'll have a licensed advisor follow up with the
   details we discussed. Have a good day!
+
+# Lines the flow speaks directly. These live here so a call never switches
+# language at escalation, refusal or close.
+
+escalation_line: >-
+  Of course. I'll pass you to a licensed advisor who can help with that directly. They'll have your details, so you won't need to repeat yourself. Thank you for your time.
+
+objection_ack: >-
+  That's a fair point.
+
+skip_line: >-
+  No problem, we can skip that.
+
+declined_line: >-
+  No problem at all, I appreciate you letting me know. Have a good day!

@@ -1,0 +1,15 @@
+Instalment reminder, colloquial Bahasa
+the everyday multifinance call, with colloquial register and finance terminology
+market: id_ID   caller voice: id-ID-ArdiNeural   call_id: 306d2e69f564
+==============================================================================
+AGENT : Selamat pagi, Bapak atau Ibu. Saya Sari dari FIFGROUP. Mohon maaf mengganggu waktunya. Saya menghubungi terkait angsuran yang akan jatuh tempo. Apakah ada waktu sebentar?
+CALLER: Iya Mbak, ada sebentar.
+AGENT : Mohon maaf, dengan Bapak atau Ibu siapa saya berbicara?
+CALLER: Saya Budi Santoso.
+AGENT : Apakah Bapak atau Ibu sudah menerima informasi mengenai angsuran yang akan jatuh tempo?
+CALLER: Sudah, saya sudah terima notifikasinya.
+AGENT : Untuk angsuran bulan ini, apakah sudah sempat dibayarkan atau masih dalam proses?
+CALLER: Belum saya bayar, Mbak.
+AGENT : Apakah ada kendala yang membuat pembayaran jadi tertunda?
+CALLER: Tenor saya berapa lama ya, dan kena denda berapa kalau telat?
+AGENT : Baik, saya mengerti. Akan saya sambungkan dengan petugas kami yang dapat membantu langsung mengenai hal tersebut. Data Bapak atau Ibu sudah ada pada kami, jadi tidak perlu menjelaskan ulang. Terima kasih banyak atas waktunya.

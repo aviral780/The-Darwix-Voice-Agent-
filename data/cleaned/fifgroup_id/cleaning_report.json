@@ -1,0 +1,173 @@
+{
+  "generated_at": "2026-09-22T07:06:55.614867+00:00",
+  "source": "https://fifgroup.co.id",
+  "source_key": "fifgroup_id",
+  "stages": {
+    "fetched": 24,
+    "fetch_failures": 0,
+    "extracted": 24,
+    "boilerplate_lines_identified": 27,
+    "boilerplate_lines_removed": 416,
+    "dates_normalised": 0,
+    "pii_records_flagged": 1,
+    "pii_types_seen": [
+      "email"
+    ],
+    "final_records": 4
+  },
+  "dropped": {
+    "extraction_failed": [],
+    "irrelevant_category": [],
+    "thin_content": [],
+    "failed_extraction": [],
+    "duplicates": [
+      {
+        "record_id": "kb_product_sharia_003",
+        "source_url": "https://fifgroup.co.id/amitra/inspirasi-fifgroup",
+        "duplicate_of": "kb_product_sharia_002",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_fraud_safety_005",
+        "source_url": "https://fifgroup.co.id/anti-fraud/amitra",
+        "duplicate_of": "kb_product_sharia_002",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_fraud_safety_006",
+        "source_url": "https://fifgroup.co.id/anti-fraud/inspirasi-fifgroup",
+        "duplicate_of": "kb_product_sharia_002",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_loan_011",
+        "source_url": "https://fifgroup.co.id/danastra/amitra",
+        "duplicate_of": "kb_product_sharia_002",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_loan_012",
+        "source_url": "https://fifgroup.co.id/danastra/inspirasi-fifgroup",
+        "duplicate_of": "kb_product_sharia_002",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_services_017",
+        "source_url": "https://fifgroup.co.id/fgc/amitra",
+        "duplicate_of": "kb_product_sharia_002",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_services_018",
+        "source_url": "https://fifgroup.co.id/fgc/inspirasi-fifgroup",
+        "duplicate_of": "kb_product_sharia_002",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_motor_020",
+        "source_url": "https://fifgroup.co.id/fifastra/amitra",
+        "duplicate_of": "kb_product_sharia_002",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_motor_021",
+        "source_url": "https://fifgroup.co.id/fifastra/inspirasi-fifgroup",
+        "duplicate_of": "kb_product_sharia_002",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_goods_023",
+        "source_url": "https://fifgroup.co.id/spektra/amitra",
+        "duplicate_of": "kb_product_sharia_002",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_goods_024",
+        "source_url": "https://fifgroup.co.id/spektra/inspirasi-fifgroup",
+        "duplicate_of": "kb_product_sharia_002",
+        "hamming_distance": 0,
+        "reason": "exact duplicate"
+      },
+      {
+        "record_id": "kb_product_goods_022",
+        "source_url": "https://fifgroup.co.id/spektra",
+        "duplicate_of": "kb_product_loan_010",
+        "hamming_distance": 2,
+        "reason": "near-duplicate"
+      },
+      {
+        "record_id": "kb_product_services_016",
+        "source_url": "https://fifgroup.co.id/fgc",
+        "duplicate_of": "kb_product_loan_010",
+        "hamming_distance": 2,
+        "reason": "near-duplicate"
+      },
+      {
+        "record_id": "kb_product_motor_019",
+        "source_url": "https://fifgroup.co.id/fifastra",
+        "duplicate_of": "kb_product_loan_010",
+        "hamming_distance": 2,
+        "reason": "near-duplicate"
+      },
+      {
+        "record_id": "kb_product_sharia_001",
+        "source_url": "https://fifgroup.co.id/amitra",
+        "duplicate_of": "kb_product_loan_010",
+        "hamming_distance": 4,
+        "reason": "near-duplicate"
+      },
+      {
+        "record_id": "kb_fraud_safety_004",
+        "source_url": "https://fifgroup.co.id/anti-fraud",
+        "duplicate_of": "kb_product_loan_010",
+        "hamming_distance": 4,
+        "reason": "near-duplicate"
+      },
+      {
+        "record_id": "kb_branches_007",
+        "source_url": "https://fifgroup.co.id/cabang-fifgroup",
+        "duplicate_of": "kb_product_loan_010",
+        "hamming_distance": 4,
+        "reason": "near-duplicate"
+      },
+      {
+        "record_id": "kb_branches_008",
+        "source_url": "https://fifgroup.co.id/cabang-fifgroup?from=FOOTER",
+        "duplicate_of": "kb_product_loan_010",
+        "hamming_distance": 4,
+        "reason": "near-duplicate"
+      },
+      {
+        "record_id": "kb_faq_014",
+        "source_url": "https://fifgroup.co.id/faq/amitra",
+        "duplicate_of": "kb_product_loan_010",
+        "hamming_distance": 4,
+        "reason": "near-duplicate"
+      },
+      {
+        "record_id": "kb_faq_015",
+        "source_url": "https://fifgroup.co.id/faq/inspirasi-fifgroup",
+        "duplicate_of": "kb_product_loan_010",
+        "hamming_distance": 4,
+        "reason": "near-duplicate"
+      }
+    ]
+  },
+  "warnings": [],
+  "by_category": {
+    "product_sharia": 1,
+    "company": 1,
+    "product_loan": 1,
+    "faq": 1
+  }
+}

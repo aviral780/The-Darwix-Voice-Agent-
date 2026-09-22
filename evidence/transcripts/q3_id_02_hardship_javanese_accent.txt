@@ -1,0 +1,21 @@
+Payment difficulty, Javanese-accented caller
+regional accent plus financial hardship, the combination the ASR report shows is handled worst
+market: id_ID   caller voice: jv-ID-SitiNeural   call_id: f2fcb7388c4e
+==============================================================================
+AGENT : Selamat pagi, Bapak atau Ibu. Saya Sari dari FIFGROUP. Mohon maaf mengganggu waktunya. Saya menghubungi terkait angsuran yang akan jatuh tempo. Apakah ada waktu sebentar?
+CALLER: Iya, sebentar saja ya Mbak.
+AGENT : Mohon maaf, dengan Bapak atau Ibu siapa saya berbicara?
+CALLER: Nama saya Siti Rahayu.
+AGENT : Apakah Bapak atau Ibu sudah menerima informasi mengenai angsuran yang akan jatuh tempo?
+CALLER: Sudah tahu, tapi ada masalah.
+AGENT : Baik, saya mengerti kekhawatiran Bapak/Ibu. Mohon maaf atas ketidaknyamanan yang terjadi. Saya akan bantu koordinasikan dengan petugas terkait untuk pengecekan lebih lanjut agar masalahnya dapat diselesaikan dengan baik. Apakah Bapak atau Ibu sudah menerima informasi mengenai angsuran yang akan jatuh tempo?   [refused at retrieval gate]
+CALLER: Belum bisa bayar, Mbak.
+AGENT : Saya mengerti, Bapak. Saya paham betul situasi Bapak saat ini sedang berat.
+
+Kami memiliki opsi keringanan resmi yang bisa disesuaikan dengan kemampuan Bapak.
+
+Mohon kesediaannya untuk menghubungi kantor cabang terdekat atau menghubungi nomor layanan pelanggan kami untuk mengecek detail program keringanan tersebut. Apakah Bapak atau Ibu sudah menerima informasi mengenai angsuran yang akan jatuh tempo?   [refused at retrieval gate]
+CALLER: Maaf, saya baru kena PHK jadi lagi kesulitan sekali.
+AGENT : Saya mengerti betul situasi Bapak/Ibu, dan saya turut prihatin dengan kondisi yang sedang dialami. Untuk membantu meringankan beban, saat ini tersedia opsi keringanan resmi yang bisa disesuaikan dengan kemampuan pembayaran Bapak/Ibu. Apakah Bapak atau Ibu sudah menerima informasi mengenai angsuran yang akan jatuh tempo?   [refused at retrieval gate]
+CALLER: Saya mau bicara dengan petugas yang bisa bantu keringanan.
+AGENT : Baik, saya mengerti. Akan saya sambungkan dengan petugas kami yang dapat membantu langsung mengenai hal tersebut. Data Bapak atau Ibu sudah ada pada kami, jadi tidak perlu menjelaskan ulang. Terima kasih banyak atas waktunya.

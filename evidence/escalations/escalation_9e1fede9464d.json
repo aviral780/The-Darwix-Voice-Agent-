@@ -1,0 +1,126 @@
+{
+  "event": "escalation",
+  "raised_at": "2026-09-22T07:21:58.586124+00:00",
+  "call_id": "9e1fede9464d",
+  "market": "fil_PH",
+  "reason": "caller requested a human or raised an account-specific matter",
+  "caller_name": "Elena",
+  "slots_collected": {
+    "name": "Elena",
+    "age_band": "forties"
+  },
+  "recent_turns": [
+    {
+      "index": 7,
+      "speaker": "caller",
+      "text": "Ano po ba yung sum assured tapos may rider pa po ba dun?",
+      "state": "qualifying",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:21:27.179656+00:00"
+    },
+    {
+      "index": 8,
+      "speaker": "agent",
+      "text": "Opo, ang sum assured ay yung guaranteed amount na nakasulat sa policy contract na babayaran sa policyowner o beneficiary kapag nangyari ang event, tulad ng death. Opo, may rider po, na optional benefits na maaari ninyong i-attach sa life insurance plan para palawakin ang coverage ninyo. May umaasa po ba sa inyo financially ngayon? Asawa, anak, o magulang po?",
+      "state": "answering",
+      "intent": "question",
+      "citations": [
+        "kb_product_life_012_c09"
+      ],
+      "retrieved_ids": [
+        "kb_product_life_005_c02",
+        "kb_product_life_005_c03",
+        "kb_product_life_005_c04",
+        "kb_product_life_005_c01",
+        "kb_product_life_012_c09",
+        "kb_product_life_010_c04",
+        "kb_product_investment_033_c11",
+        "kb_product_investment_035_c12"
+      ],
+      "grounded": true,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:21:30.052587+00:00"
+    },
+    {
+      "index": 9,
+      "speaker": "caller",
+      "text": "Ay naku po, medyo mahal po yata yan para sa amin ngayon.",
+      "state": "answering",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:21:40.303465+00:00"
+    },
+    {
+      "index": 10,
+      "speaker": "agent",
+      "text": "Naririnig ko po ang concern niyo, at valid naman po iyan. Iba-iba po ang mga plans at pwede po ninyong magsimula sa maliit na premium para hindi mabigat sa budget niyo ngayon. May umaasa po ba sa inyo financially ngayon? Asawa, anak, o magulang po?",
+      "state": "objection",
+      "intent": "objection",
+      "citations": [],
+      "retrieved_ids": [
+        "kb_education_insurance_077_c05",
+        "kb_education_insurance_077_c02",
+        "kb_education_finance_094_c01",
+        "kb_education_finance_094_c02",
+        "kb_education_finance_096_c03",
+        "kb_product_health_018_c04",
+        "kb_education_insurance_077_c01",
+        "kb_product_health_018_c03"
+      ],
+      "grounded": true,
+      "refused": false,
+      "refusal_gate": "none",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:21:41.058888+00:00"
+    },
+    {
+      "index": 11,
+      "speaker": "caller",
+      "text": "Pwede po ba akong makausap na lang ng totoong tao?",
+      "state": "objection",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:21:51.225084+00:00"
+    },
+    {
+      "index": 12,
+      "speaker": "agent",
+      "text": "Of course. I'll pass you to a licensed advisor who can help with that directly. They'll have your details, so you won't need to repeat yourself. Thank you for your time.",
+      "state": "escalated",
+      "intent": "escalation",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:21:51.502902+00:00"
+    }
+  ],
+  "webhook_delivered": false,
+  "webhook_error": ""
+}

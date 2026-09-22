@@ -24,6 +24,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from core import config
+from kb.sources import get as get_source
 
 TARGET_WORDS = 180          # comfortable for a spoken answer plus context
 MAX_WORDS = 320             # hard ceiling before a section is split further
@@ -175,17 +176,18 @@ def chunk_record(record: dict) -> list[Chunk]:
     return chunks
 
 
-def run() -> list[Chunk]:
-    path = config.CLEAN_DIR / "records.json"
+def run(source_key: str = "prulife_ph") -> list[Chunk]:
+    source = get_source(source_key)
+    path = source.clean_dir / "records.json"
     if not path.exists():
-        raise FileNotFoundError("No cleaned records. Run `python -m kb.clean` first.")
+        raise FileNotFoundError(f"No cleaned records for {source_key}. Run `python -m kb.clean {source_key}` first.")
     records = json.loads(path.read_text())
 
     chunks: list[Chunk] = []
     for record in records:
         chunks.extend(chunk_record(record))
 
-    out = config.CLEAN_DIR / "chunks.json"
+    out = source.clean_dir / "chunks.json"
     out.write_text(json.dumps([asdict(c) for c in chunks], indent=2, ensure_ascii=False))
 
     sizes = [c.word_count for c in chunks]
@@ -199,4 +201,5 @@ def run() -> list[Chunk]:
 
 
 if __name__ == "__main__":
-    run()
+    import sys
+    run(sys.argv[1] if len(sys.argv) > 1 else "prulife_ph")

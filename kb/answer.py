@@ -28,6 +28,13 @@ from kb.retrieve import Result, get_retriever
 
 REFUSAL_TOKEN = "NO_ANSWER_IN_CONTEXT"
 
+# What language each corpus is written in, used to decide whether a question
+# needs translating before retrieval.
+CORPUS_LANGUAGE = {
+    "prulife_ph": "English",
+    "fifgroup_id": "Bahasa Indonesia",
+}
+
 SYSTEM_PROMPT = """You answer questions using ONLY the numbered CONTEXT passages provided.
 
 How to decide whether you can answer:
@@ -106,18 +113,36 @@ def answer_question(
     max_sentences: int = 3,
     extra_instructions: str = "",
     recorder: LatencyRecorder | None = None,
+    source_key: str = "prulife_ph",
+    answer_language: str = "",
 ) -> Answer:
-    retriever = get_retriever()
-    results = retriever.search(question, top_k=top_k, recorder=recorder)
+    retriever = get_retriever(source_key)
+    corpus_language = CORPUS_LANGUAGE.get(source_key, "English")
+
+    if answer_language and not answer_language.lower().startswith(corpus_language.lower()[:4]):
+        results = retriever.search_cross_lingual(
+            question, corpus_language, top_k=top_k, recorder=recorder)
+    else:
+        results = retriever.search(question, top_k=top_k, recorder=recorder)
 
     # Gate 1: retrieval confidence.
     if not retriever.is_answerable(results):
         return Answer(text="", refused=True, results=results, gate="retrieval")
 
+    language_rule = ""
+    if answer_language:
+        # The Indonesian and Filipino markets read from corpora whose language
+        # may differ from the one the caller is speaking, so the output language
+        # is stated explicitly rather than left to match the context.
+        language_rule = (
+            f"\n- Reply in {answer_language}. The CONTEXT may be in another language; "
+            "translate what you need from it, but never add anything it does not say."
+        )
+
     system = SYSTEM_PROMPT.format(
         token=REFUSAL_TOKEN,
         max_sentences=max_sentences,
-        extra=extra_instructions,
+        extra=extra_instructions + language_rule,
     )
     user = f"CONTEXT:\n{retriever.context_block(results)}\n\nQUESTION: {question}"
 

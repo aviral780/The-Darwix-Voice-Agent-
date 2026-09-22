@@ -33,6 +33,7 @@ from fastembed import TextEmbedding
 from rank_bm25 import BM25Okapi
 
 from core import config
+from kb.sources import get as get_source
 
 # Only the e5 family uses these.
 _IS_E5 = "e5" in config.EMBED_MODEL.lower()
@@ -70,10 +71,11 @@ def embed_query(text: str) -> np.ndarray:
     return vector / max(float(np.linalg.norm(vector)), 1e-9)
 
 
-def run() -> dict:
-    path = config.CLEAN_DIR / "chunks.json"
+def run(source_key: str = "prulife_ph") -> dict:
+    source = get_source(source_key)
+    path = source.clean_dir / "chunks.json"
     if not path.exists():
-        raise FileNotFoundError("No chunks. Run `python -m kb.chunk` first.")
+        raise FileNotFoundError(f"No chunks for {source_key}. Run `python -m kb.chunk {source_key}` first.")
     chunks = json.loads(path.read_text())
 
     print(f"embedding {len(chunks)} chunks with {config.EMBED_MODEL} ...")
@@ -85,12 +87,14 @@ def run() -> dict:
     vectors = embed_passages(texts)
     bm25 = BM25Okapi([tokenize(t) for t in texts])
 
-    config.INDEX_DIR.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(config.INDEX_DIR / "vectors.npz", vectors=vectors)
-    (config.INDEX_DIR / "bm25.pkl").write_bytes(pickle.dumps(bm25))
-    (config.INDEX_DIR / "chunks.json").write_text(json.dumps(chunks, indent=2, ensure_ascii=False))
+    source.index_dir.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(source.index_dir / "vectors.npz", vectors=vectors)
+    (source.index_dir / "bm25.pkl").write_bytes(pickle.dumps(bm25))
+    (source.index_dir / "chunks.json").write_text(json.dumps(chunks, indent=2, ensure_ascii=False))
 
     meta = {
+        "source_key": source.key,
+        "language": source.language,
         "embed_model": config.EMBED_MODEL,
         "dims": int(vectors.shape[1]),
         "chunks": len(chunks),
@@ -98,10 +102,11 @@ def run() -> dict:
         "bm25_weight": config.BM25_WEIGHT,
         "min_retrieval_score": config.MIN_RETRIEVAL_SCORE,
     }
-    (config.INDEX_DIR / "meta.json").write_text(json.dumps(meta, indent=2))
-    print(f"vectors {vectors.shape}  ->  {config.INDEX_DIR}")
+    (source.index_dir / "meta.json").write_text(json.dumps(meta, indent=2))
+    print(f"vectors {vectors.shape}  ->  {source.index_dir}")
     return meta
 
 
 if __name__ == "__main__":
-    run()
+    import sys
+    run(sys.argv[1] if len(sys.argv) > 1 else "prulife_ph")

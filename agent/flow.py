@@ -74,6 +74,7 @@ class Turn:
 
 CLASSIFIER_PROMPT = """Classify the caller's message in an insurance qualification call.
 
+The call is conducted in {language}.
 The agent just asked: "{pending}"
 That question is asking for: {expects}
 The caller replied: "{utterance}"
@@ -201,6 +202,7 @@ class CallSession:
         """One fast model call to decide what the caller did."""
         slot = self.pending_slot
         prompt = CLASSIFIER_PROMPT.format(
+            language=self.market.language_name,
             pending=self.last_agent_utterance,
             expects=(slot or {}).get("expects", "a reply to the question"),
             utterance=utterance,
@@ -299,6 +301,8 @@ class CallSession:
                 else self._voice_instructions()
             ),
             recorder=self.recorder,
+            source_key=self.market.kb_source,
+            answer_language=self.market.language_name,
         )
 
         if answer.refused:
@@ -339,7 +343,15 @@ class CallSession:
         )
 
         if answer.refused:
-            text = f"That's a fair point. {self.market.refusal_line.strip()}"
+            # A configured stance is vetted business guidance, so it is a better
+            # answer than a generic refusal when the knowledge base cannot help.
+            # The Indonesian collections corpus has no hardship content, and
+            # falling through to the refusal line answered a customer who had
+            # just lost their job with "I don't have that detail".
+            if stance:
+                text = self._speak_stance(utterance, stance)
+            else:
+                text = f"{self.market.objection_ack.strip()} {self.market.refusal_line.strip()}".strip()
         else:
             text = strip_citations(answer.text)
 
@@ -351,13 +363,37 @@ class CallSession:
                         grounded=answer.grounded,
                         refused=answer.refused, refusal_gate=answer.gate)
 
+    def _speak_stance(self, utterance: str, stance: str) -> str:
+        """Answer an objection from the market's configured stance.
+
+        Used when the knowledge base has nothing to support the objection. The
+        stance is authored guidance in the market file, not model invention, so
+        the model is only putting vetted content into the market's own language
+        and register rather than deciding what to say.
+        """
+        return chat(
+            [
+                {"role": "system", "content":
+                 f"{self._voice_instructions()}\n"
+                 f"Respond to the caller's objection following this guidance exactly: {stance}\n"
+                 "Acknowledge the concern in your first sentence. State no figure, rate or "
+                 "product detail that is not in the guidance. Do not end with a question. "
+                 "Reply in the language and register described above."},
+                {"role": "user", "content": utterance},
+            ],
+            temperature=0.3,
+            max_tokens=160,
+            recorder=self.recorder,
+            stage="stance",
+        ).strip()
+
     def _reprompt(self, intent: str) -> Turn:
         """The caller said something that did not advance the call."""
         if self.state == State.QUALIFYING and self.note_failed_attempt():
             # Slot abandoned. Move to the next question rather than insisting.
             if self.pending_slot is None:
                 return self._close()
-            return self.add("agent", f"No problem, we can skip that. {self.pending_question}",
+            return self.add("agent", f"{self.market.skip_line.strip()} {self.pending_question}".strip(),
                             intent="slot_skipped")
         text = chat(
             [
@@ -380,19 +416,13 @@ class CallSession:
     def _escalate(self, reason: str) -> Turn:
         self.state = State.ESCALATED
         self.escalation_reason = reason
-        text = (
-            "Of course. I'll pass you to a licensed advisor who can help with that "
-            "directly. They'll have your details, so you won't need to repeat yourself. "
-            "Thank you for your time."
-        )
-        return self.add("agent", text, intent=Intent.ESCALATION.value)
+        return self.add("agent", self.market.escalation_line.strip(),
+                        intent=Intent.ESCALATION.value)
 
     def _close(self, declined: bool = False) -> Turn:
         self.state = State.CLOSING
-        text = (
-            "No problem at all, I appreciate you letting me know. Have a good day!"
-            if declined else self.market.closing.strip()
-        )
+        text = (self.market.declined_line.strip() if declined
+                else self.market.closing.strip())
         turn = self.add("agent", text, intent="close")
         self.state = State.ENDED
         return turn

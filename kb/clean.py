@@ -28,6 +28,7 @@ from __future__ import annotations
 import json
 import re
 import unicodedata
+from html import unescape
 from collections import Counter
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -37,6 +38,7 @@ import trafilatura
 from bs4 import BeautifulSoup
 
 from core import config
+from kb.sources import get as get_source
 
 # A line must appear on at least this share of pages to count as site furniture.
 BOILERPLATE_PAGE_RATIO = 0.25
@@ -177,25 +179,89 @@ def extract_structured(html: str) -> str:
     return "\n".join(parts).strip()
 
 
+# Keys that hold content in a client-rendered site's inline state payload.
+PAYLOAD_CONTENT_KEYS = ("faqs", "articles", "items", "posts", "contents")
+# Fields within such an entry, in the order they should be read.
+PAYLOAD_TITLE_KEYS = ("title", "question", "name", "heading")
+PAYLOAD_BODY_KEYS = ("description", "answer", "content", "body", "text")
+
+
+def _strip_html(fragment: str) -> str:
+    """Flatten an HTML fragment stored inside a JSON field."""
+    text = re.sub(r"<br\s*/?>|</p>|</li>", "\n", fragment, flags=re.I)
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = unescape(text)
+    text = re.sub(r"[ \t]+", " ", text)
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
+
+
+def _collect_payload_entries(node, found: list) -> None:
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key in PAYLOAD_CONTENT_KEYS and isinstance(value, list):
+                found.extend(v for v in value if isinstance(v, dict))
+            else:
+                _collect_payload_entries(value, found)
+    elif isinstance(node, list):
+        for value in node:
+            _collect_payload_entries(value, found)
+
+
+def extract_from_payload(html: str) -> str:
+    """Recover content from a client-rendered page's inline JSON state.
+
+    The Indonesian source renders entirely in the browser: 534KB of HTML yields
+    116 words of body text, and every FAQ answer arrives by JavaScript. Walking
+    the DOM cannot see any of it.
+
+    It does not have to. The page ships its state as inline JSON, so the answers
+    are already in the HTML that was fetched - just not where an HTML parser
+    looks. Reading them needs no extra request and no browser, which keeps the
+    crawl to exactly the pages robots.txt permits.
+    """
+    entries: list[dict] = []
+    for match in re.finditer(r"<script[^>]*>\s*(\{.{200,}?\})\s*</script>", html, re.S):
+        try:
+            payload = json.loads(match.group(1))
+        except json.JSONDecodeError:
+            continue
+        _collect_payload_entries(payload, entries)
+
+    parts: list[str] = []
+    seen: set[str] = set()
+    for entry in entries:
+        title = next((str(entry[k]) for k in PAYLOAD_TITLE_KEYS if entry.get(k)), "")
+        body = next((str(entry[k]) for k in PAYLOAD_BODY_KEYS if entry.get(k)), "")
+        if not body:
+            continue
+        body = _strip_html(body)
+        key = (title + body)[:120].lower()
+        if not body or key in seen:
+            continue
+        seen.add(key)
+        if title:
+            parts.append(f"## {_strip_html(title)}")
+        parts.append(body)
+    return "\n".join(parts).strip()
+
+
 def extract_main_content(html: str) -> tuple[str, str]:
     """Return (title, body), taking whichever extractor recovered more content.
 
-    Structured extraction wins on nearly every page here, but it depends on the
-    site's DOM. trafilatura is DOM-agnostic and wins on the few pages where the
-    main container is missing or unusual, so both run and the longer result is
-    kept. Falling back this way costs a few milliseconds per page and removes a
-    whole class of silent extraction failure.
+    Three strategies run and the one recovering the most text wins. Structured
+    DOM extraction wins on most server-rendered pages; trafilatura wins where the
+    main container is missing or unusual; the JSON payload reader wins on
+    client-rendered sites where the DOM holds almost nothing. Each costs
+    milliseconds, and running all three removes a whole class of silent
+    extraction failure rather than tuning for one site's markup.
     """
-    structured = extract_structured(html)
-    generic = trafilatura.extract(
-        html,
-        include_comments=False,
-        include_tables=True,
-        favor_recall=True,
-        no_fallback=False,
-    ) or ""
-
-    body = structured if len(structured.split()) >= len(generic.split()) else generic.strip()
+    candidates = [
+        extract_structured(html),
+        trafilatura.extract(html, include_comments=False, include_tables=True,
+                            favor_recall=True, no_fallback=False) or "",
+        extract_from_payload(html),
+    ]
+    body = max((c.strip() for c in candidates), key=lambda c: len(c.split()))
 
     meta = trafilatura.extract_metadata(html)
     title = (getattr(meta, "title", "") or "").strip()
@@ -390,16 +456,18 @@ def validate_record(record: CleanRecord) -> list[str]:
 
 # --- pipeline ---------------------------------------------------------------
 
-def run() -> dict:
-    manifest_path = config.RAW_DIR / "manifest.json"
+def run(source_key: str = "prulife_ph") -> dict:
+    source = get_source(source_key)
+    manifest_path = source.raw_dir / "manifest.json"
     if not manifest_path.exists():
-        raise FileNotFoundError("No raw manifest. Run `python -m kb.scrape` first.")
+        raise FileNotFoundError(f"No raw manifest for {source_key}. Run `python -m kb.scrape {source_key}` first.")
     manifest = json.loads(manifest_path.read_text())
 
     fetched = [r for r in manifest["records"] if r["status"] in ("ok", "cached")]
     report: dict = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source": manifest["source"],
+        "source_key": source.key,
         "stages": {},
         "dropped": {},
         "warnings": [],
@@ -411,7 +479,7 @@ def run() -> dict:
     extracted: list[dict] = []
     extraction_failures: list[dict] = []
     for entry in fetched:
-        path = config.RAW_DIR / entry["cache_file"]
+        path = source.raw_dir / entry["cache_file"]
         if not path.exists():
             extraction_failures.append({"source_url": entry["url"], "reason": "cache file missing"})
             continue
@@ -501,11 +569,11 @@ def run() -> dict:
     ]
     report["by_category"] = dict(Counter(r.category for r in records))
 
-    config.CLEAN_DIR.mkdir(parents=True, exist_ok=True)
-    (config.CLEAN_DIR / "records.json").write_text(
+    source.clean_dir.mkdir(parents=True, exist_ok=True)
+    (source.clean_dir / "records.json").write_text(
         json.dumps([asdict(r) for r in records], indent=2, ensure_ascii=False)
     )
-    (config.CLEAN_DIR / "cleaning_report.json").write_text(json.dumps(report, indent=2))
+    (source.clean_dir / "cleaning_report.json").write_text(json.dumps(report, indent=2))
 
     print(f"fetched              {report['stages']['fetched']}")
     print(f"extracted            {report['stages']['extracted']}")
@@ -522,4 +590,5 @@ def run() -> dict:
 
 
 if __name__ == "__main__":
-    run()
+    import sys
+    run(sys.argv[1] if len(sys.argv) > 1 else "prulife_ph")
