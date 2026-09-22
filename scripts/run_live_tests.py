@@ -173,7 +173,37 @@ def to_markdown(report: dict) -> str:
             f"{s['suppression_rate']:.0%} | {s.get('asr_calls_skipped_silent', 0)} |"
         )
 
+    rewritten = sum(r["suppression"].get("unsafe_text_rewritten", 0) for r in report["scenarios"])
+    dropped = sum(r["suppression"].get("unsafe_text_dropped", 0) for r in report["scenarios"])
     lines += [
+        "",
+        "## Nudge safety",
+        "",
+        "A nudge is advice given to a human mid-call, and on a regulated sales call some",
+        "advice is itself the violation. This was not hypothetical. On the compliance",
+        "scenario the model judge produced:",
+        "",
+        "> \"Provide a specific projected return or example to address the caller's interest.\"",
+        "",
+        "four seconds after a compliance rule had fired telling the agent that returns are",
+        "never guaranteed. The model was being helpful about sales and had no way to know",
+        "it was recommending the exact conduct the rule above exists to prevent.",
+        "",
+        "Model-written nudge text is now checked against prohibited-advice patterns before",
+        "it can reach a human. A flagged nudge keeps its signal - the detection was correct,",
+        "the caller really was interested - but its wording is replaced with vetted text.",
+        "The model classifies; what a human is told comes from a reviewed source. Where no",
+        "vetted wording exists for that signal type, the nudge is dropped, because advice",
+        "that cannot be made safe is worse than silence.",
+        "",
+        f"In this run: **{rewritten} rewritten, {dropped} dropped.**",
+        "",
+        "The guard applies to model-generated text only, and scoping it that way was itself",
+        "a fix. Checking every nudge flagged the rule-authored compliance text - *\"Guarantee",
+        "language used. Correct it now: returns and approval are never guaranteed\"* - because",
+        "it quotes the very word it exists to police. With no replacement defined for that",
+        "type it would have been dropped silently, disabling the two most important nudges",
+        "in the system in the name of safety.",
         "",
         "## False-positive analysis",
         "",

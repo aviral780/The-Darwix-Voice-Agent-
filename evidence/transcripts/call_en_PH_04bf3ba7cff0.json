@@ -1,0 +1,45 @@
+{
+  "call_id": "04bf3ba7cff0",
+  "market": "en_PH",
+  "started_at": "2026-09-21T18:54:00.365511+00:00",
+  "ended_at": "2026-09-21T18:54:07.972342+00:00",
+  "final_state": "greeting",
+  "slots": {},
+  "slots_filled": 0,
+  "slots_total": 6,
+  "objections_raised": [],
+  "skipped_slots": [],
+  "slot_attempts": {},
+  "escalated": false,
+  "escalation_reason": "",
+  "grounded_answers": 0,
+  "answers_with_stated_citation": 0,
+  "refusals": 0,
+  "turns": [
+    {
+      "index": 0,
+      "speaker": "agent",
+      "text": "Good day! This is Maya calling from Pru Life UK. I'm reaching out about life and health insurance options. Do you have two or three minutes to talk?",
+      "state": "greeting",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-21T18:54:00.369958+00:00"
+    }
+  ],
+  "latency": {
+    "tts": {
+      "count": 1,
+      "p50_ms": 1477.3,
+      "p95_ms": 1477.3,
+      "min_ms": 1477.3,
+      "max_ms": 1477.3,
+      "mean_ms": 1477.3
+    }
+  }
+}

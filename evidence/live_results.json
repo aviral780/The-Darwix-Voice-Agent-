@@ -26,7 +26,7 @@
           "priority": 50,
           "age_s": 0.0,
           "at_seconds": 16.0,
-          "latency_ms": 473.9
+          "latency_ms": 499.2
         }
       ],
       "transcript": [
@@ -106,6 +106,8 @@
         "dropped_low_confidence": 0,
         "dropped_duplicate": 1,
         "dropped_cooldown": 6,
+        "unsafe_text_rewritten": 0,
+        "unsafe_text_dropped": 0,
         "nudges_emitted": 1,
         "suppression_rate": 0.875,
         "asr_calls_made": 14,
@@ -114,47 +116,47 @@
       "latency": {
         "asr": {
           "count": 11,
-          "p50_ms": 256.7,
-          "p95_ms": 592.9,
-          "min_ms": 0.4,
-          "max_ms": 623.4,
-          "mean_ms": 336.4
+          "p50_ms": 332.6,
+          "p95_ms": 608.8,
+          "min_ms": 0.0,
+          "max_ms": 702.8,
+          "mean_ms": 373.2
         },
         "signals_rule": {
           "count": 11,
           "p50_ms": 0.2,
           "p95_ms": 0.4,
-          "min_ms": 0.1,
-          "max_ms": 0.5,
+          "min_ms": 0.0,
+          "max_ms": 0.4,
           "mean_ms": 0.2
         },
         "nudge_control": {
           "count": 11,
-          "p50_ms": 0.1,
-          "p95_ms": 0.2,
+          "p50_ms": 0.0,
+          "p95_ms": 0.1,
           "min_ms": 0.0,
-          "max_ms": 0.3,
-          "mean_ms": 0.1
+          "max_ms": 0.1,
+          "mean_ms": 0.0
         },
         "signal_llm": {
           "count": 2,
-          "p50_ms": 219.7,
-          "p95_ms": 236.1,
-          "min_ms": 201.5,
-          "max_ms": 237.9,
-          "mean_ms": 219.7
+          "p50_ms": 178.7,
+          "p95_ms": 185.9,
+          "min_ms": 170.8,
+          "max_ms": 186.7,
+          "mean_ms": 178.7
         },
         "end_to_end": {
           "count": 1,
-          "p50_ms": 473.9,
-          "p95_ms": 473.9,
-          "min_ms": 473.9,
-          "max_ms": 473.9,
-          "mean_ms": 473.9
+          "p50_ms": 499.2,
+          "p95_ms": 499.2,
+          "min_ms": 499.2,
+          "max_ms": 499.2,
+          "mean_ms": 499.2
         }
       },
       "end_to_end_ms": [
-        473.9
+        499.2
       ]
     },
     {
@@ -186,19 +188,19 @@
           "age_s": 0.0,
           "at_seconds": 4.0,
           "disclosure": "not_a_deposit",
-          "latency_ms": 486.5
+          "latency_ms": 538.8
         },
         {
           "id": "n002",
           "type": "buying_signal",
-          "text": "Provide a specific projected return or example to address the caller's interest.",
+          "text": "Interest signalled. Move to the next concrete step. Do not quote figures that are not in the approved material.",
           "confidence": 0.9,
           "evidence": "How much could I make?",
           "detector": "model",
           "priority": 60,
           "age_s": 0.0,
           "at_seconds": 12.0,
-          "latency_ms": 803.2
+          "latency_ms": 887.8
         },
         {
           "id": "n003",
@@ -210,7 +212,7 @@
           "priority": 95,
           "age_s": 0.0,
           "at_seconds": 16.0,
-          "latency_ms": 260.5
+          "latency_ms": 249.3
         }
       ],
       "transcript": [
@@ -285,6 +287,8 @@
         "dropped_low_confidence": 0,
         "dropped_duplicate": 11,
         "dropped_cooldown": 13,
+        "unsafe_text_rewritten": 1,
+        "unsafe_text_dropped": 0,
         "nudges_emitted": 3,
         "suppression_rate": 0.889,
         "asr_calls_made": 13,
@@ -293,49 +297,49 @@
       "latency": {
         "asr": {
           "count": 9,
-          "p50_ms": 458.9,
-          "p95_ms": 548.3,
+          "p50_ms": 453.7,
+          "p95_ms": 582.0,
           "min_ms": 0.0,
-          "max_ms": 568.9,
-          "mean_ms": 373.5
+          "max_ms": 612.0,
+          "mean_ms": 380.4
         },
         "signals_rule": {
           "count": 9,
           "p50_ms": 0.3,
-          "p95_ms": 0.4,
+          "p95_ms": 0.8,
           "min_ms": 0.1,
-          "max_ms": 0.5,
+          "max_ms": 1.1,
           "mean_ms": 0.3
         },
         "nudge_control": {
           "count": 9,
           "p50_ms": 0.1,
-          "p95_ms": 0.1,
+          "p95_ms": 0.3,
           "min_ms": 0.0,
-          "max_ms": 0.2,
+          "max_ms": 0.3,
           "mean_ms": 0.1
         },
         "end_to_end": {
           "count": 3,
-          "p50_ms": 486.5,
-          "p95_ms": 771.5,
-          "min_ms": 260.5,
-          "max_ms": 803.2,
-          "mean_ms": 516.7
+          "p50_ms": 538.8,
+          "p95_ms": 852.9,
+          "min_ms": 249.3,
+          "max_ms": 887.8,
+          "mean_ms": 558.7
         },
         "signal_llm": {
           "count": 2,
-          "p50_ms": 276.8,
-          "p95_ms": 283.8,
-          "min_ms": 268.9,
-          "max_ms": 284.6,
-          "mean_ms": 276.8
+          "p50_ms": 275.4,
+          "p95_ms": 362.8,
+          "min_ms": 178.4,
+          "max_ms": 372.5,
+          "mean_ms": 275.4
         }
       },
       "end_to_end_ms": [
-        486.5,
-        803.2,
-        260.5
+        538.8,
+        887.8,
+        249.3
       ]
     },
     {
@@ -364,7 +368,7 @@
           "priority": 80,
           "age_s": 0.0,
           "at_seconds": 12.0,
-          "latency_ms": 831.9
+          "latency_ms": 805.8
         },
         {
           "id": "n002",
@@ -376,7 +380,7 @@
           "priority": 40,
           "age_s": 0.0,
           "at_seconds": 28.0,
-          "latency_ms": 658.5
+          "latency_ms": 709.3
         }
       ],
       "transcript": [
@@ -456,6 +460,8 @@
         "dropped_low_confidence": 0,
         "dropped_duplicate": 0,
         "dropped_cooldown": 1,
+        "unsafe_text_rewritten": 0,
+        "unsafe_text_dropped": 0,
         "nudges_emitted": 2,
         "suppression_rate": 0.333,
         "asr_calls_made": 14,
@@ -464,18 +470,18 @@
       "latency": {
         "asr": {
           "count": 9,
-          "p50_ms": 455.7,
-          "p95_ms": 569.9,
-          "min_ms": 213.7,
-          "max_ms": 591.9,
-          "mean_ms": 387.5
+          "p50_ms": 487.0,
+          "p95_ms": 574.6,
+          "min_ms": 204.9,
+          "max_ms": 578.9,
+          "mean_ms": 404.6
         },
         "signals_rule": {
           "count": 9,
           "p50_ms": 0.2,
-          "p95_ms": 0.3,
+          "p95_ms": 0.5,
           "min_ms": 0.1,
-          "max_ms": 0.3,
+          "max_ms": 0.6,
           "mean_ms": 0.2
         },
         "nudge_control": {
@@ -483,29 +489,29 @@
           "p50_ms": 0.0,
           "p95_ms": 0.1,
           "min_ms": 0.0,
-          "max_ms": 0.1,
+          "max_ms": 0.2,
           "mean_ms": 0.0
         },
         "signal_llm": {
           "count": 2,
-          "p50_ms": 398.4,
-          "p95_ms": 419.0,
-          "min_ms": 375.5,
-          "max_ms": 421.3,
-          "mean_ms": 398.4
+          "p50_ms": 389.8,
+          "p95_ms": 454.5,
+          "min_ms": 318.0,
+          "max_ms": 461.6,
+          "mean_ms": 389.8
         },
         "end_to_end": {
           "count": 2,
-          "p50_ms": 745.2,
-          "p95_ms": 823.2,
-          "min_ms": 658.5,
-          "max_ms": 831.9,
-          "mean_ms": 745.2
+          "p50_ms": 757.6,
+          "p95_ms": 801.0,
+          "min_ms": 709.3,
+          "max_ms": 805.8,
+          "mean_ms": 757.6
         }
       },
       "end_to_end_ms": [
-        831.9,
-        658.5
+        805.8,
+        709.3
       ]
     },
     {
@@ -616,6 +622,8 @@
         "dropped_low_confidence": 0,
         "dropped_duplicate": 0,
         "dropped_cooldown": 0,
+        "unsafe_text_rewritten": 0,
+        "unsafe_text_dropped": 0,
         "nudges_emitted": 0,
         "suppression_rate": 0.0,
         "asr_calls_made": 18,
@@ -624,35 +632,35 @@
       "latency": {
         "asr": {
           "count": 11,
-          "p50_ms": 3349.8,
-          "p95_ms": 6691.0,
-          "min_ms": 456.5,
-          "max_ms": 6726.9,
-          "mean_ms": 2958.8
+          "p50_ms": 3336.8,
+          "p95_ms": 6699.8,
+          "min_ms": 473.2,
+          "max_ms": 6724.7,
+          "mean_ms": 2952.2
         },
         "signals_rule": {
           "count": 11,
-          "p50_ms": 0.2,
-          "p95_ms": 0.2,
+          "p50_ms": 0.3,
+          "p95_ms": 0.4,
           "min_ms": 0.1,
-          "max_ms": 0.2,
+          "max_ms": 0.4,
           "mean_ms": 0.2
         },
         "nudge_control": {
           "count": 11,
           "p50_ms": 0.0,
-          "p95_ms": 0.1,
+          "p95_ms": 0.0,
           "min_ms": 0.0,
-          "max_ms": 0.1,
+          "max_ms": 0.0,
           "mean_ms": 0.0
         },
         "signal_llm": {
           "count": 2,
-          "p50_ms": 212.7,
-          "p95_ms": 247.3,
-          "min_ms": 174.2,
-          "max_ms": 251.2,
-          "mean_ms": 212.7
+          "p50_ms": 177.1,
+          "p95_ms": 182.8,
+          "min_ms": 170.9,
+          "max_ms": 183.4,
+          "mean_ms": 177.1
         }
       },
       "end_to_end_ms": []
@@ -663,11 +671,11 @@
   "aggregate_latency": {
     "asr": {
       "count": 40,
-      "p50_ms": 380.5,
-      "p95_ms": 2958.8,
-      "min_ms": 336.4,
-      "max_ms": 2958.8,
-      "mean_ms": 1077.4
+      "p50_ms": 392.5,
+      "p95_ms": 2952.2,
+      "min_ms": 373.2,
+      "max_ms": 2952.2,
+      "mean_ms": 1091.1
     },
     "signals_rule": {
       "count": 40,
@@ -679,33 +687,33 @@
     },
     "nudge_control": {
       "count": 40,
-      "p50_ms": 0.1,
+      "p50_ms": 0.0,
       "p95_ms": 0.1,
       "min_ms": 0.0,
       "max_ms": 0.1,
-      "mean_ms": 0.1
+      "mean_ms": 0.0
     },
     "signal_llm": {
       "count": 8,
-      "p50_ms": 248.2,
-      "p95_ms": 398.4,
-      "min_ms": 212.7,
-      "max_ms": 398.4,
-      "mean_ms": 276.9
+      "p50_ms": 227.0,
+      "p95_ms": 389.8,
+      "min_ms": 177.1,
+      "max_ms": 389.8,
+      "mean_ms": 255.2
     },
     "end_to_end": {
       "count": 6,
-      "p50_ms": 516.7,
-      "p95_ms": 745.2,
-      "min_ms": 473.9,
-      "max_ms": 745.2,
-      "mean_ms": 585.7
+      "p50_ms": 558.7,
+      "p95_ms": 757.6,
+      "min_ms": 499.2,
+      "max_ms": 757.6,
+      "mean_ms": 615.1
     }
   },
   "end_to_end": {
     "count": 6,
-    "p50_ms": 572.5,
-    "p95_ms": 824.7,
-    "max_ms": 831.9
+    "p50_ms": 624.0,
+    "p95_ms": 867.3,
+    "max_ms": 887.8
   }
 }

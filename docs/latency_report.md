@@ -13,19 +13,19 @@ transcription, signal extraction, nudge control and delivery.
 | Measure | Value |
 |---|---|
 | Nudges measured | 6 |
-| **P50** | **572.5 ms** |
-| **P95** | **824.7 ms** |
-| Max | 831.9 ms |
+| **P50** | **624.0 ms** |
+| **P95** | **867.3 ms** |
+| Max | 887.8 ms |
 
 ## Per-component latency
 
 | Stage | Count | P50 (ms) | P95 (ms) | Mean (ms) | Max (ms) |
 |---|---|---|---|---|---|
-| asr | 40 | 380.5 | 2958.8 | 1077.4 | 2958.8 |
+| asr | 40 | 392.5 | 2952.2 | 1091.1 | 2952.2 |
 | signals_rule | 40 | 0.2 | 0.3 | 0.2 | 0.3 |
-| nudge_control | 40 | 0.1 | 0.1 | 0.1 | 0.1 |
-| signal_llm | 8 | 248.2 | 398.4 | 276.9 | 398.4 |
-| end_to_end | 6 | 516.7 | 745.2 | 585.7 | 745.2 |
+| nudge_control | 40 | 0.0 | 0.1 | 0.0 | 0.1 |
+| signal_llm | 8 | 227.0 | 389.8 | 255.2 | 389.8 |
+| end_to_end | 6 | 558.7 | 757.6 | 615.1 | 757.6 |
 
 `asr` dominates and is a network round trip to a hosted Whisper endpoint.
 `signals_rule` and `nudge_control` are local and cost microseconds, which is why
@@ -54,6 +54,34 @@ was actually shown:
 | Skipped disclosure and risky statement | 27 | 3 | 89% | 5 |
 | Rising frustration | 3 | 2 | 33% | 4 |
 | Noisy and ambiguous call | 0 | 0 | 0% | 4 |
+
+## Nudge safety
+
+A nudge is advice given to a human mid-call, and on a regulated sales call some
+advice is itself the violation. This was not hypothetical. On the compliance
+scenario the model judge produced:
+
+> "Provide a specific projected return or example to address the caller's interest."
+
+four seconds after a compliance rule had fired telling the agent that returns are
+never guaranteed. The model was being helpful about sales and had no way to know
+it was recommending the exact conduct the rule above exists to prevent.
+
+Model-written nudge text is now checked against prohibited-advice patterns before
+it can reach a human. A flagged nudge keeps its signal - the detection was correct,
+the caller really was interested - but its wording is replaced with vetted text.
+The model classifies; what a human is told comes from a reviewed source. Where no
+vetted wording exists for that signal type, the nudge is dropped, because advice
+that cannot be made safe is worse than silence.
+
+In this run: **1 rewritten, 0 dropped.**
+
+The guard applies to model-generated text only, and scoping it that way was itself
+a fix. Checking every nudge flagged the rule-authored compliance text - *"Guarantee
+language used. Correct it now: returns and approval are never guaranteed"* - because
+it quotes the very word it exists to police. With no replacement defined for that
+type it would have been dropped silently, disabling the two most important nudges
+in the system in the name of safety.
 
 ## False-positive analysis
 
