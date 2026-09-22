@@ -39,6 +39,20 @@ from agent.flow import CallSession, State
 
 app = FastAPI(title="Darwix Voice Agent")
 
+
+@app.middleware("http")
+async def no_cache_static(request, call_next):
+    """Serve static assets uncached.
+
+    This is a demo server that is edited while it runs, and a cached stylesheet
+    silently shows the reviewer an old interface. Correct behaviour that looks
+    broken because of a stale asset is worse than slow.
+    """
+    response = await call_next(request)
+    if request.url.path.startswith("/static"):
+        response.headers["Cache-Control"] = "no-store, must-revalidate"
+    return response
+
 WEB_DIR = config.ROOT / "web"
 app.mount("/static", StaticFiles(directory=WEB_DIR / "static"), name="static")
 

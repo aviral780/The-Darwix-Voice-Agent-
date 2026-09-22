@@ -295,8 +295,12 @@ def process(
             # "nudge" and silently ignored the event.
             emit({"type": "nudge", "nudge": payload})
 
+        # Suppression counts go out on every tick, not only at the end. The
+        # interesting number on this dashboard is how much was found and not
+        # shown, and a panel reading "3 shown, 0 seen" mid-call reads as broken.
         emit({"type": "tick", "at_s": round(chunk.start_s, 1),
-              "active": [n.to_dict() for n in engine.active()]})
+              "active": [n.to_dict() for n in engine.active()],
+              "suppression": engine.stats.as_dict()})
 
     result = StreamResult(
         call_id=call_id,
