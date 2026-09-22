@@ -1,0 +1,45 @@
+{
+  "call_id": "553dd5da31d4",
+  "market": "id_ID",
+  "started_at": "2026-09-22T11:13:28.026959+00:00",
+  "ended_at": "2026-09-22T11:33:43.987723+00:00",
+  "final_state": "greeting",
+  "slots": {},
+  "slots_filled": 0,
+  "slots_total": 6,
+  "objections_raised": [],
+  "skipped_slots": [],
+  "slot_attempts": {},
+  "escalated": false,
+  "escalation_reason": "",
+  "grounded_answers": 0,
+  "answers_with_stated_citation": 0,
+  "refusals": 0,
+  "turns": [
+    {
+      "index": 0,
+      "speaker": "agent",
+      "text": "Selamat pagi, Bapak atau Ibu. Saya Sari dari FIFGROUP. Mohon maaf mengganggu waktunya. Saya menghubungi terkait angsuran yang akan jatuh tempo. Apakah ada waktu sebentar?",
+      "state": "greeting",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T11:13:28.034009+00:00"
+    }
+  ],
+  "latency": {
+    "tts": {
+      "count": 1,
+      "p50_ms": 1353.7,
+      "p95_ms": 1353.7,
+      "min_ms": 1353.7,
+      "max_ms": 1353.7,
+      "mean_ms": 1353.7
+    }
+  }
+}

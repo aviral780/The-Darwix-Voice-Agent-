@@ -32,6 +32,7 @@ MIN_WORDS = 25              # below this a chunk carries no answerable content
 OVERLAP_WORDS = 30          # carried between splits of one oversized section
 
 HEADING_RE = re.compile(r"^(#{1,4})\s+(.*)$")
+REDACTION_MARKER = re.compile(r"\[[A-Z_]+_REDACTED\]")
 
 
 @dataclass
@@ -45,7 +46,11 @@ class Chunk:
     source: str
     source_url: str
     version: str
+    # Whether THIS chunk contains a redaction, not whether its source page did.
+    # Inheriting the record flag labelled 128 of 202 chunks as carrying PII when
+    # they carry none, which turns a precise signal into background noise.
     pii: bool
+    record_pii: bool
     chunk_index: int
     word_count: int
     heading_path: list[str] = field(default_factory=list)
@@ -167,7 +172,8 @@ def chunk_record(record: dict) -> list[Chunk]:
                 source=record["source"],
                 source_url=record["source_url"],
                 version=record["version"],
-                pii=record["pii"],
+                pii=REDACTION_MARKER.search(piece) is not None,
+                record_pii=record["pii"],
                 chunk_index=index,
                 word_count=len(piece.split()),
                 heading_path=heading_path,

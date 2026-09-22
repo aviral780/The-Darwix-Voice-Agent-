@@ -34,6 +34,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from core import asr, config, tts
+from core.timing import LatencyRecorder
 from agent.actions import finalise_call
 from agent.flow import CallSession, State
 
@@ -149,6 +150,167 @@ async def live_stream(websocket: WebSocket) -> None:
         })
     except WebSocketDisconnect:
         pass
+
+
+@app.get("/kb")
+def kb_explorer() -> FileResponse:
+    return FileResponse(WEB_DIR / "kb.html")
+
+
+@app.get("/api/kb/corpora")
+def kb_corpora() -> dict:
+    """The corpora available to query, with the state of each."""
+    from kb.sources import SOURCES
+
+    out = []
+    for key, source in SOURCES.items():
+        meta_path = source.index_dir / "meta.json"
+        report_path = source.clean_dir / "cleaning_report.json"
+        entry = {
+            "key": key,
+            "name": source.name,
+            "base": source.base,
+            "language": source.language,
+            "sector": source.sector,
+            "threshold": source.min_retrieval_score,
+            "built": meta_path.exists(),
+        }
+        if meta_path.exists():
+            entry.update(json.loads(meta_path.read_text()))
+        if report_path.exists():
+            report = json.loads(report_path.read_text())
+            entry["records"] = report["stages"].get("final_records", 0)
+        out.append(entry)
+    return {"corpora": out}
+
+
+@app.get("/api/kb/overview")
+def kb_overview(source: str = "prulife_ph") -> dict:
+    """Pipeline attrition and corpus composition for one corpus."""
+    from kb.sources import get as get_source
+
+    src = get_source(source)
+    report_path = src.clean_dir / "cleaning_report.json"
+    if not report_path.exists():
+        return {"error": f"No cleaning report for {source}. Run the pipeline first."}
+    report = json.loads(report_path.read_text())
+    stages = report["stages"]
+    dropped = report["dropped"]
+
+    # Attrition, in the order the pipeline applies it. Each step carries the
+    # reason, because a count with no reason is not auditable.
+    steps = [
+        {"label": "Pages fetched", "value": stages.get("fetched", 0), "drop": 0, "reason": ""},
+        {"label": "Content extracted", "value": stages.get("extracted", 0),
+         "drop": len(dropped.get("extraction_failed", [])), "reason": "no main content found"},
+    ]
+    running = stages.get("extracted", 0)
+    for key, label in [("irrelevant_category", "off-topic section"),
+                       ("thin_content", "too little content to answer from"),
+                       ("failed_extraction", "extraction produced a navigation widget"),
+                       ("duplicates", "exact or near-duplicate of a kept page")]:
+        n = len(dropped.get(key, []))
+        if n:
+            running -= n
+            steps.append({"label": f"After removing {label}", "value": running,
+                          "drop": n, "reason": label})
+
+    chunks_path = src.index_dir / "chunks.json"
+    chunks = json.loads(chunks_path.read_text()) if chunks_path.exists() else []
+    from collections import Counter
+    composition = Counter(c["category"] for c in chunks)
+
+    return {
+        "source": source,
+        "steps": steps,
+        "final_records": stages.get("final_records", 0),
+        "chunks": len(chunks),
+        "boilerplate_lines": stages.get("boilerplate_lines_identified", 0),
+        "boilerplate_removed": stages.get("boilerplate_lines_removed", 0),
+        "dates_normalised": stages.get("dates_normalised", 0),
+        "pii_records": stages.get("pii_records_flagged", 0),
+        "pii_types": stages.get("pii_types_seen", []),
+        "composition": [{"category": c, "chunks": n} for c, n in composition.most_common()],
+        "chunk_words": {
+            "min": min((c["word_count"] for c in chunks), default=0),
+            "median": sorted(c["word_count"] for c in chunks)[len(chunks) // 2] if chunks else 0,
+            "max": max((c["word_count"] for c in chunks), default=0),
+        },
+    }
+
+
+@app.post("/api/kb/search")
+async def kb_search(payload: dict) -> dict:
+    """Run a query through the full two-gate path and report both gates.
+
+    This is the endpoint that makes the refusal design inspectable: it returns
+    the component scores, where the threshold sits, which gate fired, and what
+    the agent would actually have said.
+    """
+    query = (payload.get("query") or "").strip()
+    source = payload.get("source", "prulife_ph")
+    language = payload.get("language", "")
+    if not query:
+        return {"error": "Enter a question."}
+
+    from core.config import MarketConfig, available_markets
+    from kb.answer import answer_question
+    from kb.retrieve import get_retriever
+
+    # Filler stripping is market-specific, so use the market that reads this
+    # corpus. Searching without it would not be what the agent does.
+    fillers: list[str] = []
+    for key in available_markets():
+        market = MarketConfig.load(key)
+        if market.kb_source == source:
+            fillers = market.query_fillers
+            if not language:
+                language = market.language_name
+            break
+
+    retriever = get_retriever(source)
+    recorder = LatencyRecorder("kb-search")
+
+    results = await asyncio.to_thread(
+        retriever.search, query, config.TOP_K, None, recorder, fillers)
+
+    answer = await asyncio.to_thread(
+        answer_question, query, config.TOP_K, 3, "", recorder, source, language, fillers)
+
+    return {
+        "query": query,
+        "source": source,
+        "threshold": retriever.min_score,
+        "weights": {"vector": config.VECTOR_WEIGHT, "bm25": config.BM25_WEIGHT},
+        "passed_retrieval_gate": retriever.is_answerable(results),
+        "answer": answer.text,
+        "refused": answer.refused,
+        "gate": answer.gate,
+        "citations": answer.citations,
+        "results": [
+            {
+                "rank": r.rank,
+                "chunk_id": r.chunk["chunk_id"],
+                "title": r.chunk["title"],
+                "heading": " > ".join(r.chunk["heading_path"]) or r.chunk["title"],
+                "category": r.chunk["category"],
+                "url": r.source_url,
+                "words": r.chunk["word_count"],
+                "pii": r.chunk["pii"],
+                "content": r.chunk["content"],
+                "score": round(r.score, 4),
+                "vector": round(r.vector_score, 4),
+                "bm25": round(r.bm25_score, 4),
+                # The weighted parts that actually sum to the fused score.
+                "vector_part": round(config.VECTOR_WEIGHT * r.vector_score, 4),
+                "bm25_part": round(config.BM25_WEIGHT * r.bm25_score, 4),
+                "cited": r.chunk["chunk_id"] in answer.citations,
+                "explain": r.explain(),
+            }
+            for r in results
+        ],
+        "latency": recorder.summary(),
+    }
 
 
 @app.get("/api/markets")

@@ -1,0 +1,107 @@
+{
+  "call_id": "baca54f1133b",
+  "market": "id_ID",
+  "started_at": "2026-09-22T11:21:19.297773+00:00",
+  "ended_at": "2026-09-22T11:22:00.626530+00:00",
+  "final_state": "greeting",
+  "slots": {},
+  "slots_filled": 0,
+  "slots_total": 6,
+  "objections_raised": [],
+  "skipped_slots": [],
+  "slot_attempts": {},
+  "escalated": false,
+  "escalation_reason": "",
+  "grounded_answers": 0,
+  "answers_with_stated_citation": 0,
+  "refusals": 0,
+  "turns": [
+    {
+      "index": 0,
+      "speaker": "agent",
+      "text": "Selamat pagi, Bapak atau Ibu. Saya Sari dari FIFGROUP. Mohon maaf mengganggu waktunya. Saya menghubungi terkait angsuran yang akan jatuh tempo. Apakah ada waktu sebentar?",
+      "state": "greeting",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T11:21:19.311219+00:00"
+    },
+    {
+      "index": 1,
+      "speaker": "caller",
+      "text": "I don't",
+      "state": "greeting",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T11:21:43.816128+00:00"
+    },
+    {
+      "index": 2,
+      "speaker": "agent",
+      "text": "Mohon maaf, saya belum mendengar dengan jelas. Boleh saya bertanya lagi, apakah Bapak atau Ibu bersedia meluangkan waktu sebentar untuk membahas angsuran yang akan jatuh tempo?",
+      "state": "greeting",
+      "intent": "unclear",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T11:21:44.383889+00:00"
+    }
+  ],
+  "latency": {
+    "tts": {
+      "count": 2,
+      "p50_ms": 2362.3,
+      "p95_ms": 3466.2,
+      "min_ms": 1135.7,
+      "max_ms": 3588.8,
+      "mean_ms": 2362.3
+    },
+    "asr": {
+      "count": 1,
+      "p50_ms": 358.5,
+      "p95_ms": 358.5,
+      "min_ms": 358.5,
+      "max_ms": 358.5,
+      "mean_ms": 358.5
+    },
+    "classify": {
+      "count": 1,
+      "p50_ms": 321.8,
+      "p95_ms": 321.8,
+      "min_ms": 321.8,
+      "max_ms": 321.8,
+      "mean_ms": 321.8
+    },
+    "reprompt": {
+      "count": 1,
+      "p50_ms": 245.0,
+      "p95_ms": 245.0,
+      "min_ms": 245.0,
+      "max_ms": 245.0,
+      "mean_ms": 245.0
+    },
+    "turn": {
+      "count": 1,
+      "p50_ms": 568.0,
+      "p95_ms": 568.0,
+      "min_ms": 568.0,
+      "max_ms": 568.0,
+      "mean_ms": 568.0
+    }
+  }
+}

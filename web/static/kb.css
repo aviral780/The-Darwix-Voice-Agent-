@@ -1,0 +1,249 @@
+/* Knowledge base explorer.
+ *
+ * Chart colour follows the data's job, not the interface's semantics.
+ *
+ * The score bars are a SEQUENTIAL ramp in one hue, not two categorical colours,
+ * because the semantic and keyword components are parts of one measure rather
+ * than different entities. That also keeps teal, amber and rose free for the
+ * jobs they carry everywhere else in this system: verified, live, breach.
+ *
+ * Both steps were validated against their own surface rather than eyeballed -
+ * an earlier pair failed at 2.68:1 contrast in dark and read grey in light.
+ */
+
+:root {
+  --vec:  #8FA6FF;   /* semantic component - lighter step */
+  --bm:   #5C74D8;   /* keyword component - darker step */
+  --thr:  #F2C14E;   /* gate marker; caution, as everywhere else */
+  --bar-track: var(--line-soft);
+}
+[data-theme="light"] {
+  --vec: #2F4BC9;
+  --bm:  #7389E6;
+}
+
+.navlink {
+  font-size: var(--step--1); color: var(--text-dim); text-decoration: none;
+  padding: 6px 11px; border-radius: var(--r-sm); border: 1px solid transparent;
+  transition: color .2s var(--ease), border-color .2s var(--ease);
+}
+.navlink:hover { color: var(--signal); border-color: var(--line); }
+
+.kb { max-width: 1060px; margin: 0 auto; padding: 46px 22px 80px; }
+
+/* ── hero / ask ────────────────────────────────────────────────────── */
+
+.hero { max-width: 760px; margin-bottom: 30px; }
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: var(--step-4); font-weight: 600;
+  letter-spacing: -.025em; line-height: 1.08;
+  margin: 0 0 14px;
+}
+.hero .lede { color: var(--text-dim); margin: 0 0 26px; max-width: 62ch; }
+
+.corpus-switch { display: inline-flex; gap: 3px; padding: 3px; margin-bottom: 12px;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; }
+.corpus-switch button {
+  padding: 6px 15px; border-radius: 999px;
+  font-size: var(--step--1); color: var(--text-dim);
+  transition: background .2s var(--ease), color .2s var(--ease);
+}
+.corpus-switch button[aria-pressed="true"] {
+  background: var(--raised); color: var(--signal); box-shadow: var(--shadow-1);
+}
+
+.ask-row { display: flex; gap: 10px; }
+#q {
+  flex: 1; min-width: 0;
+  padding: 14px 17px; font-size: var(--step-1);
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  transition: border-color .2s var(--ease);
+}
+#q::placeholder { color: var(--text-faint); }
+#q:focus { outline: none; border-color: var(--signal); }
+#askBtn { padding: 14px 24px; }
+
+.examples { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.example {
+  font-size: var(--step--1); padding: 6px 12px; border-radius: 999px;
+  background: var(--surface-2); border: 1px solid var(--line); color: var(--text-dim);
+  transition: color .2s var(--ease), border-color .2s var(--ease);
+}
+.example:hover { color: var(--text); border-color: var(--text-faint); }
+.example[data-kind="refuse"] { border-color: color-mix(in srgb, var(--caution) 34%, transparent); color: var(--caution); }
+
+/* ── gates ─────────────────────────────────────────────────────────── */
+
+.gates { margin-bottom: 26px; animation: riseIn .45s var(--ease-out); }
+@keyframes riseIn { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
+
+.gate-flow { display: flex; align-items: stretch; gap: 12px; margin-bottom: 14px; }
+.gate {
+  flex: 1; padding: 15px 17px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  border-left: 3px solid var(--text-faint);
+  transition: border-color .3s var(--ease);
+}
+.gate[data-pass="true"]  { border-left-color: var(--verified); }
+.gate[data-pass="false"] { border-left-color: var(--caution); }
+.gate-verdict { font-family: var(--font-display); font-size: var(--step-1); font-weight: 600; }
+.gate[data-pass="true"] .gate-verdict  { color: var(--verified); }
+.gate[data-pass="false"] .gate-verdict { color: var(--caution); }
+.gate-note { font-size: var(--step--1); color: var(--text-dim); margin-top: 5px; }
+.gate-arrow { display: grid; place-items: center; color: var(--text-faint); flex: 0 0 40px; }
+.gate-arrow svg { width: 34px; }
+
+.answer-box {
+  padding: 16px 18px; border-radius: var(--r-lg);
+  background: var(--surface); border: 1px solid var(--line);
+  line-height: 1.6;
+}
+.answer-box[data-refused="true"] {
+  background: var(--caution-bg);
+  border-color: color-mix(in srgb, var(--caution) 30%, transparent);
+}
+.answer-box .lbl {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--text-faint); display: block; margin-bottom: 7px;
+}
+
+.cite-chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 6px;
+  margin: 0 2px;
+  border-radius: 4px;
+  background: var(--verified-bg);
+  border: 1px solid color-mix(in srgb, var(--verified) 30%, transparent);
+  color: var(--verified);
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+
+/* ── result rows with score bars ───────────────────────────────────── */
+
+.results-wrap { margin-bottom: 34px; animation: riseIn .5s var(--ease-out); }
+.results-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.results-head .eyebrow { margin-bottom: 11px; }
+
+.chart-legend { display: flex; gap: 15px; font-size: var(--step--1); color: var(--text-dim); margin-bottom: 11px; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.swatch.vec { background: var(--vec); }
+.swatch.bm  { background: var(--bm); }
+.swatch.thr { width: 3px; height: 13px; border-radius: 1px; background: var(--thr); }
+
+.results { display: flex; flex-direction: column; gap: 9px; }
+
+.result {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-md); padding: 14px 16px;
+  transition: border-color .2s var(--ease);
+}
+.result[data-cited="true"] { border-color: color-mix(in srgb, var(--verified) 42%, transparent); }
+
+.result-top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 9px; }
+.result-rank { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-faint); flex: 0 0 auto; }
+.result-title { font-weight: 600; font-size: var(--step-0); }
+.result-head-meta { margin-left: auto; display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+.pill {
+  font-family: var(--font-mono); font-size: 10px; padding: 2px 7px;
+  border-radius: 4px; border: 1px solid var(--line); color: var(--text-faint);
+}
+.pill.cited { color: var(--verified); border-color: color-mix(in srgb, var(--verified) 34%, transparent); background: var(--verified-bg); }
+.pill.pii   { color: var(--caution); border-color: color-mix(in srgb, var(--caution) 34%, transparent); }
+
+.result-heading { font-size: var(--step--1); color: var(--text-dim); margin-bottom: 11px; }
+
+/* Stacked bar: the two weighted parts sum to the fused score, so the mark
+ * shows composition and total at once. 2px gap between segments per spec. */
+.bar-row { display: flex; align-items: center; gap: 12px; }
+.bar-track {
+  position: relative; flex: 1; height: 15px;
+  background: var(--bar-track); border-radius: 4px; overflow: visible;
+}
+.bar-fill { display: flex; height: 100%; gap: 2px; }
+.seg { height: 100%; transition: width .5s var(--ease-out); }
+.seg.vec { background: var(--vec); border-radius: 4px 0 0 4px; }
+.seg.bm  { background: var(--bm);  border-radius: 0 4px 4px 0; }
+.seg.vec:only-child, .seg.bm:only-child { border-radius: 4px; }
+
+.threshold {
+  position: absolute; top: -4px; bottom: -4px; width: 2px;
+  background: var(--thr); border-radius: 1px;
+}
+.threshold::after {
+  content: "gate";
+  position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .06em;
+  color: var(--thr); white-space: nowrap;
+}
+.result:not(:first-child) .threshold::after { display: none; }
+
+.bar-value {
+  flex: 0 0 auto; font-family: var(--font-mono); font-size: var(--step--1);
+  font-variant-numeric: tabular-nums; min-width: 46px; text-align: right;
+}
+.result[data-pass="true"] .bar-value { color: var(--verified); }
+.result[data-pass="false"] .bar-value { color: var(--text-faint); }
+
+.result-detail { margin-top: 10px; font-size: var(--step--1); color: var(--text-dim); }
+.result-detail summary { cursor: pointer; color: var(--text-faint); }
+.result-detail summary:hover { color: var(--text-dim); }
+.result-body {
+  margin-top: 9px; padding: 11px 13px; border-radius: var(--r-sm);
+  background: var(--surface-2); line-height: 1.55; white-space: pre-wrap;
+  max-height: 210px; overflow-y: auto;
+}
+.result-body + .src { display: block; margin-top: 8px; font-family: var(--font-mono); font-size: 10px; color: var(--cool); word-break: break-all; text-decoration: none; }
+
+.table-view { margin-top: 14px; }
+.table-view summary { font-size: var(--step--1); color: var(--text-faint); cursor: pointer; }
+.table-scroll { overflow-x: auto; margin-top: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: var(--step--1); }
+th, td { text-align: left; padding: 7px 11px; border-bottom: 1px solid var(--line-soft); white-space: nowrap; }
+th { font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
+td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* ── pipeline + composition ────────────────────────────────────────── */
+
+.panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 18px; }
+
+/* Descending bars rather than a tapered funnel: a trapezoid distorts area and
+ * misreports the drop between stages. */
+.stage { margin-bottom: 13px; }
+.stage-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: var(--step--1); margin-bottom: 5px; }
+.stage-label { color: var(--text-dim); }
+.stage-count { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.stage-bar { height: 9px; background: var(--bar-track); border-radius: 4px; overflow: hidden; }
+.stage-bar span { display: block; height: 100%; background: var(--vec); border-radius: 4px; transition: width .6s var(--ease-out); }
+.stage-drop {
+  font-family: var(--font-mono); font-size: 10px; color: var(--caution);
+  margin-top: 4px; display: flex; gap: 6px; align-items: baseline;
+}
+
+.pipeline-notes { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.note-row { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; font-size: var(--step--1); }
+.note-row span { color: var(--text-dim); }
+.note-row strong { font-family: var(--font-mono); font-weight: 500; }
+
+.comp-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; margin-bottom: 8px; }
+.comp-label { font-size: var(--step--1); color: var(--text-dim); }
+.comp-bar { grid-column: 1 / -1; height: 7px; background: var(--bar-track); border-radius: 4px; overflow: hidden; margin-top: -3px; }
+.comp-bar span { display: block; height: 100%; background: var(--bm); border-radius: 4px; transition: width .6s var(--ease-out); }
+.comp-count { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-faint); font-variant-numeric: tabular-nums; }
+
+.loading { color: var(--text-faint); font-size: var(--step--1); }
+
+@media (max-width: 880px) {
+  .panels { grid-template-columns: 1fr; }
+  .gate-flow { flex-direction: column; }
+  .gate-arrow { transform: rotate(90deg); flex: 0 0 24px; }
+  .hero h1 { font-size: var(--step-3); }
+  .navlink { display: none; }
+}
