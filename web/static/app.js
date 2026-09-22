@@ -263,6 +263,13 @@ function connect(marketKey) {
     if (m.type === "nudge_sync") { syncNudges(m.active, m.suppression); return; }
     if (m.type === "nudge") { return; }   // the sync that follows renders it
 
+    if (m.type === "turn_error") {
+      addTurn("agent", m.message, [{ kind: "refused", label: "temporary error" }]);
+      micStatus("Something glitched — try that again", "warn");
+      lamp("live", "live");
+      return;
+    }
+
     if (m.type === "no_speech") { micStatus(m.message, "warn"); lamp("live", "live"); return; }
 
     if (m.type === "call_ended") {

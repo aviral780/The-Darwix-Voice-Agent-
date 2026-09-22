@@ -13,6 +13,7 @@ rather than raising.
 from __future__ import annotations
 
 import json
+import re
 import time
 
 import httpx
@@ -29,6 +30,22 @@ _client: Groq | None = None
 RETRYABLE_STATUS = {429, 500, 502, 503, 504}
 MAX_ATTEMPTS = 3
 BACKOFF_BASE_S = 0.6
+
+# A 429 can mean two very different things on this provider. A per-minute token
+# limit clears in milliseconds ("try again in 142.5ms") and is worth waiting
+# out; a per-day limit does not ("try again in 17m15s") and must fail over.
+# Treating both as fatal dropped live calls for a wait shorter than one frame.
+RETRY_AFTER_RE = re.compile(r"try again in ([\d.]+)(ms|m|s)", re.I)
+MAX_INLINE_WAIT_S = 3.0
+
+
+def retry_after_seconds(message: str) -> float | None:
+    """Seconds the provider asked us to wait, or None if it did not say."""
+    match = RETRY_AFTER_RE.search(message or "")
+    if not match:
+        return None
+    value, unit = float(match.group(1)), match.group(2).lower()
+    return value / 1000 if unit == "ms" else value * 60 if unit == "m" else value
 
 
 def client() -> Groq:
@@ -66,6 +83,7 @@ def chat(
         kwargs["response_format"] = {"type": "json_object"}
 
     last_error: Exception | None = None
+    rate_limited = False
 
     for attempt in range(MAX_ATTEMPTS):
         try:
@@ -79,6 +97,15 @@ def chat(
         except (RateLimitError, APIStatusError) as exc:
             last_error = exc
             status = getattr(exc, "status_code", None)
+            if status == 429:
+                wait = retry_after_seconds(str(exc))
+                if wait is not None and wait <= MAX_INLINE_WAIT_S and attempt < MAX_ATTEMPTS - 1:
+                    # Per-minute bucket. Waiting it out is far better than
+                    # failing over or dropping the turn.
+                    time.sleep(wait + 0.05)
+                    continue
+                rate_limited = True
+                break
             if status is not None and status not in RETRYABLE_STATUS:
                 raise LLMError(f"Groq returned {status}: {exc}") from exc
             # Exponential backoff, but only if another attempt is coming.
@@ -90,15 +117,55 @@ def chat(
             if attempt < MAX_ATTEMPTS - 1:
                 time.sleep(BACKOFF_BASE_S * (2 ** attempt))
 
+    # Fail over to the second model before leaving the provider. It has its own
+    # token budget, so a daily limit on the primary does not end the session.
+    # This is what FALLBACK_MODEL was configured for; until now nothing used it.
+    if model != config.FALLBACK_MODEL:
+        for fallback_attempt in range(2):
+            try:
+                fallback_kwargs = dict(kwargs)
+                fallback_kwargs["model"] = config.FALLBACK_MODEL
+                # The gpt-oss models spend their whole budget on internal
+                # reasoning unless this is set, and return an empty message.
+                fallback_kwargs["extra_body"] = {"reasoning_effort": "low"}
+                # Even with low effort they reason before answering, so a budget
+                # sized for the primary runs out mid-document. In JSON mode that
+                # fails the whole call rather than truncating a sentence.
+                fallback_kwargs["max_tokens"] = max(
+                    int(kwargs.get("max_tokens", 300)) * 3, 700)
+
+                response = client().chat.completions.create(**fallback_kwargs)
+                text = (response.choices[0].message.content or "").strip()
+                if text:
+                    return text
+                break
+            except Exception as exc:
+                last_error = exc
+                wait = retry_after_seconds(str(exc))
+                if wait is not None and wait <= MAX_INLINE_WAIT_S and fallback_attempt == 0:
+                    time.sleep(wait + 0.05)
+                    continue
+                break
+
     if config.GEMINI_API_KEY:
         try:
             return _gemini_chat(messages, temperature, max_tokens, json_mode)
         except Exception as exc:
             raise LLMError(f"Groq and Gemini both failed. Last Groq error: {last_error}") from exc
 
+    if rate_limited:
+        # Name what actually failed. The first version reported "both models are
+        # rate limited" whenever a rate limit had been seen at any point, even
+        # when the fallback had in fact answered and failed for a different
+        # reason - which sends whoever reads it looking in the wrong place.
+        raise LLMError(
+            f"{model} is rate limited on this free-tier key and the fallback "
+            f"{config.FALLBACK_MODEL} did not produce a usable answer. "
+            f"Last error: {last_error}"
+        )
     raise LLMError(
-        f"Groq failed after {MAX_ATTEMPTS} attempts and no GEMINI_API_KEY fallback "
-        f"is configured. Last error: {last_error}"
+        f"Groq failed after {MAX_ATTEMPTS} attempts and the fallback model did "
+        f"not answer either. Last error: {last_error}"
     )
 
 

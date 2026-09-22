@@ -25,6 +25,7 @@ const ui = {
 let ws = null;
 let shown = 0;
 let current = null;
+let player = null;
 
 function lamp(text, state) { ui.lamp.textContent = text; ui.lamp.dataset.state = state || "idle"; }
 
@@ -54,8 +55,20 @@ function renderScenarios(list) {
 
 // ── run ──────────────────────────────────────────────────────────────
 
+function micNote(text) {
+  const note = document.createElement("p");
+  note.className = "empty-note";
+  note.textContent = text;
+  ui.stream.appendChild(note);
+}
+
+function stopAudio() {
+  if (player) { player.pause(); player.currentTime = 0; player = null; }
+}
+
 function run(scenario) {
   ui.micBoard.hidden = true;
+  stopAudio();
   current = scenario;
   shown = 0;
   ui.body.dataset.view = "board";
@@ -79,7 +92,19 @@ function run(scenario) {
   ws.onmessage = (ev) => {
     const m = JSON.parse(ev.data);
 
-    if (m.type === "stream_start") { ui.stream.innerHTML = ""; lamp("live", "live"); return; }
+    if (m.type === "stream_start") {
+      ui.stream.innerHTML = "";
+      lamp("live", "live");
+      // The pipeline paces itself to the audio clock, so starting playback here
+      // keeps the recording and the transcript in step without extra syncing.
+      player = new Audio(`/api/live_audio/${scenario.id}`);
+      player.play().catch(() => {
+        // Autoplay refused. The run is still valid, so say so rather than
+        // leaving a reviewer wondering why it is silent.
+        micNote("Audio blocked by the browser — the run continues without sound.");
+      });
+      return;
+    }
 
     if (m.type === "transcript") { addLine(m.at_s, m.speaker, m.text); return; }
 
@@ -99,6 +124,7 @@ function run(scenario) {
 
     if (m.type === "done") {
       lamp("complete", "idle");
+      stopAudio();
       ui.reset.hidden = false;
       const pass = m.expected.length === 0
         ? m.fired.length === 0
@@ -347,6 +373,7 @@ ui.reset.addEventListener("click", () => {
   ui.brand.textContent = "real-time nudges";
   if (micWs) { micWs.close(); micWs = null; }
   if (capture && capture.active) capture.stop("manual");
+  stopAudio();
   const v = document.querySelector(".verdict");
   if (v) v.remove();
   lamp("idle", "idle");

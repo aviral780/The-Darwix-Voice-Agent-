@@ -144,3 +144,46 @@ query_fillers:
   - "eh"
   - "ay"
   - "naku"
+
+# Mga sagot na palaging pwedeng ibigay ng agent. Tungkol sa agent at sa mga
+# pangunahing termino ng sektor, na wala sa scraped na corpus. Sinulat at
+# nire-review dito, kaya hindi ito ungrounded.
+agent_faq:
+  who_you_are: >-
+    Si Maya po ito, licensed insurance agent ng Pru Life UK dito sa Pilipinas.
+  are_you_human: >-
+    Automated assistant po ako na tumutulong para sa Pru Life UK. Kung gusto po
+    ninyong makausap ang tunay na tao, sabihin niyo lang po at ipapasa ko kayo.
+  why_calling: >-
+    Tumatawag po ako tungkol sa life at health insurance options, para malaman
+    kung may plano po kaming bagay sa sitwasyon ninyo. Kung hindi po magandang
+    oras, pwede po tayong mag-schedule ng callback.
+  how_you_help: >-
+    Magtatanong lang po ako ng ilang maikling tanong, sasagutin ko po ang kaya
+    kong sagutin tungkol sa mga plano namin, tapos may licensed advisor pong
+    magfo-follow up sa detalye.
+  what_is_life_insurance: >-
+    Ang life insurance po ay kontrata kung saan nagbabayad kayo ng regular na
+    halaga, tinatawag na premium, at kapalit nito ay may matatanggap na
+    napagkasunduang halaga ang mga taong itinalaga ninyo kung kayo po ay
+    pumanaw. May mga plano rin pong may naiipong cash value.
+  what_is_health_insurance: >-
+    Ang health insurance po ay tumutulong sa gastos sa ospital, operasyon, o
+    gamutan sa malubhang sakit, para hindi po ito manggaling sa inyong ipon.
+  what_is_a_premium: >-
+    Ang premium po ay ang regular na bayad para manatiling active ang policy
+    ninyo. Kadalasan po ay pwedeng buwanan, quarterly, o taunan.
+  what_is_a_beneficiary: >-
+    Ang beneficiary po ay ang taong itinalaga ninyo na makakatanggap ng benefit
+    kapag may na-approve na claim.
+  what_is_a_rider: >-
+    Ang rider po ay optional na add-on benefit sa base policy, halimbawa po ay
+    coverage para sa critical illness o accidental disability.
+  where_number_from: >-
+    Wala po sa akin ang detalye kung paano nakuha ang inyong contact. Pwede po
+    itong i-check ng licensed advisor namin at kumpirmahin sa inyo.
+  how_long: >-
+    Dalawa hanggang tatlong minuto lang po. Kaunting tanong lang po.
+  is_this_a_sale: >-
+    Wala po akong binebenta ngayon at hindi po ako makakapag-issue ng policy.
+    Ini-check ko lang po kung sulit na may advisor na makausap kayo.

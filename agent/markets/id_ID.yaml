@@ -147,3 +147,46 @@ query_fillers:
   - "maaf"
   - "saja"
   - "aja"
+
+# Jawaban yang selalu boleh diberikan agen. Mengenai agen dan istilah dasar
+# sektornya, yang tidak ada di korpus hasil scraping. Ditulis dan ditinjau di
+# sini, jadi menjawab dari sini bukan berarti tanpa dasar.
+agent_faq:
+  who_you_are: >-
+    Saya Sari dari FIFGROUP, bagian layanan pelanggan.
+  are_you_human: >-
+    Saya asisten otomatis yang membantu FIFGROUP. Kalau Bapak atau Ibu ingin
+    berbicara dengan petugas, silakan sampaikan saja, nanti saya sambungkan.
+  why_calling: >-
+    Saya menghubungi terkait angsuran yang akan jatuh tempo, untuk memastikan
+    informasinya sudah diterima dan menanyakan apakah ada kendala.
+  how_you_help: >-
+    Saya menanyakan beberapa hal singkat mengenai status pembayaran, dan bila
+    ada kendala saya teruskan ke petugas kami agar bisa dibantu.
+  what_is_pembiayaan: >-
+    Pembiayaan adalah fasilitas dana dari perusahaan multifinance untuk membeli
+    barang atau memperoleh dana tunai, yang dikembalikan melalui angsuran
+    bulanan selama jangka waktu tertentu.
+  what_is_cicilan: >-
+    Cicilan atau angsuran adalah pembayaran bulanan yang harus dilunasi sampai
+    masa pembiayaan selesai.
+  what_is_tenor: >-
+    Tenor adalah jangka waktu pembiayaan, yaitu berapa lama angsuran berjalan
+    sampai lunas.
+  what_is_denda: >-
+    Denda adalah biaya keterlambatan yang dikenakan bila angsuran dibayar
+    melewati tanggal jatuh tempo. Untuk nominal pastinya, petugas kami yang
+    dapat mengonfirmasi.
+  what_is_jatuh_tempo: >-
+    Jatuh tempo adalah tanggal batas pembayaran angsuran setiap bulannya.
+  what_is_dp: >-
+    DP atau uang muka adalah pembayaran awal yang disetorkan di awal
+    pembiayaan, sebelum angsuran bulanan dimulai.
+  where_number_from: >-
+    Data kontak berasal dari data pembiayaan Bapak atau Ibu. Untuk detailnya,
+    petugas kami yang dapat menjelaskan langsung.
+  how_long: >-
+    Sebentar saja, hanya beberapa pertanyaan singkat.
+  is_this_a_sale: >-
+    Saya tidak menawarkan produk pada panggilan ini. Saya hanya menanyakan
+    mengenai angsuran dan apakah ada kendala.

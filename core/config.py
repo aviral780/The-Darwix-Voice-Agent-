@@ -102,6 +102,13 @@ class MarketConfig:
     terminology: dict[str, str] = field(default_factory=dict)
     qualification: list[dict] = field(default_factory=list)
     objections: dict[str, str] = field(default_factory=dict)
+    # Authored answers the agent is always allowed to give: who it is, why it is
+    # calling, and what the basic terms of its own sector mean. These never go to
+    # the knowledge base, because a corpus scraped from product pages does not
+    # contain "what is life insurance" or "what is your name", and refusing those
+    # makes the agent look broken rather than careful. The content is written and
+    # reviewed here, so answering from it is not ungrounded.
+    agent_faq: dict[str, str] = field(default_factory=dict)
     escalation_triggers: list[str] = field(default_factory=list)
     refusal_line: str = ""
     closing: str = ""

@@ -93,8 +93,14 @@ class Answer:
         return list(seen.values())
 
 
+# Chunk ids end in _c<n>; authored FAQ ids do not. The first version matched
+# only the chunk shape, so a citation of an authored answer survived into the
+# spoken text and the caller heard "faq who you are" read aloud.
+CITATION_RE = re.compile(r"\[((?:faq_[a-z0-9_]+)|(?:[a-z0-9_]+_c\d+))\]")
+
+
 def extract_citations(text: str) -> list[str]:
-    return sorted(set(re.findall(r"\[([a-z0-9_]+_c\d+)\]", text)))
+    return sorted(set(CITATION_RE.findall(text)))
 
 
 def strip_citations(text: str) -> str:
@@ -104,7 +110,7 @@ def strip_citations(text: str) -> str:
     but the markers have to survive long enough to be verified and logged, so
     they are stripped at the point of speech rather than at generation.
     """
-    return re.sub(r"\s*\[[a-z0-9_]+_c\d+\]", "", text).strip()
+    return re.sub(r"\s*" + CITATION_RE.pattern, "", text).strip()
 
 
 def answer_question(
@@ -116,6 +122,7 @@ def answer_question(
     source_key: str = "prulife_ph",
     answer_language: str = "",
     query_fillers: list[str] | None = None,
+    authored: dict[str, str] | None = None,
 ) -> Answer:
     retriever = get_retriever(source_key)
     corpus_language = CORPUS_LANGUAGE.get(source_key, "English")
@@ -128,8 +135,18 @@ def answer_question(
         results = retriever.search(question, top_k=top_k, recorder=recorder,
                                    fillers=query_fillers)
 
-    # Gate 1: retrieval confidence.
-    if not retriever.is_answerable(results):
+    # Authored passages from the market file sit alongside the retrieved ones.
+    # They are vetted content, so the "answer only from context" rule still holds;
+    # the corpus simply is not the only legitimate source. Without them the agent
+    # refuses its own name.
+    authored_block = ""
+    if authored:
+        authored_block = "\n\n".join(
+            f"[faq_{key}] {text.strip()}" for key, text in authored.items())
+
+    # Gate 1: retrieval confidence. Skipped when authored context is available,
+    # since a question the market file answers does not depend on the corpus.
+    if not retriever.is_answerable(results) and not authored_block:
         return Answer(text="", refused=True, results=results, gate="retrieval")
 
     language_rule = ""
@@ -147,7 +164,10 @@ def answer_question(
         max_sentences=max_sentences,
         extra=extra_instructions + language_rule,
     )
-    user = f"CONTEXT:\n{retriever.context_block(results)}\n\nQUESTION: {question}"
+    context = retriever.context_block(results) if retriever.is_answerable(results) else ""
+    if authored_block:
+        context = f"{authored_block}\n\n{context}".strip()
+    user = f"CONTEXT:\n{context}\n\nQUESTION: {question}"
 
     raw = chat(
         [{"role": "system", "content": system}, {"role": "user", "content": user}],
@@ -162,6 +182,7 @@ def answer_question(
         return Answer(text="", refused=True, results=results, gate="generation")
 
     retrieved_ids = [r.chunk["chunk_id"] for r in results]
+    retrieved_ids += [f"faq_{k}" for k in (authored or {})]
     stated = extract_citations(raw)
 
     # A citation naming a chunk that was never in context is a fabricated

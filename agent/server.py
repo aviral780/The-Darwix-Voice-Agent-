@@ -30,7 +30,7 @@ import json
 import time
 from pathlib import Path
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -99,6 +99,33 @@ def live_scenarios() -> dict:
          "expect": s["expect"], "duration_s": s["duration_s"]}
         for s in scenarios
     ]}
+
+
+@app.get("/api/live_audio/{scenario_id}")
+def live_audio(scenario_id: str) -> FileResponse:
+    """Serve a scenario's recording so the dashboard can play the call aloud.
+
+    The file already carries both voices on separate channels - the agent on the
+    left, the customer on the right - which is what the pipeline uses for speaker
+    attribution. Playing it means a reviewer hears the same audio the detectors
+    are reading, rather than watching text appear silently.
+    """
+    import json as _json
+
+    scenarios = _json.loads(
+        (config.EVIDENCE_DIR / "live_calls" / "scenarios.json").read_text())
+    match = next((s for s in scenarios if s["id"] == scenario_id), None)
+    if match is None:
+        raise HTTPException(status_code=404, detail="Unknown scenario")
+
+    path = config.ROOT / match["path"]
+    # Only ever serve from the evidence directory, whatever the id contained.
+    resolved = path.resolve()
+    if not resolved.is_relative_to((config.EVIDENCE_DIR / "live_calls").resolve()):
+        raise HTTPException(status_code=404, detail="Unknown scenario")
+    if not resolved.exists():
+        raise HTTPException(status_code=404, detail="Recording missing")
+    return FileResponse(resolved, media_type="audio/wav")
 
 
 @app.websocket("/ws/live_mic")
@@ -528,7 +555,20 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
                 continue
 
             # --- agent turn ---------------------------------------------------
-            turn = await asyncio.to_thread(session.handle, text)
+            try:
+                turn = await asyncio.to_thread(session.handle, text)
+            except Exception as exc:
+                # A provider hiccup must not end the call. Dropping the socket
+                # loses the transcript, the slots collected so far and the lead,
+                # which is a far worse outcome than one awkward turn - and on a
+                # free tier a transient rate limit is not rare.
+                print(f"turn failed for {session.call_id}: {type(exc).__name__}: {exc}")
+                await websocket.send_json({
+                    "type": "turn_error",
+                    "message": "Sorry, I lost that for a second. Could you say it again?",
+                })
+                continue
+
             await websocket.send_json(turn_payload(session, turn, await speak(session, turn.text)))
 
             if nudger and turn.text:

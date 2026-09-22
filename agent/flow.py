@@ -246,6 +246,16 @@ class CallSession:
                 return self._close(declined=True)
 
             if signal["intent"] == Intent.QUESTION.value:
+                # A caller who answers and asks back in one breath - "It's Aviral,
+                # what's your name?" - was having their answer discarded, because
+                # the question branch ran first and never looked at the slot. The
+                # classifier had already extracted it correctly.
+                if (self.state == State.QUALIFYING and signal["value_fits"]
+                        and signal["slot_value"]):
+                    self.fill_slot(signal["slot_value"])
+                elif self.state == State.GREETING and signal["value_fits"] and signal["slot_value"]:
+                    self.state = State.QUALIFYING
+                    self.fill_slot(signal["slot_value"])
                 return self._answer_question(utterance)
 
             if signal["intent"] == Intent.OBJECTION.value:
@@ -304,6 +314,7 @@ class CallSession:
             source_key=self.market.kb_source,
             answer_language=self.market.language_name,
             query_fillers=self.market.query_fillers,
+            authored=self.market.agent_faq,
         )
 
         if answer.refused:
