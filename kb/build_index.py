@@ -100,7 +100,10 @@ def run(source_key: str = "prulife_ph") -> dict:
         "chunks": len(chunks),
         "vector_weight": config.VECTOR_WEIGHT,
         "bm25_weight": config.BM25_WEIGHT,
-        "min_retrieval_score": config.MIN_RETRIEVAL_SCORE,
+        # This corpus's own calibrated gate, not the global default. Writing the
+        # constant here reported 0.5 for both corpora and hid the fact that the
+        # thresholds are derived per corpus.
+        "min_retrieval_score": source.min_retrieval_score,
     }
     (source.index_dir / "meta.json").write_text(json.dumps(meta, indent=2))
     print(f"vectors {vectors.shape}  ->  {source.index_dir}")
