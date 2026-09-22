@@ -47,6 +47,17 @@
     </p>
   </div>
   <div class="scenario-grid" id="scenarioGrid"></div>
+
+  <button class="mic-card" id="micCard" type="button">
+    <span class="scenario-tag live"><span class="dot"></span>live microphone</span>
+    <h2>Or speak into it yourself</h2>
+    <p class="why">
+      Talk as the agent or as the customer and watch the same detectors run on
+      your own voice. Say “these funds have guaranteed returns” as the agent, or
+      “my wife and two kids depend on me” as the customer.
+    </p>
+    <span class="scenario-go">Start listening →</span>
+  </button>
 </main>
 
 <main class="board" id="board" hidden>
@@ -79,7 +90,58 @@
   </aside>
 </main>
 
+<main class="board" id="micBoard" hidden>
+  <section class="stream-pane">
+    <p class="eyebrow">Live transcript <span class="chan-key"><i class="ch agent"></i>agent <i class="ch caller"></i>customer</span></p>
+    <div class="stream" id="micStream">
+      <p class="stream-empty">Pick who you are speaking as, then hold the mic and talk.</p>
+    </div>
+
+    <div class="mic-composer">
+      <div class="role-switch" role="group" aria-label="Speaking as">
+        <button id="roleAgent" aria-pressed="true">I am the agent</button>
+        <button id="roleCaller" aria-pressed="false">I am the customer</button>
+      </div>
+
+      <div class="composer">
+        <button class="mic" id="liveMic" aria-label="Start recording">
+          <svg class="mic-ring" viewBox="0 0 84 84" aria-hidden="true">
+            <circle class="ring-track" cx="42" cy="42" r="38"/>
+            <circle class="ring-level" id="liveRing" cx="42" cy="42" r="38"/>
+          </svg>
+          <span class="mic-glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="9" y="2" width="6" height="12" rx="3"/>
+              <path d="M5 11a7 7 0 0 0 14 0M12 18v4"/>
+            </svg>
+          </span>
+        </button>
+        <div class="composer-main">
+          <div class="mic-status" id="liveMicStatus">Click the mic and talk — it sends when you stop</div>
+          <div class="meter" id="liveMeter"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="text-row">
+            <input id="liveText" type="text" autocomplete="off" placeholder="or type a line">
+            <button class="send" id="liveSend" aria-label="Send line" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <p class="composer-hint">Try: “our funds have guaranteed returns” as the agent · “my wife depends on me” as the customer</p>
+    </div>
+  </section>
+
+  <aside class="nudge-pane">
+    <section class="card nudge-card">
+      <p class="eyebrow">Live nudges <span class="supp-chip mono" id="micSupp" hidden></span></p>
+      <div class="nudges" id="micNudges">
+        <p class="empty-note">Nudges appear here the moment a detector fires.</p>
+      </div>
+    </section>
+  </aside>
+</main>
+
 <script src="/static/theme.js"></script>
-<script src="/static/live.js"></script>
+<script type="module" src="/static/live.js"></script>
 </body>
 </html>

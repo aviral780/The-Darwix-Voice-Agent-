@@ -76,6 +76,20 @@ Wait for the greeting to play. Let them hear it.
 
 **Then say:**
 
+> "My wife and two kids depend on me."
+
+A nudge appears in the **Live coaching** panel on the right.
+
+**Say:**
+
+> "That's the Q4 nudge engine running on this live call, not a recording. It
+> heard the customer mention a family and flagged it as an opening the agent
+> talked past. Same detectors as the recorded pipeline — and here it knows
+> exactly who said what, because the agent's words are generated locally and
+> mine came back from the transcriber already labelled."
+
+**Then say:**
+
 > "What is my current policy account balance?"
 
 **Say:**
@@ -208,6 +222,34 @@ Point at the suppression panel.
 > "The number I care about is this one. Twenty-seven signals found, three shown.
 > Detecting things is easy. Not burying the agent is the hard part."
 
+**Click New run**, then scroll down and click **"Or speak into it yourself"**.
+
+**Say:**
+
+> "You can also just talk to it."
+
+Set the role to **I am the agent** and say:
+
+> "Our investment funds have guaranteed returns and there is no risk at all."
+
+Two red nudges appear.
+
+**Say:**
+
+> "Missing disclosure, and guarantee language. Both on my own voice, in real
+> time. Now switch roles."
+
+Click **I am the customer** and say:
+
+> "My wife and two kids depend on me."
+
+**Say:**
+
+> "Different speaker, different detector. That's why the role is a button rather
+> than something the system guesses — a missing disclosure only counts against
+> the agent, and a family mentioned is only an opening when the customer says it.
+> Guessing would fire half the rules on the wrong person."
+
 **Click New run, then:** *Noisy and ambiguous call*.
 
 **Say:**
@@ -276,6 +318,7 @@ Let it finish so they see the green **Pass**.
 - The **Taglish answer** keeping "premium" in English
 - The **Indonesian market** having different qualification questions
 - The **suppression counter** — 27 signals, 3 shown
+- A **nudge firing on your own live voice**, in both roles
 
 ## Don't show this
 

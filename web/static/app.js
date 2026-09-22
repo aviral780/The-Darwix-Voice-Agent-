@@ -14,6 +14,7 @@ const ui = {
   micStatus: el("micStatus"), text: el("textInput"),
   lamp: el("lamp"), clock: el("clock"), end: el("endCall"), brand: el("brandContext"),
   slots: el("slots"), sources: el("sources"),
+  nudges: el("nudges"), suppChip: el("suppChip"),
   send: el("send"),
   sheet: el("sheet"), scrim: el("sheetScrim"), statRow: el("statRow"),
   sheetBody: el("sheetBody"), closeSheet: el("closeSheet"),
@@ -120,6 +121,52 @@ function renderSlots(filled) {
   });
 }
 
+// ── live coaching ────────────────────────────────────────────────────
+//
+// The same nudge engine that powers the Live insights page, running against
+// this conversation. Speaker attribution is exact here - the agent's words are
+// generated locally and the caller's come back already labelled - so it needs
+// none of the channel splitting the recorded pipeline does.
+
+function syncNudges(active, suppression) {
+  const ids = new Set(active.map((n) => n.id));
+  [...ui.nudges.querySelectorAll(".nudge")].forEach((node) => {
+    if (!ids.has(node.dataset.id)) {
+      node.classList.add("leaving");
+      setTimeout(() => node.remove(), 420);
+    }
+  });
+
+  active.forEach((n) => {
+    let node = ui.nudges.querySelector(`[data-id="${n.id}"]`);
+    if (!node) {
+      const note = ui.nudges.querySelector(".empty-note");
+      if (note) note.remove();
+      node = document.createElement("div");
+      node.className = "nudge";
+      node.dataset.id = n.id;
+      node.dataset.type = n.type;
+      node.innerHTML = `
+        <div class="nudge-top"><span class="n-type"></span><span class="nudge-prio"></span></div>
+        <div class="nudge-text"></div>
+        <div class="nudge-meta"><span class="n-conf"></span><span class="n-det"></span><span class="n-ev"></span></div>`;
+      node.querySelector(".n-type").textContent = n.type.replace(/_/g, " ");
+      node.querySelector(".nudge-prio").textContent = `p${n.priority}`;
+      node.querySelector(".nudge-text").textContent = n.text;
+      node.querySelector(".n-conf").innerHTML = `conf <em>${n.confidence}</em>`;
+      node.querySelector(".n-det").innerHTML = `via <em>${n.detector}</em>`;
+      if (n.evidence) node.querySelector(".n-ev").innerHTML = `“<em>${n.evidence}</em>”`;
+      ui.nudges.appendChild(node);
+    }
+  });
+
+  if (suppression && suppression.signals_seen) {
+    ui.suppChip.hidden = false;
+    ui.suppChip.textContent =
+      `${suppression.nudges_emitted} shown · ${suppression.signals_seen} seen`;
+  }
+}
+
 // ── transcript ───────────────────────────────────────────────────────
 
 function addTurn(who, text, badges) {
@@ -169,6 +216,8 @@ function beginCall(market) {
   ui.console.hidden = false;
   ui.stream.innerHTML = `<p class="stream-empty">Connecting…</p>`;
   ui.sources.innerHTML = `<p class="empty-note">Every factual answer is retrieved and cited. Sources appear here as the agent uses them.</p>`;
+  ui.nudges.innerHTML = `<p class="empty-note">Signals from this call appear here as it runs — the same engine as Live insights, watching in real time.</p>`;
+  ui.suppChip.hidden = true;
   renderSlots({});
   connect(market.key);
 }
@@ -210,6 +259,9 @@ function connect(marketKey) {
       if (live) lamp("live", "live");
       return;
     }
+
+    if (m.type === "nudge_sync") { syncNudges(m.active, m.suppression); return; }
+    if (m.type === "nudge") { return; }   // the sync that follows renders it
 
     if (m.type === "no_speech") { micStatus(m.message, "warn"); lamp("live", "live"); return; }
 

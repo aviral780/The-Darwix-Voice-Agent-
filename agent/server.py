@@ -27,6 +27,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import json
+import time
 from pathlib import Path
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
@@ -37,6 +38,7 @@ from core import asr, config, tts
 from core.timing import LatencyRecorder
 from agent.actions import finalise_call
 from agent.flow import CallSession, State
+from live.turns import TurnNudger
 
 app = FastAPI(title="Darwix Voice Agent")
 
@@ -97,6 +99,71 @@ def live_scenarios() -> dict:
          "expect": s["expect"], "duration_s": s["duration_s"]}
         for s in scenarios
     ]}
+
+
+@app.websocket("/ws/live_mic")
+async def live_mic(websocket: WebSocket) -> None:
+    """Live microphone into the nudge pipeline.
+
+    The speaker is chosen in the interface rather than inferred, because the
+    detectors are asymmetric: a missing disclosure is only a finding when the
+    AGENT failed to give it, and a mention of a spouse is only an opening when
+    the CUSTOMER said it. Guessing would make half the rules fire on the wrong
+    person.
+    """
+    await websocket.accept()
+    nudger = TurnNudger(label="mic")
+    started = time.perf_counter()
+
+    try:
+        while True:
+            message = json.loads(await websocket.receive_text())
+            kind = message.get("type")
+
+            if kind == "reset":
+                nudger = TurnNudger(label="mic")
+                started = time.perf_counter()
+                await websocket.send_json({"type": "reset_ok"})
+                continue
+
+            speaker = "agent" if message.get("speaker") == "agent" else "caller"
+            text = ""
+
+            if kind == "audio":
+                audio = base64.b64decode(message["data"])
+                text = await asyncio.to_thread(
+                    asr.transcribe_bytes, audio, "mic.webm", "en",
+                    "premium, policy, beneficiary, rider, lapse, coverage, "
+                    "bancassurance, guaranteed, investment, fund",
+                    nudger.recorder, "asr")
+            elif kind == "text":
+                text = (message.get("text") or "").strip()
+            else:
+                continue
+
+            if not text.strip():
+                await websocket.send_json({
+                    "type": "no_speech",
+                    "message": "Nothing came through - try again, or type it instead.",
+                })
+                continue
+
+            at_s = time.perf_counter() - started
+            await websocket.send_json({
+                "type": "transcript", "speaker": speaker,
+                "text": text, "at_s": round(at_s, 1),
+            })
+
+            nudger.add(speaker, text, at_s)
+            await push_nudges(websocket, nudger, nudger.run_rules(at_s), at_s)
+
+            if nudger.should_judge():
+                judged = await asyncio.to_thread(nudger.run_judge, at_s)
+                if judged:
+                    await push_nudges(websocket, nudger, judged, at_s)
+
+    except WebSocketDisconnect:
+        pass
 
 
 @app.websocket("/ws/live")
@@ -342,6 +409,24 @@ async def speak(session: CallSession, text: str) -> str:
     return base64.b64encode(audio).decode()
 
 
+async def push_nudges(websocket: WebSocket, nudger: TurnNudger, new_nudges, at_s: float) -> None:
+    """Send freshly emitted nudges plus the current active set.
+
+    Both are sent: the new ones so the interface can announce them, the active
+    set so it can retire the ones that expired or fell outside the concurrent
+    cap. Sending only additions would let the panel grow forever, which hides
+    the suppression that is the point of the feature.
+    """
+    for nudge in new_nudges:
+        await websocket.send_json({"type": "nudge", "nudge": nudge.to_dict()})
+    await websocket.send_json({
+        "type": "nudge_sync",
+        "at_s": round(at_s, 1),
+        "active": nudger.active(),
+        "suppression": nudger.stats(),
+    })
+
+
 def turn_payload(session: CallSession, turn, audio_b64: str) -> dict:
     return {
         "type": "agent_turn",
@@ -361,6 +446,8 @@ def turn_payload(session: CallSession, turn, audio_b64: str) -> dict:
 async def websocket_endpoint(websocket: WebSocket) -> None:
     await websocket.accept()
     session: CallSession | None = None
+    nudger: TurnNudger | None = None
+    started = time.perf_counter()
 
     try:
         while True:
@@ -369,6 +456,8 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
 
             if kind == "start":
                 session = CallSession(market_key=message.get("market", "en_PH"))
+                nudger = TurnNudger(label=session.call_id)
+                started = time.perf_counter()
                 greeting = session.open()
                 await websocket.send_json({
                     "type": "call_started",
@@ -406,12 +495,20 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
                     })
                     continue
                 await websocket.send_json({"type": "caller_turn", "text": text})
+                if nudger:
+                    at_s = time.perf_counter() - started
+                    nudger.add("caller", text, at_s)
+                    await push_nudges(websocket, nudger, nudger.run_rules(at_s), at_s)
 
             elif kind == "text":
                 text = message.get("text", "").strip()
                 if not text:
                     continue
                 await websocket.send_json({"type": "caller_turn", "text": text})
+                if nudger:
+                    at_s = time.perf_counter() - started
+                    nudger.add("caller", text, at_s)
+                    await push_nudges(websocket, nudger, nudger.run_rules(at_s), at_s)
 
             elif kind == "end":
                 summary = session.summary()
@@ -433,6 +530,18 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
             # --- agent turn ---------------------------------------------------
             turn = await asyncio.to_thread(session.handle, text)
             await websocket.send_json(turn_payload(session, turn, await speak(session, turn.text)))
+
+            if nudger and turn.text:
+                at_s = time.perf_counter() - started
+                nudger.add("agent", turn.text, at_s)
+                await push_nudges(websocket, nudger, nudger.run_rules(at_s), at_s)
+
+                # The caller already has their answer, so the model judge runs
+                # after the reply has gone out and never delays the conversation.
+                if nudger.should_judge():
+                    judged = await asyncio.to_thread(nudger.run_judge, at_s)
+                    if judged:
+                        await push_nudges(websocket, nudger, judged, at_s)
 
             # A call that reached a terminal state runs its business actions
             # immediately, so an escalation is never lost to a closed tab.

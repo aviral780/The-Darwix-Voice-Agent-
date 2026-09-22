@@ -93,6 +93,37 @@ body[data-view="board"] .picker { display: none; }
   transition: gap .25s var(--ease), color .2s var(--ease);
 }
 
+.mic-card {
+  display: flex; flex-direction: column; gap: 11px;
+  width: 100%; margin-top: 14px; padding: 22px;
+  text-align: left;
+  background: var(--surface);
+  border: 1px dashed color-mix(in srgb, var(--signal) 45%, transparent);
+  border-radius: var(--r-lg);
+  transition: transform .25s var(--ease-out), background .25s var(--ease), border-color .25s var(--ease);
+  opacity: 0; animation: cardIn .55s var(--ease-out) .28s forwards;
+}
+.mic-card:hover { transform: translateY(-3px); background: var(--surface-2); border-color: var(--signal); }
+.mic-card:hover .scenario-go { color: var(--signal); gap: 10px; }
+.mic-card h2 { font-family: var(--font-display); font-size: var(--step-2); font-weight: 600; letter-spacing: -.02em; margin: 0; }
+.mic-card .why { max-width: 62ch; }
+.scenario-tag.live { color: var(--signal); }
+
+.mic-composer { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line-soft); }
+
+.role-switch {
+  display: inline-flex; gap: 3px; padding: 3px; margin-bottom: 14px;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px;
+}
+.role-switch button {
+  padding: 7px 16px; border-radius: 999px;
+  font-size: var(--step--1); color: var(--text-dim);
+  transition: background .2s var(--ease), color .2s var(--ease);
+}
+.role-switch button[aria-pressed="true"] { background: var(--raised); box-shadow: var(--shadow-1); }
+#roleAgent[aria-pressed="true"]  { color: var(--signal); }
+#roleCaller[aria-pressed="true"] { color: var(--cool); }
+
 /* ── board ─────────────────────────────────────────────────────────── */
 
 .board {
@@ -153,52 +184,8 @@ body[data-view="board"] .picker { display: none; }
 
 .stream-empty { margin: auto; text-align: center; color: var(--text-faint); max-width: 36ch; }
 
-/* ── nudges ────────────────────────────────────────────────────────── */
-
-.nudge-card { min-height: 190px; }
-.nudges { display: flex; flex-direction: column; gap: 10px; }
-
-.nudge {
-  position: relative;
-  padding: 13px 14px 12px;
-  border-radius: var(--r-md);
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--text-faint);
-  animation: nudgeIn .42s var(--ease-out);
-  transition: opacity .4s var(--ease), transform .4s var(--ease);
-}
-@keyframes nudgeIn {
-  0%   { opacity: 0; transform: translateX(16px) scale(.97); }
-  60%  { opacity: 1; }
-  100% { opacity: 1; transform: none; }
-}
-.nudge.leaving { opacity: 0; transform: translateX(10px); }
-
-.nudge[data-type="compliance_gap"],
-.nudge[data-type="risky_statement"] { border-left-color: var(--alert); background: var(--alert-bg); }
-.nudge[data-type="rising_frustration"] { border-left-color: var(--caution); background: var(--caution-bg); }
-.nudge[data-type="buying_signal"],
-.nudge[data-type="missed_cross_sell"] { border-left-color: var(--verified); background: var(--verified-bg); }
-.nudge[data-type="payment_difficulty"],
-.nudge[data-type="callback_needed"] { border-left-color: var(--cool); background: var(--cool-bg); }
-
-.nudge-top {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  font-family: var(--font-mono);
-  font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--text-dim);
-  margin-bottom: 7px;
-}
-.nudge-prio { color: var(--text-faint); }
-.nudge-text { font-size: var(--step-0); line-height: 1.45; }
-.nudge-meta {
-  margin-top: 9px; padding-top: 8px;
-  border-top: 1px solid var(--line-soft);
-  font-family: var(--font-mono); font-size: 10px; color: var(--text-faint);
-  display: flex; flex-wrap: wrap; gap: 9px;
-}
-.nudge-meta em { font-style: normal; color: var(--text-dim); }
+/* Nudge styling is shared; see theme.css. */
+.nudge-card { min-height: 180px; }
 
 /* Suppression gauge: the number worth looking at is what did NOT fire. */
 .gauge { margin-bottom: 14px; }
@@ -241,3 +228,63 @@ body[data-view="board"] .picker { display: none; }
   .picker-head h1 { font-size: var(--step-3); }
   .navlink { display: none; }
 }
+
+
+/* The mic control and meter are the call console's; imported here so the two
+ * surfaces behave and look identical rather than drifting apart. */
+.composer { display: flex; align-items: center; gap: 16px; }
+.mic {
+  position: relative; flex: 0 0 auto; width: 84px; height: 84px;
+  display: grid; place-items: center; border-radius: 50%;
+  color: var(--text-dim);
+  transition: color .25s var(--ease);
+}
+.mic:disabled { opacity: .35; cursor: not-allowed; }
+.mic:not(:disabled):hover { color: var(--text); }
+.mic-glyph { position: relative; z-index: 1; display: grid; place-items: center; }
+.mic-glyph svg { width: 26px; height: 26px; }
+.mic-ring { position: absolute; inset: 0; width: 84px; height: 84px; transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: var(--line); stroke-width: 3; }
+.ring-level {
+  fill: none; stroke: var(--signal); stroke-width: 3; stroke-linecap: round;
+  stroke-dasharray: 239; stroke-dashoffset: 239;
+  transition: stroke-dashoffset .08s linear;
+}
+.mic[data-state="recording"] { color: var(--signal); }
+.mic[data-state="recording"] .mic-glyph::after {
+  content: ""; position: absolute; inset: -14px; border-radius: 50%;
+  background: var(--signal); opacity: .14;
+  animation: breathe 1.6s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100% { transform: scale(.82); opacity: .1 } 50% { transform: scale(1.08); opacity: .2 } }
+.mic[data-state="sending"] { color: var(--caution); }
+
+.composer-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 9px; }
+.mic-status { font-size: var(--step--1); color: var(--text-dim); min-height: 18px; }
+.mic-status[data-tone="live"] { color: var(--signal); }
+.mic-status[data-tone="ok"]   { color: var(--verified); }
+.mic-status[data-tone="warn"] { color: var(--caution); }
+
+.meter { display: flex; align-items: flex-end; gap: 3px; height: 22px; }
+.meter span { flex: 1; height: 3px; border-radius: 2px; background: var(--line); transition: height .07s linear, background .15s var(--ease); }
+.meter.active span { background: var(--signal-dim); }
+
+.text-row { display: flex; gap: 8px; }
+#liveText {
+  flex: 1; min-width: 0; padding: 11px 14px; border-radius: var(--r-md);
+  background: var(--surface-2); border: 1px solid var(--line);
+  transition: border-color .2s var(--ease);
+}
+#liveText::placeholder { color: var(--text-faint); }
+#liveText:focus { outline: none; border-color: var(--signal); }
+.send {
+  flex: 0 0 auto; width: 42px; display: grid; place-items: center;
+  border-radius: var(--r-md); background: var(--surface-2);
+  border: 1px solid var(--line); color: var(--text-faint);
+  transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+}
+.send svg { width: 17px; height: 17px; }
+.send:not(:disabled) { color: var(--signal); border-color: color-mix(in srgb, var(--signal) 40%, transparent); }
+.send:not(:disabled):hover { background: var(--signal); color: #14100C; border-color: var(--signal); }
+.send:disabled { opacity: .45; cursor: not-allowed; }
+.composer-hint { margin: 12px 0 0; font-size: var(--step--1); color: var(--text-faint); }

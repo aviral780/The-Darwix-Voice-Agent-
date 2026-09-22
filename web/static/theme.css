@@ -263,3 +263,58 @@ button { cursor: pointer; border: none; background: none; }
 }
 
 .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+
+/* ── nudges ────────────────────────────────────────────────────────────
+ * Shared by the call console and the live insights board so a nudge looks
+ * the same wherever it appears. Colour is by signal type and matches the
+ * meaning it carries everywhere else: rose for a compliance problem, amber
+ * for caution, teal for an opening worth taking.
+ */
+
+.nudges { display: flex; flex-direction: column; gap: 10px; }
+
+.nudge {
+  position: relative;
+  padding: 12px 13px 11px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--text-faint);
+  animation: nudgeIn .42s var(--ease-out);
+  transition: opacity .4s var(--ease), transform .4s var(--ease);
+}
+@keyframes nudgeIn {
+  0%   { opacity: 0; transform: translateX(14px) scale(.97); }
+  100% { opacity: 1; transform: none; }
+}
+.nudge.leaving { opacity: 0; transform: translateX(10px); }
+
+.nudge[data-type="compliance_gap"],
+.nudge[data-type="risky_statement"]   { border-left-color: var(--alert);    background: var(--alert-bg); }
+.nudge[data-type="rising_frustration"]{ border-left-color: var(--caution);  background: var(--caution-bg); }
+.nudge[data-type="buying_signal"],
+.nudge[data-type="missed_cross_sell"] { border-left-color: var(--verified); background: var(--verified-bg); }
+.nudge[data-type="payment_difficulty"],
+.nudge[data-type="callback_needed"]   { border-left-color: var(--cool);     background: var(--cool-bg); }
+
+.nudge-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 6px;
+}
+.nudge-prio { color: var(--text-faint); }
+.nudge-text { font-size: var(--step-0); line-height: 1.45; }
+.nudge-meta {
+  margin-top: 8px; padding-top: 7px;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-faint);
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.nudge-meta em { font-style: normal; color: var(--text-dim); }
+
+.supp-chip {
+  float: right; font-size: 10px; letter-spacing: .04em;
+  color: var(--text-faint); text-transform: none;
+}

@@ -64,12 +64,21 @@ model loads.
 
 | Page | What it is |
 |---|---|
-| `/` | **Call console.** Pick a market, talk to the agent. |
+| `/` | **Call console.** Pick a market, talk to the agent. Live coaching runs alongside the call. |
 | `/kb` | **Knowledge base explorer.** Type a question, watch both gates decide. |
-| `/live` | **Live insights.** Play a call, watch nudges appear mid-call. |
+| `/live` | **Live insights.** Play a recorded call, or speak into it yourself. |
 
 On the call console, click the mic and talk. It sends when you stop speaking.
 If your microphone is awkward, type instead — same engine either way.
+
+The nudge engine runs on the live call too, in the panel on the right. Say
+*"my wife and two kids depend on me"* and a cross-sell nudge appears while you
+are still talking.
+
+On `/live` you can also skip the recordings and use your own voice. Pick whether
+you are speaking as the agent or the customer, because the detectors are
+asymmetric: a missing disclosure only counts against the agent, and a mention of
+a spouse is only an opening when the customer says it.
 
 Two things worth trying on the call console:
 
@@ -96,9 +105,12 @@ product names people say verbatim.
 different config file. The Indonesian bot reads from its own corpus because it is
 a different sector — multifinance, not insurance.
 
-**Q4 — Live nudges.** Audio in four-second chunks at real playback speed. Rules
-catch what is deterministic (a missing disclosure), the model judges what is not
-(whether someone is getting frustrated). Nudges appear in about 600 ms.
+**Q4 — Live nudges.** Two ways in. Recorded calls stream in four-second chunks at
+real playback speed with speakers split by stereo channel. A live call feeds the
+same detectors turn by turn, where attribution is exact because the agent's words
+are generated here and the caller's come back already labelled. Rules catch what
+is deterministic (a missing disclosure), the model judges what is not (whether
+someone is getting frustrated).
 
 ---
 
