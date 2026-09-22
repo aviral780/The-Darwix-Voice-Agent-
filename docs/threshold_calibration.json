@@ -7,23 +7,27 @@
       "in_scope": [
         {
           "query": "What happens if I miss a premium payment?",
-          "score": 0.591
+          "score": 0.589
+        },
+        {
+          "query": "Sorry, can I just ask what happens if I miss a payment please?",
+          "score": 0.59
         },
         {
           "query": "How long does it take to process a claim?",
-          "score": 0.529
+          "score": 0.527
         },
         {
           "query": "Can I pay my premium through GCash?",
-          "score": 0.614
+          "score": 0.611
         },
         {
           "query": "What investment funds can I choose from for a PRULink policy?",
-          "score": 0.774
+          "score": 0.767
         },
         {
           "query": "Does the health plan cover critical illness diagnosis?",
-          "score": 0.665
+          "score": 0.672
         },
         {
           "query": "What documents do I need to file a death claim?",
@@ -33,23 +37,23 @@
       "out_of_scope": [
         {
           "query": "How do I file a car insurance claim for a windscreen crack in Germany?",
-          "score": 0.484
+          "score": 0.492
         },
         {
           "query": "What is the interest rate on a personal loan at a bank in Jakarta?",
-          "score": 0.56
+          "score": 0.567
         },
         {
           "query": "Can you tell me tomorrow's weather in Cebu?",
           "score": 0.568
         }
       ],
-      "in_scope_min": 0.529,
-      "in_scope_median": 0.64,
+      "in_scope_min": 0.527,
+      "in_scope_median": 0.611,
       "out_of_scope_max": 0.568,
       "separable": false,
-      "current": 0.5,
-      "suggested": 0.499,
+      "current": 0.499,
+      "suggested": 0.497,
       "would_refuse_in_scope": [],
       "would_answer_out_of_scope": [
         "What is the interest rate on a personal loan at a bank in Jakarta?",
@@ -61,54 +65,63 @@
       "in_scope": [
         {
           "query": "Bagaimana cara mengajukan pembiayaan motor?",
-          "score": 0.573
+          "score": 0.563
         },
         {
           "query": "Berapa plafond pinjaman DANASTRA?",
-          "score": 0.539
+          "score": 0.556
         },
         {
           "query": "Apa itu AMITRA?",
-          "score": 0.413
+          "score": 0.483
         },
         {
           "query": "Apa saja syarat pengajuan pembiayaan?",
-          "score": 0.561
+          "score": 0.495
         },
         {
           "query": "Berapa lama tenor pembiayaan yang tersedia?",
-          "score": 0.533
+          "score": 0.502
         },
         {
           "query": "Dokumen apa yang dibutuhkan untuk pengajuan?",
-          "score": 0.576
+          "score": 0.575
+        },
+        {
+          "query": "Mbak, apa itu AMITRA ya?",
+          "score": 0.488
+        },
+        {
+          "query": "Pak, kena denda berapa ya kalau telat bayar cicilan?",
+          "score": 0.467
+        },
+        {
+          "query": "Bu, tenor pembiayaan itu berapa lama sih?",
+          "score": 0.454
         }
       ],
       "out_of_scope": [
         {
           "query": "Bagaimana cara klaim asuransi jiwa di Filipina?",
-          "score": 0.447
+          "score": 0.41
         },
         {
           "query": "Berapa harga tiket pesawat ke Bali besok?",
-          "score": 0.35
+          "score": 0.337
         },
         {
           "query": "Siapa presiden Indonesia saat ini?",
-          "score": 0.386
+          "score": 0.416
         }
       ],
-      "in_scope_min": 0.413,
-      "in_scope_median": 0.55,
-      "out_of_scope_max": 0.447,
-      "separable": false,
-      "current": 0.38,
-      "suggested": 0.383,
+      "in_scope_min": 0.454,
+      "in_scope_median": 0.495,
+      "out_of_scope_max": 0.416,
+      "separable": true,
+      "current": 0.438,
+      "suggested": 0.424,
       "would_refuse_in_scope": [],
-      "would_answer_out_of_scope": [
-        "Bagaimana cara klaim asuransi jiwa di Filipina?",
-        "Siapa presiden Indonesia saat ini?"
-      ]
+      "would_answer_out_of_scope": []
     }
   }
 }

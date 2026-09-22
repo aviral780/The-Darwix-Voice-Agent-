@@ -98,10 +98,18 @@ SOURCES: dict[str, Source] = {
             ("hubungi-kami", "customer_support"),
             ("karir", "careers"),
         ],
-        # Derived the same way: weakest in-scope query 0.413. The gap from the
+        # Derived the same way: weakest in-scope query 0.454, including colloquial phrasings. The gap from the
         # Philippine corpus's 0.499 is the point - one global threshold would have
         # refused fair Indonesian questions outright.
-        min_retrieval_score=0.383,
+        #
+        # This corpus separates cleanly by score (in-scope 0.468 against
+        # out-of-scope 0.409) where the Philippine one does not. That is a
+        # consequence of size and focus rather than of better retrieval: 169
+        # chunks on one sector share little vocabulary with an off-topic
+        # question, while 814 chunks spanning products, claims, payments and
+        # financial education overlap with almost anything. The generation gate
+        # still applies here; a separable corpus today is not one tomorrow.
+        min_retrieval_score=0.424,
     ),
 }
 

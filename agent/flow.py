@@ -303,6 +303,7 @@ class CallSession:
             recorder=self.recorder,
             source_key=self.market.kb_source,
             answer_language=self.market.language_name,
+            query_fillers=self.market.query_fillers,
         )
 
         if answer.refused:

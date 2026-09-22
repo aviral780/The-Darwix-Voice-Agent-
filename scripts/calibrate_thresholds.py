@@ -27,6 +27,7 @@ EVAL_SETS: dict[str, dict] = {
     "prulife_ph": {
         "in_scope": [
             "What happens if I miss a premium payment?",
+            "Sorry, can I just ask what happens if I miss a payment please?",
             "How long does it take to process a claim?",
             "Can I pay my premium through GCash?",
             "What investment funds can I choose from for a PRULink policy?",
@@ -47,6 +48,14 @@ EVAL_SETS: dict[str, dict] = {
             "Apa saja syarat pengajuan pembiayaan?",
             "Berapa lama tenor pembiayaan yang tersedia?",
             "Dokumen apa yang dibutuhkan untuk pengajuan?",
+            # Colloquial phrasings. The first calibration used clean queries only
+            # and missed that vocatives alone move a query below the gate:
+            # "Apa itu AMITRA?" scored 0.507 and "Apa itu AMITRA ya Mbak?" 0.435,
+            # retrieving a different product. Callers always speak the second way,
+            # so the eval set has to.
+            "Mbak, apa itu AMITRA ya?",
+            "Pak, kena denda berapa ya kalau telat bayar cicilan?",
+            "Bu, tenor pembiayaan itu berapa lama sih?",
         ],
         "out_of_scope": [
             "Bagaimana cara klaim asuransi jiwa di Filipina?",
@@ -61,13 +70,13 @@ EVAL_SETS: dict[str, dict] = {
 MARGIN = 0.03
 
 
-def calibrate(source_key: str, queries: dict) -> dict:
+def calibrate(source_key: str, queries: dict, fillers: list[str] | None = None) -> dict:
     retriever = get_retriever(source_key)
 
     def top_scores(items: list[str]) -> list[tuple[str, float]]:
         out = []
         for q in items:
-            results = retriever.search(q, top_k=4)
+            results = retriever.search(q, top_k=4, fillers=fillers)
             out.append((q, results[0].score if results else 0.0))
         return out
 
@@ -95,8 +104,14 @@ def calibrate(source_key: str, queries: dict) -> dict:
 
 def run() -> dict:
     report = {"generated_at": date.today().isoformat(), "margin": MARGIN, "sources": {}}
+    # Calibration must use the same query normalisation the agent uses, or the
+    # thresholds are derived from inputs the system never actually sees.
+    from core.config import MarketConfig
+    fillers_for = {"prulife_ph": MarketConfig.load("en_PH").query_fillers,
+                   "fifgroup_id": MarketConfig.load("id_ID").query_fillers}
+
     for key, queries in EVAL_SETS.items():
-        result = calibrate(key, queries)
+        result = calibrate(key, queries, fillers_for.get(key))
         report["sources"][key] = result
         print(f"\n=== {key}")
         print(f"  in-scope  min {result['in_scope_min']}  median {result['in_scope_median']}")

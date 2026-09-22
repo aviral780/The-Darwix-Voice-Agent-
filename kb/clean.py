@@ -48,7 +48,8 @@ SIMHASH_BITS = 64
 SIMHASH_DISTANCE = 4                # <= this Hamming distance counts as near-duplicate
 SHINGLE_SIZE = 4
 
-MIN_CONTENT_WORDS = 40              # below this a page carries no answerable information
+MIN_CONTENT_WORDS = 40
+HEADING_LINE = re.compile(r"^#{1,4}\s+\S")              # below this a page carries no answerable information
 
 # Categories that are legitimate pages but do not belong in a qualification
 # knowledge base. Kept through extraction so the report can show them being
@@ -331,12 +332,27 @@ def normalise_heading(title: str) -> str:
 # --- boilerplate ------------------------------------------------------------
 
 def find_boilerplate(bodies: list[str]) -> set[str]:
-    """Lines repeating across a large share of pages are site furniture."""
+    """Lines repeating across a large share of pages are site furniture.
+
+    Headings are exempt. Page-frequency is a good proxy for chrome on a
+    server-rendered site, but it breaks on a client-rendered one that ships the
+    same state payload to every page: there, real content appears on every page
+    by construction. On the Indonesian source this stripped the heading "Apa Itu
+    AMITRA?" from the only chunk that defines AMITRA, which then lost the term
+    from its embedding text and stopped ranking for a question naming it - while
+    the answer sat in the index the whole time.
+
+    A heading is content. Navigation is already removed by subtree at extraction,
+    so nothing that reaches here as a heading is chrome.
+    """
     if not bodies:
         return set()
     counts: Counter[str] = Counter()
     for body in bodies:
-        seen = {ln.strip() for ln in body.split("\n") if ln.strip()}
+        seen = {
+            ln.strip() for ln in body.split("\n")
+            if ln.strip() and not HEADING_LINE.match(ln.strip())
+        }
         counts.update(seen)
     threshold = max(2, int(len(bodies) * BOILERPLATE_PAGE_RATIO))
     return {

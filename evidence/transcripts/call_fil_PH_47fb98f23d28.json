@@ -1,0 +1,186 @@
+{
+  "call_id": "47fb98f23d28",
+  "market": "fil_PH",
+  "started_at": "2026-09-22T07:59:41.515170+00:00",
+  "ended_at": "2026-09-22T07:59:53.495123+00:00",
+  "final_state": "answering",
+  "slots": {
+    "name": "Ana"
+  },
+  "slots_filled": 1,
+  "slots_total": 6,
+  "objections_raised": [],
+  "skipped_slots": [],
+  "slot_attempts": {},
+  "escalated": false,
+  "escalation_reason": "",
+  "grounded_answers": 1,
+  "answers_with_stated_citation": 0,
+  "refusals": 0,
+  "turns": [
+    {
+      "index": 0,
+      "speaker": "agent",
+      "text": "Magandang araw po! Si Maya po ito from Pru Life UK. Tumatawag po ako tungkol sa inyong life insurance coverage. May two to three minutes po ba kayo?",
+      "state": "greeting",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:41.519143+00:00"
+    },
+    {
+      "index": 1,
+      "speaker": "caller",
+      "text": "Opo.",
+      "state": "greeting",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:42.571960+00:00"
+    },
+    {
+      "index": 2,
+      "speaker": "agent",
+      "text": "Sino po ang kausap ko?",
+      "state": "qualifying",
+      "intent": "agree",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:42.871170+00:00"
+    },
+    {
+      "index": 3,
+      "speaker": "caller",
+      "text": "Si Ana po.",
+      "state": "qualifying",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:43.913176+00:00"
+    },
+    {
+      "index": 4,
+      "speaker": "agent",
+      "text": "Pwede po bang malaman kung anong age bracket kayo? Twenties, thirties, forties, o mas matanda po?",
+      "state": "qualifying",
+      "intent": "answer",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "name",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:44.253181+00:00"
+    },
+    {
+      "index": 5,
+      "speaker": "caller",
+      "text": "Ano po ang mangyayari kung hindi ko mabayaran ang premium?",
+      "state": "qualifying",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:45.889332+00:00"
+    },
+    {
+      "index": 6,
+      "speaker": "agent",
+      "text": "Depende po sa type ng policy mo. Kung traditional plan, at may cash value na, gagamitin ang Non-Forfeiture Option para manatibay ang coverage kahit hindi bayaran ang premium. Kung wala naman itong cash value, lalaps ang policy pagkatapos ng 31-day grace period. Pwede po bang malaman kung anong age bracket kayo? Twenties, thirties, forties, o mas matanda po?",
+      "state": "answering",
+      "intent": "question",
+      "citations": [],
+      "retrieved_ids": [
+        "kb_payments_050_c25",
+        "kb_services_058_c02",
+        "kb_services_057_c02",
+        "kb_services_057_c01",
+        "kb_payments_050_c30",
+        "kb_payments_050_c03",
+        "kb_payments_050_c04",
+        "kb_product_life_005_c16"
+      ],
+      "grounded": true,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:47.156671+00:00"
+    }
+  ],
+  "latency": {
+    "tts": {
+      "count": 4,
+      "p50_ms": 1333.6,
+      "p95_ms": 5610.5,
+      "min_ms": 1037.2,
+      "max_ms": 6313.5,
+      "mean_ms": 2504.5
+    },
+    "classify": {
+      "count": 3,
+      "p50_ms": 327.3,
+      "p95_ms": 338.6,
+      "min_ms": 298.9,
+      "max_ms": 339.9,
+      "mean_ms": 322.0
+    },
+    "turn": {
+      "count": 3,
+      "p50_ms": 340.0,
+      "p95_ms": 1174.7,
+      "min_ms": 299.3,
+      "max_ms": 1267.4,
+      "mean_ms": 635.6
+    },
+    "query_translate": {
+      "count": 1,
+      "p50_ms": 311.3,
+      "p95_ms": 311.3,
+      "min_ms": 311.3,
+      "max_ms": 311.3,
+      "mean_ms": 311.3
+    },
+    "retrieval": {
+      "count": 2,
+      "p50_ms": 44.3,
+      "p95_ms": 60.8,
+      "min_ms": 26.0,
+      "max_ms": 62.6,
+      "mean_ms": 44.3
+    },
+    "generation": {
+      "count": 1,
+      "p50_ms": 516.0,
+      "p95_ms": 516.0,
+      "min_ms": 516.0,
+      "max_ms": 516.0,
+      "mean_ms": 516.0
+    }
+  }
+}

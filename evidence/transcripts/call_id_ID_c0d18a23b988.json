@@ -1,0 +1,180 @@
+{
+  "call_id": "c0d18a23b988",
+  "market": "id_ID",
+  "started_at": "2026-09-22T07:59:09.700132+00:00",
+  "ended_at": "2026-09-22T07:59:29.923125+00:00",
+  "final_state": "answering",
+  "slots": {
+    "name": "Budi"
+  },
+  "slots_filled": 1,
+  "slots_total": 6,
+  "objections_raised": [],
+  "skipped_slots": [],
+  "slot_attempts": {},
+  "escalated": false,
+  "escalation_reason": "",
+  "grounded_answers": 1,
+  "answers_with_stated_citation": 1,
+  "refusals": 0,
+  "turns": [
+    {
+      "index": 0,
+      "speaker": "agent",
+      "text": "Selamat pagi, Bapak atau Ibu. Saya Sari dari FIFGROUP. Mohon maaf mengganggu waktunya. Saya menghubungi terkait angsuran yang akan jatuh tempo. Apakah ada waktu sebentar?",
+      "state": "greeting",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:09.704386+00:00"
+    },
+    {
+      "index": 1,
+      "speaker": "caller",
+      "text": "Iya Mbak.",
+      "state": "greeting",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:13.990897+00:00"
+    },
+    {
+      "index": 2,
+      "speaker": "agent",
+      "text": "Mohon maaf, dengan Bapak atau Ibu siapa saya berbicara?",
+      "state": "qualifying",
+      "intent": "agree",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:14.317835+00:00"
+    },
+    {
+      "index": 3,
+      "speaker": "caller",
+      "text": "Saya Budi.",
+      "state": "qualifying",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:15.497936+00:00"
+    },
+    {
+      "index": 4,
+      "speaker": "agent",
+      "text": "Apakah Bapak atau Ibu sudah menerima informasi mengenai angsuran yang akan jatuh tempo?",
+      "state": "qualifying",
+      "intent": "answer",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "name",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:15.747712+00:00"
+    },
+    {
+      "index": 5,
+      "speaker": "caller",
+      "text": "Apa itu AMITRA ya Mbak?",
+      "state": "qualifying",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:19.731655+00:00"
+    },
+    {
+      "index": 6,
+      "speaker": "agent",
+      "text": "Halo, Bapak/Ibu. AMITRA adalah jasa layanan pembiayaan syariah dari FIFGROUP. Produk unggulannya meliputi Haji Plus, Haji Regular, dan Paket Umroh. Layanan ini juga berlaku untuk pembiayaan syariah dari produk lainnya. Apakah Bapak atau Ibu sudah menerima informasi mengenai angsuran yang akan jatuh tempo?",
+      "state": "answering",
+      "intent": "question",
+      "citations": [
+        "kb_faq_013_c00"
+      ],
+      "retrieved_ids": [
+        "kb_faq_013_c00",
+        "kb_product_sharia_002_c70",
+        "kb_product_loan_010_c29",
+        "kb_product_loan_010_c30",
+        "kb_product_loan_010_c28",
+        "kb_company_009_c03",
+        "kb_product_sharia_002_c45",
+        "kb_product_loan_010_c03"
+      ],
+      "grounded": true,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T07:59:20.367075+00:00"
+    }
+  ],
+  "latency": {
+    "tts": {
+      "count": 4,
+      "p50_ms": 4126.1,
+      "p95_ms": 8751.2,
+      "min_ms": 1172.6,
+      "max_ms": 9540.9,
+      "mean_ms": 4741.4
+    },
+    "classify": {
+      "count": 3,
+      "p50_ms": 249.5,
+      "p95_ms": 318.9,
+      "min_ms": 233.0,
+      "max_ms": 326.6,
+      "mean_ms": 269.7
+    },
+    "turn": {
+      "count": 3,
+      "p50_ms": 327.0,
+      "p95_ms": 604.6,
+      "min_ms": 249.9,
+      "max_ms": 635.5,
+      "mean_ms": 404.1
+    },
+    "retrieval": {
+      "count": 1,
+      "p50_ms": 33.3,
+      "p95_ms": 33.3,
+      "min_ms": 33.3,
+      "max_ms": 33.3,
+      "mean_ms": 33.3
+    },
+    "generation": {
+      "count": 1,
+      "p50_ms": 355.8,
+      "p95_ms": 355.8,
+      "min_ms": 355.8,
+      "max_ms": 355.8,
+      "mean_ms": 355.8
+    }
+  }
+}

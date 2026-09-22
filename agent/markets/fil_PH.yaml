@@ -121,3 +121,26 @@ skip_line: >-
 
 declined_line: >-
   Walang problema po, salamat po sa pagsabi. Magandang araw po sa inyo!
+
+# Vocatives and discourse particles stripped from retrieval queries only.
+# They are essential in speech and noise in a search.
+query_fillers:
+  - "po"
+  - "opo"
+  - "ho"
+  - "naman"
+  - "ba"
+  - "kasi"
+  - "talaga"
+  - "yung"
+  - "yun"
+  - "sana"
+  - "nga"
+  - "lang"
+  - "daw"
+  - "raw"
+  - "pala"
+  - "kaya"
+  - "eh"
+  - "ay"
+  - "naku"

@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-09-22T07:06:55.614867+00:00",
+  "generated_at": "2026-09-22T07:54:40.324332+00:00",
   "source": "https://fifgroup.co.id",
   "source_key": "fifgroup_id",
   "stages": {
     "fetched": 24,
     "fetch_failures": 0,
     "extracted": 24,
-    "boilerplate_lines_identified": 27,
-    "boilerplate_lines_removed": 416,
+    "boilerplate_lines_identified": 16,
+    "boilerplate_lines_removed": 240,
     "dates_normalised": 0,
     "pii_records_flagged": 1,
     "pii_types_seen": [
@@ -102,14 +102,14 @@
         "record_id": "kb_product_goods_022",
         "source_url": "https://fifgroup.co.id/spektra",
         "duplicate_of": "kb_product_loan_010",
-        "hamming_distance": 2,
+        "hamming_distance": 3,
         "reason": "near-duplicate"
       },
       {
         "record_id": "kb_product_services_016",
         "source_url": "https://fifgroup.co.id/fgc",
         "duplicate_of": "kb_product_loan_010",
-        "hamming_distance": 2,
+        "hamming_distance": 3,
         "reason": "near-duplicate"
       },
       {

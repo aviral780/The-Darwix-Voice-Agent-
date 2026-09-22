@@ -115,3 +115,15 @@ skip_line: >-
 
 declined_line: >-
   No problem at all, I appreciate you letting me know. Have a good day!
+
+# Vocatives and discourse particles stripped from retrieval queries only.
+# They are essential in speech and noise in a search.
+query_fillers:
+  - "please"
+  - "sir"
+  - "maam"
+  - "ma'am"
+  - "kindly"
+  - "just"
+  - "actually"
+  - "like"

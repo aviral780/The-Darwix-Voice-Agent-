@@ -115,15 +115,18 @@ def answer_question(
     recorder: LatencyRecorder | None = None,
     source_key: str = "prulife_ph",
     answer_language: str = "",
+    query_fillers: list[str] | None = None,
 ) -> Answer:
     retriever = get_retriever(source_key)
     corpus_language = CORPUS_LANGUAGE.get(source_key, "English")
 
     if answer_language and not answer_language.lower().startswith(corpus_language.lower()[:4]):
         results = retriever.search_cross_lingual(
-            question, corpus_language, top_k=top_k, recorder=recorder)
+            question, corpus_language, top_k=top_k, recorder=recorder,
+            fillers=query_fillers)
     else:
-        results = retriever.search(question, top_k=top_k, recorder=recorder)
+        results = retriever.search(question, top_k=top_k, recorder=recorder,
+                                   fillers=query_fillers)
 
     # Gate 1: retrieval confidence.
     if not retriever.is_answerable(results):

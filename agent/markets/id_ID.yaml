@@ -124,3 +124,26 @@ skip_line: >-
 
 declined_line: >-
   Baik, tidak masalah. Terima kasih sudah memberi tahu. Selamat beraktivitas.
+
+# Vocatives and discourse particles stripped from retrieval queries only.
+# They are essential in speech and noise in a search.
+query_fillers:
+  - "mbak"
+  - "mas"
+  - "pak"
+  - "bu"
+  - "bapak"
+  - "ibu"
+  - "ya"
+  - "yah"
+  - "dong"
+  - "sih"
+  - "deh"
+  - "kok"
+  - "nih"
+  - "kan"
+  - "tolong"
+  - "mohon"
+  - "maaf"
+  - "saja"
+  - "aja"

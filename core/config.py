@@ -111,6 +111,12 @@ class MarketConfig:
     # refusal. The brief names unexpected English switching as a failure, and a
     # caller who has spoken Bahasa for four turns being answered in English at
     # the handover is the clearest possible version of it.
+    # Politeness and discourse markers that are essential in speech but noise in
+    # a retrieval query. "Apa itu AMITRA?" retrieves the right chunk at 0.507;
+    # "Apa itu AMITRA ya Mbak?" scores 0.435 and retrieves a different product
+    # entirely, because the vocative dilutes BM25 and shifts the embedding. Real
+    # callers always speak the second way.
+    query_fillers: list[str] = field(default_factory=list)
     escalation_line: str = ""
     objection_ack: str = ""
     skip_line: str = ""

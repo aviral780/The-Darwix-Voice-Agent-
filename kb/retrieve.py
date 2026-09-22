@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import pickle
+import re
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -32,6 +33,23 @@ from core.timing import LatencyRecorder
 # Saturation constant for BM25. Set so that a typical strong lexical match on
 # this corpus lands near 0.6-0.8 rather than saturating immediately.
 BM25_SATURATION = 6.0
+
+
+def normalise_query(query: str, fillers: list[str]) -> str:
+    """Strip vocatives and discourse particles before retrieval.
+
+    These carry real meaning in conversation and none in a search. Removing them
+    is safe because they are matched as whole tokens against a curated per-market
+    list, and the original text is what the model still answers; only the string
+    used to find passages is trimmed. If stripping would empty the query, the
+    original is used.
+    """
+    if not fillers:
+        return query
+    pattern = r"\b(?:" + "|".join(re.escape(f) for f in fillers) + r")\b"
+    trimmed = re.sub(pattern, " ", query, flags=re.I)
+    trimmed = re.sub(r"\s+", " ", trimmed).strip(" ,.?!")
+    return trimmed if len(trimmed.split()) >= 2 else query
 
 
 @dataclass
@@ -88,8 +106,10 @@ class Retriever:
         top_k: int | None = None,
         category: str | None = None,
         recorder: LatencyRecorder | None = None,
+        fillers: list[str] | None = None,
     ) -> list[Result]:
         top_k = top_k or config.TOP_K
+        query = normalise_query(query, fillers or [])
 
         def _run() -> list[Result]:
             from kb.build_index import embed_query, tokenize
@@ -129,6 +149,7 @@ class Retriever:
         corpus_language: str,
         top_k: int | None = None,
         recorder: LatencyRecorder | None = None,
+        fillers: list[str] | None = None,
     ) -> list[Result]:
         """Search a corpus written in a different language from the question.
 
@@ -170,7 +191,7 @@ class Retriever:
 
         merged: dict[str, Result] = {}
         for variant in filter(None, [query, translated]):
-            for result in self.search(variant, top_k=top_k, recorder=recorder):
+            for result in self.search(variant, top_k=top_k, recorder=recorder, fillers=fillers):
                 existing = merged.get(result.chunk["chunk_id"])
                 if existing is None or result.score > existing.score:
                     merged[result.chunk["chunk_id"]] = result
