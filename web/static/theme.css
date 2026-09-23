@@ -152,6 +152,23 @@ button { cursor: pointer; border: none; background: none; }
   z-index: 40;
 }
 
+/* Sits before .brand, hidden on the landing view and shown once inside a call
+ * or a run. Leaving is a lighter action than "End call" - it does not wait for
+ * a summary sheet - so it gets its own always-visible control at the one
+ * place people already look to orient themselves, rather than living only in
+ * a page-specific button on the right. */
+.back-btn {
+  display: grid;
+  place-items: center;
+  width: 30px; height: 30px;
+  margin-right: 4px;
+  border-radius: var(--r-sm);
+  color: var(--text-dim);
+  transition: color .2s var(--ease), background .2s var(--ease);
+}
+.back-btn svg { width: 17px; height: 17px; }
+.back-btn:hover { color: var(--signal); background: var(--surface-2); }
+
 .brand {
   display: flex;
   align-items: center;

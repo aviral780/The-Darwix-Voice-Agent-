@@ -12,7 +12,7 @@ const ui = {
   picker: el("picker"), grid: el("marketGrid"), console: el("console"),
   stream: el("stream"), mic: el("mic"), ring: el("ringLevel"), meter: el("meter"),
   micStatus: el("micStatus"), text: el("textInput"),
-  lamp: el("lamp"), clock: el("clock"), end: el("endCall"), brand: el("brandContext"),
+  lamp: el("lamp"), clock: el("clock"), end: el("endCall"), back: el("backBtn"), brand: el("brandContext"),
   slots: el("slots"), sources: el("sources"),
   nudges: el("nudges"), suppChip: el("suppChip"),
   send: el("send"),
@@ -214,6 +214,7 @@ function beginCall(market) {
   ui.brand.textContent = market.display_name;
   ui.body.dataset.view = "call";
   ui.console.hidden = false;
+  ui.back.hidden = false;
   ui.stream.innerHTML = `<p class="stream-empty">Connecting…</p>`;
   ui.sources.innerHTML = `<p class="empty-note">Every factual answer is retrieved and cited. Sources appear here as the agent uses them.</p>`;
   ui.nudges.innerHTML = `<p class="empty-note">Signals from this call appear here as it runs — the same engine as Live insights, watching in real time.</p>`;
@@ -365,6 +366,27 @@ function hideSheet() {
   ui.sheet.hidden = true;
   ui.body.dataset.view = "picker";
   ui.console.hidden = true;
+  ui.back.hidden = true;
+  ui.brand.textContent = "lead qualification";
+  ui.clock.hidden = true;
+  lamp("idle", "idle");
+}
+
+function goBack() {
+  // Closing the socket, not sending "end", is what the server actually keys
+  // off: its WebSocketDisconnect handler persists the transcript and creates
+  // the lead if any turns happened, exactly as a dropped tab would. "Back" is
+  // therefore a lighter exit than "End call" - no summary sheet - not a path
+  // that skips saving what the call already produced.
+  if (ws) { try { ws.close(); } catch (e) { /* already closing */ } ws = null; }
+  if (capture && capture.active) capture.stop("manual");
+  live = false;
+  stopClock();
+  ui.scrim.hidden = true;
+  ui.sheet.hidden = true;
+  ui.body.dataset.view = "picker";
+  ui.console.hidden = true;
+  ui.back.hidden = true;
   ui.brand.textContent = "lead qualification";
   ui.clock.hidden = true;
   lamp("idle", "idle");
@@ -468,6 +490,7 @@ ui.text.addEventListener("input", () => {
 ui.send.addEventListener("click", sendText);
 
 ui.end.addEventListener("click", () => { if (ws && live) ws.send(JSON.stringify({ type: "end" })); });
+ui.back.addEventListener("click", goBack);
 ui.closeSheet.addEventListener("click", hideSheet);
 ui.scrim.addEventListener("click", hideSheet);
 

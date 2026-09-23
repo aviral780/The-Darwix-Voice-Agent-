@@ -93,9 +93,13 @@ body[data-view="board"] .picker { display: none; }
   transition: gap .25s var(--ease), color .2s var(--ease);
 }
 
+/* Sized and positioned as a grid cell, matching .scenario-card, so it sits as
+ * a fifth option next to the scenarios rather than a separate block below
+ * them. The dashed border and signal-coloured tag are what still mark it out
+ * as different in kind (your own voice, not a fixture). */
 .mic-card {
-  display: flex; flex-direction: column; gap: 11px;
-  width: 100%; margin-top: 14px; padding: 22px;
+  display: flex; flex-direction: column; gap: 13px;
+  padding: 20px;
   text-align: left;
   background: var(--surface);
   border: 1px dashed color-mix(in srgb, var(--signal) 45%, transparent);
@@ -105,8 +109,8 @@ body[data-view="board"] .picker { display: none; }
 }
 .mic-card:hover { transform: translateY(-3px); background: var(--surface-2); border-color: var(--signal); }
 .mic-card:hover .scenario-go { color: var(--signal); gap: 10px; }
-.mic-card h2 { font-family: var(--font-display); font-size: var(--step-2); font-weight: 600; letter-spacing: -.02em; margin: 0; }
-.mic-card .why { max-width: 62ch; }
+.mic-card h2 { font-family: var(--font-display); font-size: var(--step-1); font-weight: 600; letter-spacing: -.015em; margin: 0; line-height: 1.25; }
+.mic-card .why { color: var(--text-dim); font-size: var(--step--1); margin: 0; line-height: 1.5; }
 .scenario-tag.live { color: var(--signal); }
 
 .mic-composer { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line-soft); }

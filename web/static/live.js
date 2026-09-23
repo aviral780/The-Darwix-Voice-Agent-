@@ -12,7 +12,7 @@ const ui = {
   body: document.body,
   grid: el("scenarioGrid"), board: el("board"), stream: el("stream"),
   nudges: el("nudges"), lamp: el("lamp"), clock: el("clock"),
-  reset: el("reset"), brand: el("brandContext"),
+  reset: el("reset"), back: el("backBtn"), brand: el("brandContext"),
   cSeen: el("cSeen"), cShown: el("cShown"), cSupp: el("cSupp"),
   cLat: el("cLat"), cExp: el("cExp"), suppBar: el("suppBar"),
   micCard: el("micCard"), micBoard: el("micBoard"), micStream: el("micStream"),
@@ -51,6 +51,12 @@ function renderScenarios(list) {
     card.addEventListener("click", () => run(s));
     ui.grid.appendChild(card);
   });
+
+  // Moved into the grid rather than left as a full-width block below it, so it
+  // reads as a fifth option sitting next to the scenarios instead of a
+  // separate, disconnected feature. appendChild on a node already in the DOM
+  // relocates it - the click handler bound to it earlier still holds.
+  ui.grid.appendChild(ui.micCard);
 }
 
 // ── run ──────────────────────────────────────────────────────────────
@@ -71,8 +77,10 @@ function run(scenario) {
   stopAudio();
   current = scenario;
   shown = 0;
+  openLine = { agent: null, caller: null };
   ui.body.dataset.view = "board";
   ui.board.hidden = false;
+  ui.back.hidden = false;
   ui.brand.textContent = scenario.name;
   ui.stream.innerHTML = `<p class="stream-empty">Connecting…</p>`;
   ui.nudges.innerHTML = `<p class="empty-note">Listening. Nudges appear here while the call runs.</p>`;
@@ -155,17 +163,51 @@ function paintSuppression(s) {
   ui.suppBar.style.width = `${s.signals_seen ? Math.max(shownPct, 2) : 0}%`;
 }
 
+// The recorded pipeline transcribes both channels in fixed 4-second windows and
+// emits agent-then-caller for each window. A sentence that straddles a chunk
+// boundary is cut in two, and because the other channel's chunk is emitted in
+// between, its line lands wedged inside what was really one continuous
+// sentence - "Hi, I just want to check the" / [agent line] / "status of my
+// policy payment." reads as three turns when it was one.
+//
+// The chunking itself is correct and is what Q4's evidence is measured against;
+// this is a display fix, not a data fix. A speaker's fragment is treated as
+// unfinished until it ends in terminal punctuation, and the next fragment from
+// that same speaker is appended into the existing bubble - wherever it already
+// sits in the transcript - rather than opened as a new line. The other
+// speaker's turn can still appear in between; it no longer breaks the sentence.
+const TERMINAL_PUNCT = /[.!?]["'”)\]]?\s*$/;
+let openLine = { agent: null, caller: null };
+
 function addLine(at, speaker, text) {
+  text = text.trim();
+  if (!text) return;
+  const key = speaker === "agent" ? "agent" : "caller";
+  const open = openLine[key];
+
+  if (open) {
+    open.raw += " " + text;
+    open.el.textContent = open.raw;
+    if (TERMINAL_PUNCT.test(open.raw)) openLine[key] = null;
+    ui.stream.scrollTop = ui.stream.scrollHeight;
+    return;
+  }
+
   const empty = ui.stream.querySelector(".stream-empty");
   if (empty) empty.remove();
   const div = document.createElement("div");
-  div.className = `line ${speaker === "agent" ? "agent" : "caller"}`;
+  div.className = `line ${key}`;
   div.innerHTML = `<span class="t"></span><span class="s"></span><span class="x"></span>`;
   div.querySelector(".t").textContent = `${at.toFixed(1)}s`;
-  div.querySelector(".s").textContent = speaker.toUpperCase();
-  div.querySelector(".x").textContent = text;
+  div.querySelector(".s").textContent = key.toUpperCase();
+  const textEl = div.querySelector(".x");
+  textEl.textContent = text;
   ui.stream.appendChild(div);
   ui.stream.scrollTop = ui.stream.scrollHeight;
+
+  if (!TERMINAL_PUNCT.test(text)) {
+    openLine[key] = { raw: text, el: textEl };
+  }
 }
 
 function syncNudges(active) {
@@ -293,6 +335,7 @@ function openMicMode() {
   ui.body.dataset.view = "board";
   ui.micBoard.hidden = false;
   ui.board.hidden = true;
+  ui.back.hidden = false;
   ui.brand.textContent = "live microphone";
   ui.reset.hidden = false;
   ui.micStream.innerHTML = `<p class="stream-empty">Pick who you are speaking as, then click the mic and talk.</p>`;
@@ -364,20 +407,25 @@ ui.liveText.addEventListener("input", () => { ui.liveSend.disabled = !ui.liveTex
 ui.liveText.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); sendMicText(); } });
 ui.liveSend.addEventListener("click", sendMicText);
 
-ui.reset.addEventListener("click", () => {
+function goToPicker() {
   ui.body.dataset.view = "picker";
   ui.board.hidden = true;
   ui.micBoard.hidden = true;
   ui.clock.hidden = true;
   ui.reset.hidden = true;
+  ui.back.hidden = true;
   ui.brand.textContent = "real-time nudges";
+  if (ws) { ws.close(); ws = null; }
   if (micWs) { micWs.close(); micWs = null; }
   if (capture && capture.active) capture.stop("manual");
   stopAudio();
   const v = document.querySelector(".verdict");
   if (v) v.remove();
   lamp("idle", "idle");
-});
+}
+
+ui.reset.addEventListener("click", goToPicker);
+ui.back.addEventListener("click", goToPicker);
 
 fetch("/api/live_scenarios")
   .then((r) => r.json())

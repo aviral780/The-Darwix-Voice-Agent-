@@ -1,0 +1,200 @@
+{
+  "call_id": "05a322ff8c13",
+  "market": "en_PH",
+  "started_at": "2026-09-22T12:59:53.911457+00:00",
+  "ended_at": "2026-09-22T13:13:02.570499+00:00",
+  "final_state": "qualifying",
+  "slots": {
+    "name": "Aviral"
+  },
+  "slots_filled": 1,
+  "slots_total": 6,
+  "objections_raised": [],
+  "skipped_slots": [],
+  "slot_attempts": {
+    "age_band": 1
+  },
+  "escalated": false,
+  "escalation_reason": "",
+  "grounded_answers": 1,
+  "answers_with_stated_citation": 0,
+  "refusals": 0,
+  "turns": [
+    {
+      "index": 0,
+      "speaker": "agent",
+      "text": "Good day! This is Maya calling from Pru Life UK. I'm reaching out about life and health insurance options. Do you have two or three minutes to talk?",
+      "state": "greeting",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T12:59:53.916503+00:00"
+    },
+    {
+      "index": 1,
+      "speaker": "caller",
+      "text": "yes",
+      "state": "greeting",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T13:00:01.913127+00:00"
+    },
+    {
+      "index": 2,
+      "speaker": "agent",
+      "text": "I’m not sure I caught that. Could you let me know if you have a minute to chat about life and health insurance?",
+      "state": "greeting",
+      "intent": "answer",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T13:00:04.038296+00:00"
+    },
+    {
+      "index": 3,
+      "speaker": "caller",
+      "text": "It is Aviral, what's your name?",
+      "state": "greeting",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T13:00:10.916742+00:00"
+    },
+    {
+      "index": 4,
+      "speaker": "agent",
+      "text": "I’m Maya. May I ask roughly what age bracket you're in? Twenties, thirties, forties, or older?",
+      "state": "answering",
+      "intent": "question",
+      "citations": [],
+      "retrieved_ids": [
+        "kb_product_life_008_c08",
+        "kb_payments_050_c08",
+        "kb_product_life_012_c08",
+        "kb_education_finance_098_c00",
+        "kb_services_059_c00",
+        "kb_services_065_c01",
+        "kb_product_life_008_c03",
+        "kb_education_finance_086_c05",
+        "faq_who_you_are",
+        "faq_are_you_human",
+        "faq_why_calling",
+        "faq_how_you_help",
+        "faq_what_is_life_insurance",
+        "faq_what_is_health_insurance",
+        "faq_what_is_a_premium",
+        "faq_what_is_a_beneficiary",
+        "faq_what_is_a_rider",
+        "faq_where_number_from",
+        "faq_how_long",
+        "faq_is_this_a_sale"
+      ],
+      "grounded": true,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T13:00:13.255725+00:00"
+    },
+    {
+      "index": 5,
+      "speaker": "caller",
+      "text": "my wife and two kids depend on me",
+      "state": "answering",
+      "intent": "",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T13:00:19.920826+00:00"
+    },
+    {
+      "index": 6,
+      "speaker": "agent",
+      "text": "I’m sorry, I didn’t catch that. Could you tell me which age group you’re in—twenties, thirties, forties, or older?",
+      "state": "qualifying",
+      "intent": "unclear",
+      "citations": [],
+      "retrieved_ids": [],
+      "grounded": false,
+      "refused": false,
+      "refusal_gate": "",
+      "slot_filled": "",
+      "latency_ms": 0.0,
+      "at": "2026-09-22T13:00:21.163439+00:00"
+    }
+  ],
+  "latency": {
+    "tts": {
+      "count": 4,
+      "p50_ms": 1392.5,
+      "p95_ms": 1621.8,
+      "min_ms": 1206.7,
+      "max_ms": 1629.8,
+      "mean_ms": 1405.4
+    },
+    "classify": {
+      "count": 3,
+      "p50_ms": 157.9,
+      "p95_ms": 243.9,
+      "min_ms": 121.1,
+      "max_ms": 253.5,
+      "mean_ms": 177.5
+    },
+    "reprompt": {
+      "count": 2,
+      "p50_ms": 86.1,
+      "p95_ms": 110.3,
+      "min_ms": 59.2,
+      "max_ms": 112.9,
+      "mean_ms": 86.1
+    },
+    "turn": {
+      "count": 3,
+      "p50_ms": 2125.4,
+      "p95_ms": 2317.8,
+      "min_ms": 1242.8,
+      "max_ms": 2339.2,
+      "mean_ms": 1902.5
+    },
+    "retrieval": {
+      "count": 1,
+      "p50_ms": 169.8,
+      "p95_ms": 169.8,
+      "min_ms": 169.8,
+      "max_ms": 169.8,
+      "mean_ms": 169.8
+    },
+    "generation": {
+      "count": 1,
+      "p50_ms": 127.4,
+      "p95_ms": 127.4,
+      "min_ms": 127.4,
+      "max_ms": 127.4,
+      "mean_ms": 127.4
+    }
+  }
+}
