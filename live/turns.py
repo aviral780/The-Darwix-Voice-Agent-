@@ -64,10 +64,20 @@ class TurnNudger:
     # --- detection ----------------------------------------------------------
 
     def run_rules(self, at_s: float = 0.0) -> list[Nudge]:
-        """Deterministic detectors. Microseconds, so safe on every turn."""
+        """Deterministic detectors over the turn that just finished.
+
+        Only the latest turn is scanned for new cues, with the whole conversation
+        passed for disclosure timing - so a disclosure becomes a gap when the
+        agent speaks again without it, not the moment its trigger is said.
+        """
+        if not self.turns:
+            return []
+        last = self.turns[-1]
+        is_agent = last.speaker == "agent"
         with self.recorder.span("signals_rule"):
             signals: list[Signal] = rule_signals(
-                self.agent_text, self.recent_caller_text, at_seconds=at_s)
+                last.text if is_agent else "", "" if is_agent else last.text,
+                at_seconds=at_s, turns=[(t.speaker, t.text) for t in self.turns])
         with self.recorder.span("nudge_control"):
             return self.engine.offer(signals)
 

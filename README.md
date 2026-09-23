@@ -105,12 +105,13 @@ product names people say verbatim.
 different config file. The Indonesian bot reads from its own corpus because it is
 a different sector — multifinance, not insurance.
 
-**Q4 — Live nudges.** Two ways in. Recorded calls stream in four-second chunks at
-real playback speed with speakers split by stereo channel. A live call feeds the
-same detectors turn by turn, where attribution is exact because the agent's words
-are generated here and the caller's come back already labelled. Rules catch what
-is deterministic (a missing disclosure), the model judges what is not (whether
-someone is getting frustrated).
+**Q4 — Live nudges.** Two ways in. Recorded calls play at real speed with the two
+speakers on separate stereo channels; each channel is cut into utterances where
+the speaker actually pauses, and nothing is processed before it has been heard.
+A live call feeds the same detectors turn by turn. Rules catch what is
+deterministic (a disclosure the agent has now skipped), the model judges what is
+not (whether someone is getting frustrated), and each nudge marks the line that
+caused it.
 
 ---
 
@@ -120,7 +121,7 @@ someone is getting frustrated).
 |---|---|
 | Knowledge base answers correctly or refuses correctly | 14 / 14 |
 | Live nudge scenarios pass | 4 / 4 |
-| Live nudge latency | p50 624 ms, p95 867 ms |
+| Live nudge latency (from speaker stopping) | p50 1106 ms, p95 1380 ms |
 | ASR trials, scored against exact references | 85 |
 | Recorded calls | 9 |
 

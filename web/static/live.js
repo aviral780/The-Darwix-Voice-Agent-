@@ -39,6 +39,10 @@ function renderScenarios(list) {
     card.type = "button";
     card.className = "scenario-card";
     card.dataset.silent = String(silent);
+    card.dataset.kind = silent ? "silent"
+      : s.expect.includes("rising_frustration") ? "frustration"
+      : s.expect.some((e) => e === "compliance_gap" || e === "risky_statement") ? "compliance"
+      : "opportunity";
     card.innerHTML = `
       <span class="scenario-tag"><span class="dot"></span>${silent ? "must stay silent" : s.expect.join(" · ").replace(/_/g, " ")}</span>
       <h2></h2>
@@ -70,20 +74,214 @@ function micNote(text) {
 
 function stopAudio() {
   if (player) { player.pause(); player.currentTime = 0; player = null; }
+  audioLive = false;
+}
+
+// ── keeping text, nudges and sound together ─────────────────────────
+//
+// Every event carries the point on the audio clock it belongs to (at_s). Events
+// are held until the audio has actually reached that point, so a line can never
+// appear before its words are heard, even if the browser stalls buffering. The
+// server also waits for this page to report that playback has started before
+// starting its own clock, so in practice the queue rarely has to hold anything;
+// it is the guarantee rather than the mechanism.
+
+let audioLive = false;
+let pendingEvents = [];
+let flushTimer = null;
+
+function audioNow() {
+  return player && audioLive && !player.paused ? player.currentTime : null;
+}
+
+function enqueue(event) {
+  pendingEvents.push(event);
+  flushEvents();
+}
+
+function flushEvents() {
+  const now = audioNow();
+  while (pendingEvents.length) {
+    const next = pendingEvents[0];
+    if (now !== null && typeof next.at_s === "number" && next.at_s > now + 0.05) break;
+    pendingEvents.shift();
+    handleEvent(next);
+  }
+}
+
+// ── transcript bubbles ───────────────────────────────────────────────
+//
+// A bubble opens the moment a speaker starts talking and shows that they are
+// speaking; the words fill in once they finish and the utterance has been
+// transcribed. A live system cannot show words before they are said, and a
+// recogniser that works on whole utterances cannot show them before the speaker
+// pauses - so the bubble is what keeps pace with the voice, and the text follows
+// it by under a second.
+//
+// Consecutive utterances from the same speaker, with nobody else speaking in
+// between, share a bubble: that is one turn with a pause in it, not two turns.
+// This replaces an earlier merge that guessed from punctuation and got it wrong
+// in both directions.
+
+let bubbles = [];
+let byUtt = {};
+
+function resetTranscript() {
+  bubbles = [];
+  byUtt = {};
+  pendingEvents = [];
+}
+
+function newBubble(speaker, startS) {
+  const empty = ui.stream.querySelector(".stream-empty");
+  if (empty) empty.remove();
+  const key = speaker === "agent" ? "agent" : "caller";
+  const el = document.createElement("div");
+  el.className = `line ${key} pending`;
+  el.innerHTML =
+    `<span class="t"></span><span class="s"></span>` +
+    `<span class="x"><span class="words"></span>` +
+    `<span class="speaking" aria-label="speaking"><i></i><i></i><i></i></span></span>` +
+    `<span class="flags"></span>`;
+  el.querySelector(".t").textContent = `${startS.toFixed(1)}s`;
+  el.querySelector(".s").textContent = key === "agent" ? "AGENT" : "CUSTOMER";
+  ui.stream.appendChild(el);
+  ui.stream.scrollTop = ui.stream.scrollHeight;
+  const bubble = { el, speaker: key, parts: [], open: 0 };
+  bubbles.push(bubble);
+  return bubble;
+}
+
+function onSpeechStart(e) {
+  const key = e.speaker === "agent" ? "agent" : "caller";
+  const last = bubbles[bubbles.length - 1];
+  const bubble = last && last.speaker === key ? last : newBubble(key, e.start_s);
+  bubble.open += 1;
+  bubble.el.classList.add("pending");
+  byUtt[e.utt_id] = bubble;
+  ui.stream.scrollTop = ui.stream.scrollHeight;
+}
+
+function settle(bubble) {
+  bubble.open = Math.max(0, bubble.open - 1);
+  if (bubble.open === 0) bubble.el.classList.remove("pending");
+}
+
+function onTranscript(e) {
+  const bubble = byUtt[e.utt_id] || (() => {
+    const b = newBubble(e.speaker, e.start_s);
+    b.open = 1;
+    byUtt[e.utt_id] = b;
+    return b;
+  })();
+  bubble.parts.push(e.text);
+  const words = bubble.el.querySelector(".words");
+  words.textContent = bubble.parts.join(" ");
+  words.classList.remove("fresh");
+  void words.offsetWidth;          // restart the reveal animation
+  words.classList.add("fresh");
+  settle(bubble);
+  ui.stream.scrollTop = ui.stream.scrollHeight;
+}
+
+function onUtteranceEmpty(e) {
+  const bubble = byUtt[e.utt_id];
+  if (!bubble) return;
+  settle(bubble);
+  if (!bubble.parts.length && bubble.open === 0) {
+    bubble.el.remove();
+    bubbles = bubbles.filter((b) => b !== bubble);
+  }
+}
+
+// Mark the line that caused a nudge, in the nudge's colour, so what triggered
+// what is visible rather than inferred from timing.
+function flagLine(nudge) {
+  const bubble = nudge.utt && byUtt[nudge.utt];
+  if (!bubble) return;
+  const chip = document.createElement("span");
+  chip.className = "flag";
+  chip.dataset.type = nudge.type;
+  chip.textContent = nudge.type.replace(/_/g, " ");
+  bubble.el.querySelector(".flags").appendChild(chip);
+  bubble.el.dataset.flag = nudge.type;
+}
+
+// ── run ──────────────────────────────────────────────────────────────
+
+function handleEvent(m) {
+  if (m.type === "stream_start") {
+    ui.stream.innerHTML = "";
+    lamp("live", "live");
+    return;
+  }
+  if (m.type === "speech_start") { onSpeechStart(m); return; }
+  if (m.type === "transcript") { onTranscript(m); return; }
+  if (m.type === "utterance_empty") { onUtteranceEmpty(m); return; }
+  if (m.type === "nudge") {
+    ui.cLat.textContent = `${m.nudge.latency_ms} ms`;
+    flagLine(m.nudge);
+    return;
+  }
+  if (m.type === "tick") {
+    const now = audioNow();
+    ui.clock.textContent = `${(now !== null ? now : m.at_s).toFixed(1)}s`;
+    syncNudges(m.active);
+    if (m.suppression) paintSuppression(m.suppression);
+    return;
+  }
+  if (m.type === "stream_end") { paintSuppression(m.suppression); return; }
+  if (m.type === "done") { finishRun(m); }
+}
+
+function startAudio(url) {
+  player = new Audio(url);
+  player.preload = "auto";
+  let reported = false;
+  const report = () => {
+    if (reported || !ws || ws.readyState !== 1) return;
+    reported = true;
+    ws.send(JSON.stringify({ type: "playing" }));
+  };
+  player.addEventListener("playing", () => { audioLive = true; report(); });
+  player.play().catch(() => {
+    // Autoplay refused. Run without sound rather than not at all, and say so.
+    audioLive = false;
+    player = null;
+    micNote("Audio blocked by the browser — the run continues without sound.");
+    report();
+  });
+}
+
+function finishRun(m) {
+  lamp("complete", "idle");
+  ui.reset.hidden = false;
+  const pass = m.expected.length === 0
+    ? m.fired.length === 0
+    : m.expected.every((e) => m.fired.includes(e));
+  const v = document.createElement("div");
+  v.className = "verdict";
+  v.dataset.pass = String(pass);
+  v.textContent = pass
+    ? (m.expected.length === 0
+        ? "Pass — stayed silent, as required on a call with nothing to act on."
+        : `Pass — detected ${m.expected.join(", ").replace(/_/g, " ")}.`)
+    : `Fail — expected ${m.expected.join(", ") || "nothing"}, fired ${m.fired.join(", ") || "nothing"}.`;
+  ui.nudges.parentElement.appendChild(v);
 }
 
 function run(scenario) {
   ui.micBoard.hidden = true;
   stopAudio();
+  resetTranscript();
   current = scenario;
   shown = 0;
-  openLine = { agent: null, caller: null };
   ui.body.dataset.view = "board";
   ui.board.hidden = false;
   ui.back.hidden = false;
   ui.brand.textContent = scenario.name;
-  ui.stream.innerHTML = `<p class="stream-empty">Connecting…</p>`;
-  ui.nudges.innerHTML = `<p class="empty-note">Listening. Nudges appear here while the call runs.</p>`;
+  ui.stream.innerHTML = `<p class="stream-empty">Loading the call…</p>`;
+  ui.nudges.innerHTML = `<p class="empty-note">Nudges appear here the moment what was said makes one worth showing.</p>`;
   ui.cSeen.textContent = "0"; ui.cShown.textContent = "0";
   ui.cSupp.textContent = "—"; ui.cLat.textContent = "—";
   ui.cExp.textContent = scenario.expect.length ? scenario.expect.join(", ").replace(/_/g, " ") : "nothing";
@@ -91,7 +289,12 @@ function run(scenario) {
   ui.clock.hidden = false;
   ui.clock.textContent = "0.0s";
   ui.reset.hidden = true;
+  const old = document.querySelector(".verdict");
+  if (old) old.remove();
   lamp("connecting", "think");
+
+  if (flushTimer) clearInterval(flushTimer);
+  flushTimer = setInterval(flushEvents, 50);
 
   const proto = location.protocol === "https:" ? "wss" : "ws";
   ws = new WebSocket(`${proto}://${location.host}/ws/live`);
@@ -99,54 +302,9 @@ function run(scenario) {
 
   ws.onmessage = (ev) => {
     const m = JSON.parse(ev.data);
-
-    if (m.type === "stream_start") {
-      ui.stream.innerHTML = "";
-      lamp("live", "live");
-      // The pipeline paces itself to the audio clock, so starting playback here
-      // keeps the recording and the transcript in step without extra syncing.
-      player = new Audio(`/api/live_audio/${scenario.id}`);
-      player.play().catch(() => {
-        // Autoplay refused. The run is still valid, so say so rather than
-        // leaving a reviewer wondering why it is silent.
-        micNote("Audio blocked by the browser — the run continues without sound.");
-      });
-      return;
-    }
-
-    if (m.type === "transcript") { addLine(m.at_s, m.speaker, m.text); return; }
-
-    if (m.type === "tick") {
-      ui.clock.textContent = `${m.at_s.toFixed(1)}s`;
-      syncNudges(m.active);
-      if (m.suppression) paintSuppression(m.suppression);
-      return;
-    }
-
-    if (m.type === "nudge") {
-      ui.cLat.textContent = `${m.nudge.latency_ms} ms`;
-      return;
-    }
-
-    if (m.type === "stream_end") { paintSuppression(m.suppression); return; }
-
-    if (m.type === "done") {
-      lamp("complete", "idle");
-      stopAudio();
-      ui.reset.hidden = false;
-      const pass = m.expected.length === 0
-        ? m.fired.length === 0
-        : m.expected.every((e) => m.fired.includes(e));
-      const v = document.createElement("div");
-      v.className = "verdict";
-      v.dataset.pass = String(pass);
-      v.textContent = pass
-        ? (m.expected.length === 0
-            ? "Pass — stayed silent, as required on a call with nothing to act on."
-            : `Pass — detected ${m.expected.join(", ").replace(/_/g, " ")}.`)
-        : `Fail — expected ${m.expected.join(", ") || "nothing"}, fired ${m.fired.join(", ") || "nothing"}.`;
-      ui.nudges.parentElement.appendChild(v);
-    }
+    // "ready" starts the audio and is never held: the pipeline is waiting on it.
+    if (m.type === "ready") { startAudio(m.audio); return; }
+    enqueue(m);
   };
 
   ws.onclose = () => { if (ui.lamp.dataset.state === "live") lamp("disconnected", "idle"); };
@@ -161,53 +319,6 @@ function paintSuppression(s) {
   // heavy suppression at a glance.
   const shownPct = s.signals_seen ? (s.nudges_emitted / s.signals_seen) * 100 : 0;
   ui.suppBar.style.width = `${s.signals_seen ? Math.max(shownPct, 2) : 0}%`;
-}
-
-// The recorded pipeline transcribes both channels in fixed 4-second windows and
-// emits agent-then-caller for each window. A sentence that straddles a chunk
-// boundary is cut in two, and because the other channel's chunk is emitted in
-// between, its line lands wedged inside what was really one continuous
-// sentence - "Hi, I just want to check the" / [agent line] / "status of my
-// policy payment." reads as three turns when it was one.
-//
-// The chunking itself is correct and is what Q4's evidence is measured against;
-// this is a display fix, not a data fix. A speaker's fragment is treated as
-// unfinished until it ends in terminal punctuation, and the next fragment from
-// that same speaker is appended into the existing bubble - wherever it already
-// sits in the transcript - rather than opened as a new line. The other
-// speaker's turn can still appear in between; it no longer breaks the sentence.
-const TERMINAL_PUNCT = /[.!?]["'”)\]]?\s*$/;
-let openLine = { agent: null, caller: null };
-
-function addLine(at, speaker, text) {
-  text = text.trim();
-  if (!text) return;
-  const key = speaker === "agent" ? "agent" : "caller";
-  const open = openLine[key];
-
-  if (open) {
-    open.raw += " " + text;
-    open.el.textContent = open.raw;
-    if (TERMINAL_PUNCT.test(open.raw)) openLine[key] = null;
-    ui.stream.scrollTop = ui.stream.scrollHeight;
-    return;
-  }
-
-  const empty = ui.stream.querySelector(".stream-empty");
-  if (empty) empty.remove();
-  const div = document.createElement("div");
-  div.className = `line ${key}`;
-  div.innerHTML = `<span class="t"></span><span class="s"></span><span class="x"></span>`;
-  div.querySelector(".t").textContent = `${at.toFixed(1)}s`;
-  div.querySelector(".s").textContent = key.toUpperCase();
-  const textEl = div.querySelector(".x");
-  textEl.textContent = text;
-  ui.stream.appendChild(div);
-  ui.stream.scrollTop = ui.stream.scrollHeight;
-
-  if (!TERMINAL_PUNCT.test(text)) {
-    openLine[key] = { raw: text, el: textEl };
-  }
 }
 
 function syncNudges(active) {
@@ -408,6 +519,8 @@ ui.liveText.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.prev
 ui.liveSend.addEventListener("click", sendMicText);
 
 function goToPicker() {
+  if (flushTimer) { clearInterval(flushTimer); flushTimer = null; }
+  resetTranscript();
   ui.body.dataset.view = "picker";
   ui.board.hidden = true;
   ui.micBoard.hidden = true;

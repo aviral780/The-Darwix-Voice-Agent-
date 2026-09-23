@@ -141,6 +141,9 @@ class Nudge:
             "age_s": round(self.age_s(now), 1),
             "at_seconds": round(self.at_seconds, 1),
             **({"disclosure": self.meta["disclosure"]} if "disclosure" in self.meta else {}),
+            # The transcript line that caused this nudge, so the dashboard can
+            # mark it and a reviewer can see what triggered what.
+            **({"utt": self.meta["utt"]} if "utt" in self.meta else {}),
         }
 
 

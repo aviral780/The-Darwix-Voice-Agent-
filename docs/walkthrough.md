@@ -200,16 +200,29 @@ Point at the two green gate boxes.
 > "This is the fourth piece. Analysis while the call is still running, not after."
 
 **Click:** *Skipped disclosure and risky statement*. **Let it play.** Don't talk
-over the first few seconds — let them see the transcript filling in.
+over the first few seconds. Let them hear it and watch the lines open as each
+person starts speaking.
 
-When the first nudge appears:
+**Say**, while it plays:
+
+> "Each line opens the moment that person starts talking. The words fill in just
+> after they finish, because the recogniser needs the pause to know they're done.
+> Nothing here is shown before it's been said."
+
+Notice that nothing fires when the agent first says "investment". The first nudge
+comes after the agent's *second* line.
 
 **Say:**
 
-> "That fired four seconds in. The agent said 'investment' and never gave the
-> disclosure, so it tells them to. The red one there — the agent promised
-> guaranteed returns, and that correction landed in about a quarter of a second.
-> They're still mid-sentence."
+> "It didn't fire when she first mentioned investment, because she could still
+> have given the disclosure. It fires here, when she's moved on to recommending a
+> fund and still hasn't. That's the moment a supervisor would actually step in.
+> And see the tag on that line: every nudge marks the line that caused it."
+
+When the rose nudge appears:
+
+> "And that one's the agent promising guaranteed returns. It lands about a second
+> after she stops talking."
 
 
 The exact millisecond figure shows on the nudge card and changes slightly every
@@ -219,8 +232,11 @@ Point at the suppression panel.
 
 **Say:**
 
-> "The number I care about is this one. Twenty-seven signals found, three shown.
-> Detecting things is easy. Not burying the agent is the hard part."
+> "The number I care about is this one: how many signals were found against how
+> many were shown. Detecting things is easy. Not burying the agent is the hard
+> part."
+
+Read the two numbers off the panel. They move slightly between runs.
 
 **Click New run**, then scroll down and click **"Or speak into it yourself"**.
 
@@ -228,16 +244,18 @@ Point at the suppression panel.
 
 > "You can also just talk to it."
 
-Set the role to **I am the agent** and say:
+Set the role to **I am the agent** and say two lines, one after the other:
 
-> "Our investment funds have guaranteed returns and there is no risk at all."
+> "Let me tell you about our investment funds."
 
-Two red nudges appear.
+> "Honestly, there are guaranteed returns and no risk at all."
+
+After the second line, two nudges appear.
 
 **Say:**
 
-> "Missing disclosure, and guarantee language. Both on my own voice, in real
-> time. Now switch roles."
+> "Guarantee language, and the disclosure I've now skipped twice. Both on my own
+> voice, in real time. Now switch roles."
 
 Click **I am the customer** and say:
 
@@ -277,11 +295,17 @@ Let it finish so they see the green **Pass**.
 > trials and it barely moved the numbers. I corrected the comment in my own code
 > to say so rather than leave a claim the evidence doesn't support.
 >
-> Three — my nudge system told an agent to quote a projected return, four seconds
+> Three — my nudge system told an agent to quote a projected return, seconds
 > after a compliance rule told them returns are never guaranteed. The model was
 > being helpful about sales and had no idea it was recommending the exact thing
 > the rule above it exists to prevent. Model-written nudges now get checked
-> before a human sees them."
+> before a human sees them.
+>
+> Four — my live pipeline was reading ahead of the audio. It cut the call into
+> four-second windows and started on each window when it began, so it was
+> transcribing speech that hadn't been played yet. Text appeared before its words
+> and a nudge fired mid-sentence. It now cuts on real pauses and never looks past
+> what's been heard, and the latency is measured from when the speaker stops."
 
 **Then, on limitations:**
 
@@ -317,7 +341,8 @@ Let it finish so they see the green **Pass**.
 - The **noisy call staying silent** — harder than making nudges fire
 - The **Taglish answer** keeping "premium" in English
 - The **Indonesian market** having different qualification questions
-- The **suppression counter** — 27 signals, 3 shown
+- The **suppression counter**: signals found against nudges shown
+- A line **opening as someone starts speaking**, with a tag once it causes a nudge
 - A **nudge firing on your own live voice**, in both roles
 
 ## Don't show this
@@ -351,9 +376,10 @@ refusal. Qwen was three times faster and matched on quality. It's in
 Not available on my Groq account. I picked from what the key could actually reach.
 
 **"What breaks at 10x?"**
-The free tier, not the architecture. Two speech requests per four-second chunk is
-about five per second against a twenty-per-minute limit. Fix is a streaming
-connection per call.
+The free tier, not the architecture. It's one speech request per utterance, about
+twenty a minute per call, against a twenty-a-minute limit. I measured it: four
+calls back to back pushed lines sixteen seconds late. The fix is a streaming
+connection per call, which also removes the lag before the words appear.
 
 **"Why no phone number?"**
 Every free telephony trial needs a card. I chose something reproducible over

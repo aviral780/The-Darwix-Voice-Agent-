@@ -106,12 +106,19 @@ implemented. In the Indonesian market this is not a cosmetic bug.
 
 ## Free tier is the real ceiling
 
-At ten concurrent calls the architecture is fine and the free tier is not: two
-speech-to-text requests per four-second chunk works out at roughly five requests
-per second against a limit of twenty per minute.
+At ten concurrent calls the architecture is fine and the free tier is not. Each
+utterance is one speech-to-text request, roughly fifteen to twenty a minute per
+call, against a limit of twenty a minute per model.
 
-The fix is a streaming connection per call instead of discrete uploads, which
-removes the per-request overhead entirely. Rules and nudge control don't move —
+This is measured. Four calls back to back with no gap exhausted the quota and
+individual lines appeared up to sixteen seconds after they were spoken. Failing
+over to a second Whisper model cut that to seven; a one-minute gap between calls
+removed it entirely. One call at a time, which is how the demo runs, is never
+affected.
+
+The fix is a streaming connection per call instead of one upload per utterance.
+That also removes the transcript lag: a streaming recogniser returns words while
+they are spoken, where this one has to wait for the speaker to pause. Rules and nudge control don't move —
 they're local and measured in microseconds.
 
 ---

@@ -35,6 +35,11 @@ ESCALATION_WEBHOOK_URL = os.getenv("ESCALATION_WEBHOOK_URL", "").strip()
 CHAT_MODEL = "qwen/qwen3.8-27b"      # fastest and strongest available; see docs/model_selection.md
 FALLBACK_MODEL = "openai/gpt-oss-20b"  # different family, so a Qwen-side outage does not stop the demo
 ASR_MODEL = "whisper-large-v3-turbo"
+# Same recogniser family with its own rate-limit bucket. One live call makes one
+# request per utterance, which on a talkative call runs past the free tier's
+# twenty a minute; failing over is better than making a line wait for the limit
+# to clear.
+ASR_FALLBACK_MODEL = "whisper-large-v3"
 EMBED_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 EMBED_DIMS = 384
 # 0.22GB ONNX, ~50 languages including Indonesian and Tagalog. multilingual-e5-small

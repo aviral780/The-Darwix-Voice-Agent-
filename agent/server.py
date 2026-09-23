@@ -27,6 +27,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import json
+import threading
 import time
 from pathlib import Path
 
@@ -195,19 +196,29 @@ async def live_mic(websocket: WebSocket) -> None:
 
 @app.websocket("/ws/live")
 async def live_stream(websocket: WebSocket) -> None:
-    """Stream a call and push nudges to the dashboard as they are generated.
+    """Stream a recorded call and push transcript and nudges as it plays.
 
-    The stream runs in a worker thread because live/stream.py is synchronous and
-    paces itself against the audio clock. Events are handed back through a queue
-    so the socket keeps sending while the thread blocks on its next chunk.
+    The pipeline and the listener's audio have to start together or nothing
+    lines up. So the pipeline loads the recording, sends "ready", and waits; the
+    page starts the audio and replies "playing" the moment playback actually
+    begins; only then does the pipeline start its clock. Before this, the clock
+    started when the socket opened and the audio started whenever the browser
+    finished loading the file, and every line was offset by that gap.
+
+    The pipeline runs in a worker thread because it paces itself against the
+    audio clock. Events come back through a queue, and a separate task listens
+    for the page so that leaving - the back button, a closed tab - stops the
+    run instead of letting it spend transcription calls on a call nobody sees.
     """
     await websocket.accept()
+    start_gate = threading.Event()
+    stop_flag = threading.Event()
+    listener: asyncio.Task | None = None
     try:
         message = json.loads(await websocket.receive_text())
         scenario_id = message.get("scenario", "")
 
-        import json as _json
-        scenarios = _json.loads(
+        scenarios = json.loads(
             (config.EVIDENCE_DIR / "live_calls" / "scenarios.json").read_text())
         match = next((s for s in scenarios if s["id"] == scenario_id), None)
         if match is None:
@@ -222,8 +233,20 @@ async def live_stream(websocket: WebSocket) -> None:
         def on_event(event: dict) -> None:
             loop.call_soon_threadsafe(queue.put_nowait, event)
 
+        async def listen() -> None:
+            try:
+                while True:
+                    incoming = json.loads(await websocket.receive_text())
+                    if incoming.get("type") == "playing":
+                        start_gate.set()
+            except (WebSocketDisconnect, RuntimeError):
+                stop_flag.set()
+                start_gate.set()
+
+        listener = asyncio.create_task(listen())
         task = asyncio.create_task(asyncio.to_thread(
-            process, config.ROOT / match["path"], match["id"], True, on_event))
+            process, config.ROOT / match["path"], match["id"], True, on_event,
+            start_gate, stop_flag))
 
         while True:
             if task.done() and queue.empty():
@@ -232,18 +255,27 @@ async def live_stream(websocket: WebSocket) -> None:
                 event = await asyncio.wait_for(queue.get(), timeout=0.5)
             except asyncio.TimeoutError:
                 continue
+            if event.get("type") == "ready":
+                event["audio"] = f"/api/live_audio/{match['id']}"
             await websocket.send_json(event)
 
         result = await task
-        await websocket.send_json({
-            "type": "done",
-            "expected": match["expect"],
-            "fired": [n["type"] for n in result.nudges],
-            "suppression": result.suppression,
-            "latency": result.latency,
-        })
+        if not stop_flag.is_set():
+            await websocket.send_json({
+                "type": "done",
+                "expected": match["expect"],
+                "fired": [n["type"] for n in result.nudges],
+                "suppression": result.suppression,
+                "latency": result.latency,
+            })
     except WebSocketDisconnect:
-        pass
+        stop_flag.set()
+        start_gate.set()
+    finally:
+        stop_flag.set()
+        start_gate.set()
+        if listener is not None:
+            listener.cancel()
 
 
 @app.get("/kb")

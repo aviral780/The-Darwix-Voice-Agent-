@@ -19,14 +19,24 @@ of it - and it makes behaviour deterministic per market, which matters when
 comparing runs. It is not the accuracy win it was introduced as, and the report
 says so.
 
-Chunk sizing: Question 4 feeds audio in short segments. Whisper degrades badly
-on segments under roughly one second because it has too little context, so the
-streamer keeps a rolling overlap instead of sending bare chunks.
+Segmenting: the live pipeline sends one whole utterance per request, cut where
+the speaker actually paused, rather than fixed-length chunks. Whisper is far
+more accurate with a complete sentence than with a fragment cut mid-word, and
+there are fewer requests to make.
+
+Rate limits: that is one request per utterance, which on a talkative call runs
+past the free tier's twenty a minute. A rate-limited request moves straight to
+the second Whisper model, which has its own quota, and only waits if both are
+limited - a dropped request here is a line missing from the transcript and a
+detector that never saw it, and a request that waits out the limit is a line
+that appears fifteen seconds after it was said. Measured: four calls back to
+back on turbo alone pushed individual transcripts to sixteen seconds late.
 """
 
 from __future__ import annotations
 
 import io
+import time
 from pathlib import Path
 
 from groq import Groq
@@ -68,6 +78,13 @@ def transcribe_file(
         return _transcribe(handle.read(), path.name, language, prompt, recorder, stage)
 
 
+RETRYABLE_STATUS = {429, 500, 502, 503, 504}
+MAX_ATTEMPTS = 3
+# A per-minute request limit clears within seconds; a daily one does not, and is
+# not worth waiting for mid-call.
+MAX_RETRY_WAIT_S = 8.0
+
+
 def transcribe_bytes(
     audio: bytes,
     filename: str = "chunk.wav",
@@ -105,8 +122,31 @@ def _transcribe(
         kwargs["prompt"] = prompt
 
     def _run() -> str:
-        result = client().audio.transcriptions.create(**kwargs)
-        return (result if isinstance(result, str) else getattr(result, "text", "")).strip()
+        from core.llm import retry_after_seconds
+
+        models = list(dict.fromkeys([config.ASR_MODEL, config.ASR_FALLBACK_MODEL]))
+        last_error: Exception | None = None
+        for attempt in range(MAX_ATTEMPTS):
+            waits: list[float] = []
+            for model in models:
+                buffer.seek(0)            # a failed attempt consumed the upload
+                kwargs["model"] = model
+                try:
+                    result = client().audio.transcriptions.create(**kwargs)
+                    return (result if isinstance(result, str) else getattr(result, "text", "")).strip()
+                except Exception as exc:
+                    if getattr(exc, "status_code", None) not in RETRYABLE_STATUS:
+                        raise
+                    last_error = exc
+                    print(f"asr: {model} rate limited or unavailable, trying the next option ({str(exc)[:120]})")
+                    hint = retry_after_seconds(str(exc))
+                    waits.append(hint if hint is not None else 0.6 * (2 ** attempt))
+            # Every model is limited right now; wait for the soonest to clear.
+            wait = min(waits)
+            if attempt == MAX_ATTEMPTS - 1 or wait > MAX_RETRY_WAIT_S:
+                break
+            time.sleep(wait + 0.05)
+        raise last_error if last_error else RuntimeError("transcription failed")
 
     if recorder is not None:
         with recorder.span(stage, bytes=len(audio)):

@@ -1,78 +1,104 @@
 """Real-time call processing: audio in, nudges out while the call is running.
 
 The brief is explicit that analysing a finished recording does not qualify. This
-consumes audio in chunks at the pace the audio actually plays, and emits nudges
-as the call proceeds. Replaying a recording at real-time speed is the permitted
-form and is what the test suite uses, because it makes runs comparable; the same
-loop accepts live microphone chunks.
+consumes a call at the pace it plays and emits transcript and nudges as it goes.
+Replaying a recording at real-time speed is the permitted form and is what the
+test suite uses; the loop only ever looks at audio up to the current playback
+position, so it behaves exactly as it would on a live line.
 
-Speaker separation is done with stereo channels rather than diarisation. Contact
-centre recorders put the agent on one channel and the customer on the other, and
-Whisper does not diarise at all. Splitting channels and transcribing each gives
-true attribution instead of a guess; mono input still works but is flagged as
-unattributed, because pretending to know who spoke would corrupt every
-agent-side compliance rule.
+That last property is the one the first version got wrong. It cut audio into
+fixed 4-second windows and started work on each window at the window's START,
+which meant transcribing up to four seconds of speech that had not been played
+yet. Text appeared before the words were heard and a compliance nudge fired
+while the agent was still in the sentence that caused it. It also flattered the
+latency numbers, because the clock started before the speech existed. A live
+system cannot read ahead, so this one no longer does.
 
-Two timing decisions shape the pipeline:
+Segmentation is by speech, not by clock. Each channel runs its own voice
+activity detector over 100 ms frames. An utterance opens when the voice starts
+and closes after HANGOVER_S of silence, and only then is it transcribed - whole.
+Fixed windows cut sentences in half wherever the boundary fell, and the halves
+of one speaker's sentence ended up either side of the other speaker's line.
 
-Chunks are 4 seconds. Shorter and Whisper loses the context it needs and its
-accuracy drops sharply; longer and the nudge arrives after the moment has passed.
+Speaker separation uses stereo channels rather than diarisation: agent left,
+customer right, the way contact centre recorders lay out a call. Mono input
+still works but is marked unattributed rather than guessed, because every
+agent-side compliance rule depends on knowing who spoke.
 
-Rules run on every chunk because they cost microseconds. The model judge runs
-only when enough new speech has accumulated to be worth a round trip, which is
-what keeps the end-to-end number low without giving up the judgement calls.
+Transcription and the model judge run in worker threads. The frame loop never
+blocks on a network call, so the other speaker starting to talk while one
+utterance is being transcribed is still noticed on time.
 """
 
 from __future__ import annotations
 
-import array
+import io
 import json
-import math
 import subprocess
 import tempfile
+import threading
 import time
 import wave
+from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Iterator
+from typing import Callable
 
-from core import asr, config
+import numpy as np
+
+from core import asr
 from core.timing import LatencyRecorder, format_markdown_table
 from live.nudges import Nudge, NudgeEngine
 from live.signals import Signal, model_signals, rule_signals
 
-CHUNK_SECONDS = 4.0
-# Below this RMS a chunk is treated as silence and never sent to the ASR.
-# Whisper hallucinates on silence - it returns "you", "Thank you." or
-# "Thanks for watching!" for an empty segment, which lands in the transcript as
-# if someone said it and then feeds the signal detectors. In a stereo call each
-# speaker is silent roughly half the time, so gating on energy also removes
-# about half the ASR calls and their latency.
-SILENCE_RMS = 180.0
+SAMPLE_RATE = 16000
+FRAME_S = 0.1
 
-# Phrases Whisper emits for near-silence, kept as a second line of defence for
-# chunks that carry line noise above the energy gate.
+# Voice activity. Frames above this RMS count as speech. Tuned against clean
+# recordings; a real phone line would need it recalibrated against line noise.
+SPEECH_RMS = 180.0
+# Two consecutive voiced frames open an utterance, so a click does not.
+ONSET_FRAMES = 2
+# Silence needed to close an utterance. Long enough to ride over the pause
+# between two sentences in one turn, short enough that text lands soon after
+# the speaker stops. This is the floor on transcript latency: nothing can be
+# transcribed until the detector is sure the speaker has finished. At 0.45 s a
+# third of turns were split at a sentence pause, each split costing a request
+# against the free tier's twenty a minute; 0.6 s keeps most turns whole.
+HANGOVER_S = 0.6
+# A speaker who never pauses is still transcribed in pieces of at most this long.
+MAX_UTTERANCE_S = 12.0
+# Audio kept either side of the detected speech so the first and last
+# syllables are not clipped.
+PRE_ROLL_S = 0.15
+POST_ROLL_S = 0.15
+
+TICK_EVERY_S = 0.25
+# How long to wait for the listener to confirm playback before starting anyway.
+START_TIMEOUT_S = 10.0
+
+# The model judge reads intent - frustration, buying interest - so it runs when
+# the customer finishes speaking and enough has been said to judge.
+JUDGE_MIN_CHARS = 100
+JUDGE_WINDOW_TURNS = 6
+
+ASR_WORKERS = 2
+
+# Phrases Whisper emits for near-silence. The detector means segments are
+# voiced audio now, so these should not occur; kept as a second line of defence.
 SILENCE_ARTIFACTS = {
     "you", "thank you.", "thank you", "thanks for watching!", "thanks for watching",
-    "bye.", "bye", ".", "...", "um", "uh", "so", "and the road.",
+    "bye.", "bye", ".", "...", "um", "uh", "so",
 }
-SAMPLE_RATE = 16000
-# Judge with the model once this much unjudged speech has built up.
-JUDGE_EVERY_CHARS = 180
-JUDGE_WINDOW_TURNS = 6
 
 
 @dataclass
-class Chunk:
-    index: int
+class Utterance:
+    utt_id: str
+    speaker: str
     start_s: float
-    agent_audio: bytes
-    caller_audio: bytes
-    mono_audio: bytes = b""
-    stereo: bool = True
-    agent_rms: float = 0.0
-    caller_rms: float = 0.0
-    mono_rms: float = 0.0
+    end_s: float = 0.0
+    text: str = ""
 
 
 @dataclass
@@ -81,12 +107,19 @@ class StreamResult:
     source: str
     stereo: bool
     duration_s: float
-    chunks: int
+    utterances: int
     transcript: list[dict] = field(default_factory=list)
     nudges: list[dict] = field(default_factory=list)
     suppression: dict = field(default_factory=dict)
     latency: dict = field(default_factory=dict)
     end_to_end_ms: list[float] = field(default_factory=list)
+    transcript_lag_ms: list[float] = field(default_factory=list)
+    # Raw durations per stage, so a suite can compute real percentiles across
+    # runs instead of percentiles of per-run averages.
+    raw: dict[str, list[float]] = field(default_factory=dict)
+
+
+# ── audio ────────────────────────────────────────────────────────────────
 
 
 def probe_channels(path: Path) -> int:
@@ -101,92 +134,108 @@ def probe_channels(path: Path) -> int:
         return 1
 
 
-def to_wav(path: Path, destination: Path, channel: int | None = None) -> Path:
-    """Decode to 16kHz mono WAV, optionally extracting one stereo channel."""
-    filters = ["-ac", "1"]
-    if channel is not None:
-        filters = ["-af", f"pan=mono|c0=c{channel}"]
-    subprocess.run(
-        ["ffmpeg", "-y", "-i", str(path), *filters, "-ar", str(SAMPLE_RATE),
-         "-acodec", "pcm_s16le", str(destination)],
-        capture_output=True, check=True,
-    )
-    return destination
+def _decode(path: Path, channel: int | None) -> np.ndarray:
+    """Decode to 16 kHz mono int16, optionally one channel of a stereo file."""
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "out.wav"
+        filters = ["-af", f"pan=mono|c0=c{channel}"] if channel is not None else ["-ac", "1"]
+        subprocess.run(
+            ["ffmpeg", "-y", "-i", str(path), *filters, "-ar", str(SAMPLE_RATE),
+             "-acodec", "pcm_s16le", str(out)],
+            capture_output=True, check=True,
+        )
+        with wave.open(str(out), "rb") as handle:
+            return np.frombuffer(handle.readframes(handle.getnframes()), dtype=np.int16)
 
 
-def read_frames(path: Path) -> tuple[bytes, int, float]:
-    with wave.open(str(path), "rb") as handle:
-        frames = handle.readframes(handle.getnframes())
-        rate = handle.getframerate()
-        duration = handle.getnframes() / float(rate)
-    return frames, rate, duration
+def load_channels(path: Path) -> tuple[dict[str, np.ndarray], bool, float]:
+    """Return {speaker: samples}, whether the source was stereo, and duration."""
+    stereo = probe_channels(path) >= 2
+    if stereo:
+        channels = {"agent": _decode(path, 0), "caller": _decode(path, 1)}
+    else:
+        channels = {"unattributed": _decode(path, None)}
+    duration = max(len(s) for s in channels.values()) / SAMPLE_RATE
+    return channels, stereo, duration
 
 
-def rms(pcm: bytes) -> float:
-    """Root-mean-square amplitude of 16-bit PCM."""
-    if not pcm:
-        return 0.0
-    samples = array.array("h")
-    samples.frombytes(pcm[: len(pcm) - (len(pcm) % 2)])
-    if not samples:
-        return 0.0
-    return math.sqrt(sum(s * s for s in samples) / len(samples))
-
-
-def is_artifact(text: str) -> bool:
-    """Whether a transcription is a known silence hallucination."""
-    return text.strip().lower() in SILENCE_ARTIFACTS
-
-
-def wav_bytes(pcm: bytes, rate: int = SAMPLE_RATE) -> bytes:
-    """Wrap raw PCM in a WAV container so it can be posted to the ASR API."""
-    import io
+def wav_bytes(samples: np.ndarray) -> bytes:
+    """Wrap int16 samples in a WAV container for the ASR upload."""
     buffer = io.BytesIO()
     with wave.open(buffer, "wb") as handle:
         handle.setnchannels(1)
         handle.setsampwidth(2)
-        handle.setframerate(rate)
-        handle.writeframes(pcm)
+        handle.setframerate(SAMPLE_RATE)
+        handle.writeframes(samples.astype(np.int16).tobytes())
     return buffer.getvalue()
 
 
-def chunk_source(path: Path, chunk_seconds: float = CHUNK_SECONDS) -> Iterator[Chunk]:
-    """Yield fixed-length chunks, split by speaker when the source is stereo."""
-    channels = probe_channels(path)
-    stereo = channels >= 2
+def is_artifact(text: str) -> bool:
+    return text.strip().lower() in SILENCE_ARTIFACTS
 
-    with tempfile.TemporaryDirectory() as tmp:
-        tmp_path = Path(tmp)
-        if stereo:
-            agent_wav = to_wav(path, tmp_path / "agent.wav", channel=0)
-            caller_wav = to_wav(path, tmp_path / "caller.wav", channel=1)
-            agent_pcm, rate, duration = read_frames(agent_wav)
-            caller_pcm, _, _ = read_frames(caller_wav)
-            mono_pcm = b""
-        else:
-            mono_wav = to_wav(path, tmp_path / "mono.wav")
-            mono_pcm, rate, duration = read_frames(mono_wav)
-            agent_pcm = caller_pcm = b""
 
-        step = int(rate * chunk_seconds) * 2      # 16-bit samples
-        total = len(agent_pcm if stereo else mono_pcm)
-        index = 0
-        for offset in range(0, total, step):
-            agent_pcm_chunk = agent_pcm[offset:offset + step] if stereo else b""
-            caller_pcm_chunk = caller_pcm[offset:offset + step] if stereo else b""
-            mono_pcm_chunk = mono_pcm[offset:offset + step] if not stereo else b""
-            yield Chunk(
-                index=index,
-                start_s=offset / 2 / rate,
-                agent_audio=wav_bytes(agent_pcm_chunk, rate) if stereo else b"",
-                caller_audio=wav_bytes(caller_pcm_chunk, rate) if stereo else b"",
-                mono_audio=wav_bytes(mono_pcm_chunk, rate) if not stereo else b"",
-                stereo=stereo,
-                agent_rms=rms(agent_pcm_chunk),
-                caller_rms=rms(caller_pcm_chunk),
-                mono_rms=rms(mono_pcm_chunk),
-            )
-            index += 1
+# ── voice activity ───────────────────────────────────────────────────────
+
+
+class ChannelVAD:
+    """Opens and closes utterances on one channel, one frame at a time."""
+
+    def __init__(self, speaker: str, samples: np.ndarray) -> None:
+        self.speaker = speaker
+        self.samples = samples
+        self.frame_len = int(SAMPLE_RATE * FRAME_S)
+        self.run = 0
+        self.current: Utterance | None = None
+        self.last_voiced_end = 0.0
+        self.count = 0
+
+    def _voiced(self, index: int) -> bool:
+        frame = self.samples[index * self.frame_len:(index + 1) * self.frame_len]
+        if frame.size == 0:
+            return False
+        level = float(np.sqrt(np.mean(frame.astype(np.float32) ** 2)))
+        return level >= SPEECH_RMS
+
+    def step(self, index: int) -> list[tuple[str, Utterance]]:
+        events: list[tuple[str, Utterance]] = []
+        frame_end = (index + 1) * FRAME_S
+        voiced = self._voiced(index)
+
+        if self.current is None:
+            self.run = self.run + 1 if voiced else 0
+            if self.run >= ONSET_FRAMES:
+                self.count += 1
+                start = (index - ONSET_FRAMES + 1) * FRAME_S
+                self.current = Utterance(
+                    utt_id=f"{self.speaker[0]}{self.count}", speaker=self.speaker, start_s=round(start, 2))
+                self.last_voiced_end = frame_end
+                events.append(("start", self.current))
+            return events
+
+        if voiced:
+            self.last_voiced_end = frame_end
+        silent_for = frame_end - self.last_voiced_end
+        if silent_for >= HANGOVER_S or frame_end - self.current.start_s >= MAX_UTTERANCE_S:
+            events.append(("end", self._close()))
+        return events
+
+    def flush(self) -> list[tuple[str, Utterance]]:
+        return [("end", self._close())] if self.current is not None else []
+
+    def _close(self) -> Utterance:
+        utt = self.current
+        utt.end_s = round(self.last_voiced_end, 2)
+        self.current = None
+        self.run = 0
+        return utt
+
+    def segment(self, utt: Utterance) -> np.ndarray:
+        start = max(0, int((utt.start_s - PRE_ROLL_S) * SAMPLE_RATE))
+        end = min(len(self.samples), int((utt.end_s + POST_ROLL_S) * SAMPLE_RATE))
+        return self.samples[start:end]
+
+
+# ── pipeline ─────────────────────────────────────────────────────────────
 
 
 def process(
@@ -194,132 +243,221 @@ def process(
     call_id: str = "",
     realtime: bool = True,
     on_event: Callable[[dict], None] | None = None,
+    start_gate: threading.Event | None = None,
+    stop_flag: threading.Event | None = None,
     terminology: str = "premium, policy, beneficiary, rider, lapse, coverage, bancassurance",
 ) -> StreamResult:
-    """Stream a call and emit nudges as it plays.
+    """Stream a call and emit transcript and nudges as it plays.
 
-    realtime=True paces the loop to the audio's own duration, which is what makes
-    this a live-processing test rather than batch analysis. Setting it False runs
-    as fast as the API allows and is only for checking correctness.
+    realtime=True paces the loop to the audio's own clock, which is what makes
+    this live processing rather than batch analysis. start_gate, when given, is
+    waited on before the clock starts, so the pipeline and the listener's audio
+    begin together. stop_flag ends the run early - a listener who leaves should
+    not keep spending transcription calls on a call nobody is watching.
     """
     call_id = call_id or source.stem
     recorder = LatencyRecorder(f"live-{call_id}")
     engine = NudgeEngine()
+    executor = ThreadPoolExecutor(max_workers=ASR_WORKERS)
+
+    channels, stereo, duration = load_channels(source)
+    vads = [ChannelVAD(speaker, samples) for speaker, samples in channels.items()]
+    total_frames = int(np.ceil(duration / FRAME_S))
 
     transcript: list[dict] = []
+    turns: list[tuple[str, str]] = []
     emitted: list[dict] = []
     end_to_end: list[float] = []
-    unjudged_chars = 0
+    transcript_lag: list[float] = []
+    pending: list[tuple[Utterance, ChannelVAD, Future, float]] = []
+    judging: list[tuple[Future, Utterance, float]] = []
+    unjudged = 0
     asr_calls = 0
-    asr_possible = 0
-    stereo = probe_channels(source) >= 2
-    duration = 0.0
 
     def emit(event: dict) -> None:
         if on_event:
             on_event(event)
 
-    emit({"type": "stream_start", "call_id": call_id, "source": str(source), "stereo": stereo})
+    def stopped() -> bool:
+        return stop_flag is not None and stop_flag.is_set()
 
+    emit({"type": "ready", "call_id": call_id, "stereo": stereo, "duration_s": round(duration, 1)})
+    if start_gate is not None:
+        start_gate.wait(timeout=START_TIMEOUT_S)
+    if stopped():
+        executor.shutdown(wait=False, cancel_futures=True)
+        return _result(call_id, source, stereo, duration, transcript, emitted, engine,
+                       asr_calls, recorder, end_to_end, transcript_lag)
+
+    emit({"type": "stream_start", "call_id": call_id, "source": str(source), "stereo": stereo})
     wall_start = time.perf_counter()
 
-    for chunk in chunk_source(source):
-        duration = chunk.start_s + CHUNK_SECONDS
+    def speech_end_wall(utt: Utterance, closed_wall: float) -> float:
+        # Latency is measured from the moment the speaker stopped talking. In
+        # real time that is a point on the audio clock; in fast mode there is no
+        # audio clock, so the moment the utterance was closed stands in for it.
+        return wall_start + utt.end_s if realtime else closed_wall
 
-        # Pace to the audio. Without this the loop runs as fast as the network
-        # allows and the latency numbers would describe batch throughput rather
-        # than what an agent on a live call experiences.
-        if realtime:
-            target = chunk.start_s
-            drift = target - (time.perf_counter() - wall_start)
-            if drift > 0:
-                time.sleep(drift)
+    def transcribe(samples: np.ndarray, name: str) -> tuple[str, float]:
+        t0 = time.perf_counter()
+        text = asr.transcribe_bytes(wav_bytes(samples), name, language="en", prompt=terminology)
+        return text, (time.perf_counter() - t0) * 1000
 
-        chunk_received = time.perf_counter()
+    def judge(window: str, at_s: float) -> tuple[list[Signal], float]:
+        t0 = time.perf_counter()
+        return model_signals(window, at_s), (time.perf_counter() - t0) * 1000
 
-        # --- transcription ---------------------------------------------------
-        agent_text = caller_text = ""
-        with recorder.span("asr", chunk=chunk.index):
-            if chunk.stereo:
-                if chunk.agent_rms >= SILENCE_RMS:
-                    agent_text = asr.transcribe_bytes(
-                        chunk.agent_audio, f"a{chunk.index}.wav", language="en", prompt=terminology)
-                    asr_calls += 1
-                if chunk.caller_rms >= SILENCE_RMS:
-                    caller_text = asr.transcribe_bytes(
-                        chunk.caller_audio, f"c{chunk.index}.wav", language="en", prompt=terminology)
-                    asr_calls += 1
-            elif chunk.mono_rms >= SILENCE_RMS:
-                caller_text = asr.transcribe_bytes(
-                    chunk.mono_audio, f"m{chunk.index}.wav", language="en", prompt=terminology)
-                asr_calls += 1
-            asr_possible += 2 if chunk.stereo else 1
-
-        for speaker, text in (("agent", agent_text), ("caller", caller_text)):
-            if text.strip() and not is_artifact(text):
-                entry = {"at_s": round(chunk.start_s, 1),
-                         "speaker": speaker if chunk.stereo else "unattributed",
-                         "text": text.strip()}
-                transcript.append(entry)
-                emit({"type": "transcript", **entry})
-                unjudged_chars += len(text)
-
-        # --- signal extraction ------------------------------------------------
-        signals: list[Signal] = []
-        full_agent = " ".join(t["text"] for t in transcript if t["speaker"] == "agent")
-        recent_caller = " ".join(t["text"] for t in transcript[-4:] if t["speaker"] != "agent")
-
-        with recorder.span("signals_rule", chunk=chunk.index):
-            signals.extend(rule_signals(full_agent, recent_caller, at_seconds=chunk.start_s))
-
-        if unjudged_chars >= JUDGE_EVERY_CHARS:
-            window = "\n".join(
-                f"{t['speaker'].upper()}: {t['text']}" for t in transcript[-JUDGE_WINDOW_TURNS:])
-            signals.extend(model_signals(window, chunk.start_s, recorder=recorder))
-            unjudged_chars = 0
-
-        # --- nudge control ----------------------------------------------------
-        with recorder.span("nudge_control", chunk=chunk.index):
-            new_nudges: list[Nudge] = engine.offer(signals)
-
-        for nudge in new_nudges:
-            # End to end: the chunk arriving through to a nudge ready to display.
-            latency_ms = (time.perf_counter() - chunk_received) * 1000
+    def publish(new: list[Nudge], utt: Utterance, reference: float) -> None:
+        for nudge in new:
+            latency_ms = (time.perf_counter() - reference) * 1000
             end_to_end.append(latency_ms)
             recorder.record("end_to_end", latency_ms, nudge=nudge.nudge_id)
             payload = {**nudge.to_dict(), "latency_ms": round(latency_ms, 1)}
             emitted.append(payload)
-            # Nested, not spread. The nudge dict has its own "type" field holding
-            # the signal type, and spreading it overwrote the event envelope's
-            # type - so every listener saw "compliance_gap" where it expected
-            # "nudge" and silently ignored the event.
-            emit({"type": "nudge", "nudge": payload})
+            # Nested, not spread: the nudge has its own "type" field.
+            emit({"type": "nudge", "nudge": payload, "at_s": utt.end_s})
+        if new:
+            tick(utt.end_s)
 
-        # Suppression counts go out on every tick, not only at the end. The
-        # interesting number on this dashboard is how much was found and not
-        # shown, and a panel reading "3 shown, 0 seen" mid-call reads as broken.
-        emit({"type": "tick", "at_s": round(chunk.start_s, 1),
+    def tick(at_s: float) -> None:
+        emit({"type": "tick", "at_s": round(at_s, 2),
               "active": [n.to_dict() for n in engine.active()],
               "suppression": engine.stats.as_dict()})
 
-    result = StreamResult(
+    def handle_transcribed(utt: Utterance, future: Future, closed_wall: float) -> None:
+        nonlocal unjudged
+        try:
+            text, asr_ms = future.result()
+            recorder.record("asr", asr_ms, utt=utt.utt_id)
+        except Exception as exc:
+            print(f"asr failed for {utt.utt_id}: {type(exc).__name__}: {exc}")
+            text = ""
+
+        text = (text or "").strip()
+        if not text or is_artifact(text):
+            emit({"type": "utterance_empty", "utt_id": utt.utt_id})
+            return
+
+        utt.text = text
+        reference = speech_end_wall(utt, closed_wall)
+        lag_ms = (time.perf_counter() - reference) * 1000
+        transcript_lag.append(lag_ms)
+        recorder.record("transcript_lag", lag_ms, utt=utt.utt_id)
+
+        entry = {"utt_id": utt.utt_id, "speaker": utt.speaker, "text": text,
+                 "start_s": utt.start_s, "end_s": utt.end_s, "at_s": utt.end_s}
+        transcript.append(entry)
+        emit({"type": "transcript", **entry})
+
+        turns.append((utt.speaker, text))
+        unjudged += len(text)
+        is_agent = utt.speaker == "agent"
+
+        # Rules read the utterance that just finished, with the conversation so
+        # far for disclosure timing. Each nudge carries the id of the line that
+        # caused it, so the dashboard can mark that line.
+        with recorder.span("signals_rule", utt=utt.utt_id):
+            signals = rule_signals(text if is_agent else "", "" if is_agent else text,
+                                   at_seconds=utt.end_s, turns=turns)
+        for signal in signals:
+            signal.meta["utt"] = utt.utt_id
+        with recorder.span("nudge_control", utt=utt.utt_id):
+            new = engine.offer(signals)
+        publish(new, utt, reference)
+
+        if not is_agent and unjudged >= JUDGE_MIN_CHARS:
+            unjudged = 0
+            window = "\n".join(
+                f"{'AGENT' if s == 'agent' else 'CALLER'}: {t}" for s, t in turns[-JUDGE_WINDOW_TURNS:])
+            judging.append((executor.submit(judge, window, utt.end_s), utt, reference))
+
+    def handle_judged(future: Future, utt: Utterance, reference: float) -> None:
+        try:
+            signals, judge_ms = future.result()
+            recorder.record("signal_llm", judge_ms, utt=utt.utt_id)
+        except Exception as exc:
+            print(f"judge failed after {utt.utt_id}: {type(exc).__name__}: {exc}")
+            return
+        for signal in signals:
+            signal.meta["utt"] = utt.utt_id
+        with recorder.span("nudge_control", utt=utt.utt_id):
+            new = engine.offer(signals)
+        publish(new, utt, reference)
+
+    def drain(block: bool = False) -> None:
+        # Transcripts are handled in the order utterances closed, so rules see
+        # the conversation in the order it was spoken even when two transcription
+        # calls finish out of order.
+        while pending and (block or pending[0][2].done()):
+            utt, vad, future, closed_wall = pending.pop(0)
+            handle_transcribed(utt, future, closed_wall)
+        for item in [j for j in judging if block or j[0].done()]:
+            judging.remove(item)
+            handle_judged(*item)
+
+    def close(utt: Utterance, vad: ChannelVAD) -> None:
+        nonlocal asr_calls
+        asr_calls += 1
+        future = executor.submit(transcribe, vad.segment(utt), f"{utt.utt_id}.wav")
+        pending.append((utt, vad, future, time.perf_counter()))
+
+    next_tick = 0.0
+    for index in range(total_frames):
+        if stopped():
+            break
+        frame_end = (index + 1) * FRAME_S
+
+        # Never look at audio before it has played.
+        if realtime:
+            wait = wall_start + frame_end - time.perf_counter()
+            if wait > 0:
+                time.sleep(wait)
+
+        for vad in vads:
+            for kind, utt in vad.step(index):
+                if kind == "start":
+                    emit({"type": "speech_start", "utt_id": utt.utt_id, "speaker": utt.speaker,
+                          "start_s": utt.start_s, "at_s": utt.start_s})
+                else:
+                    close(utt, vad)
+
+        drain()
+        if frame_end >= next_tick:
+            tick(frame_end)
+            next_tick = frame_end + TICK_EVERY_S
+
+    if not stopped():
+        for vad in vads:
+            for _, utt in vad.flush():
+                close(utt, vad)
+        # Finish whatever is still being transcribed or judged, in order.
+        while pending or judging:
+            drain(block=True)
+        tick(duration)
+    executor.shutdown(wait=not stopped(), cancel_futures=stopped())
+
+    result = _result(call_id, source, stereo, duration, transcript, emitted, engine,
+                     asr_calls, recorder, end_to_end, transcript_lag)
+    emit({"type": "stream_end", "suppression": result.suppression, "latency": result.latency})
+    return result
+
+
+def _result(call_id, source, stereo, duration, transcript, emitted, engine,
+            asr_calls, recorder, end_to_end, transcript_lag) -> StreamResult:
+    return StreamResult(
         call_id=call_id,
         source=str(source),
         stereo=stereo,
         duration_s=round(duration, 1),
-        chunks=len([t for t in transcript]),
+        utterances=len(transcript),
         transcript=transcript,
         nudges=emitted,
-        suppression={
-            **engine.stats.as_dict(),
-            "asr_calls_made": asr_calls,
-            "asr_calls_skipped_silent": asr_possible - asr_calls,
-        },
+        suppression={**engine.stats.as_dict(), "utterances": len(transcript), "asr_calls": asr_calls},
         latency=recorder.summary(),
         end_to_end_ms=[round(x, 1) for x in end_to_end],
+        transcript_lag_ms=[round(x, 1) for x in transcript_lag],
+        raw={stage: recorder.durations(stage) for stage in recorder.stages()},
     )
-    emit({"type": "stream_end", "suppression": result.suppression, "latency": result.latency})
-    return result
 
 
 if __name__ == "__main__":
@@ -331,12 +469,13 @@ if __name__ == "__main__":
     fast = "--fast" in sys.argv
 
     def printer(event: dict) -> None:
-        if event["type"] == "transcript":
-            print(f"  [{event['at_s']:6.1f}s] {event['speaker'][:6].upper():8s} {event['text'][:78]}")
+        if event["type"] == "speech_start":
+            print(f"  [{event['start_s']:5.1f}s] {event['speaker'][:6].upper():7s} ...speaking")
+        elif event["type"] == "transcript":
+            print(f"  [{event['end_s']:5.1f}s] {event['speaker'][:6].upper():7s} {event['text'][:74]}")
         elif event["type"] == "nudge":
             n = event["nudge"]
-            print(f"  >>> NUDGE [{n['type']}] {n['text']}"
-                  f"  ({n['latency_ms']}ms, conf {n['confidence']})")
+            print(f"      >>> NUDGE [{n['type']}] {n['text'][:60]}  ({n['latency_ms']}ms)")
 
     result = process(path, realtime=not fast, on_event=printer)
     print("\n" + format_markdown_table(result.latency, "Latency"))

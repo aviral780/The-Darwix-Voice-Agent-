@@ -78,19 +78,19 @@ DISCLOSURES = [
         # does not match "funds", which silently missed real disclosure gaps.
         "trigger": re.compile(r"\b(invest\w*|funds?|returns?|savings|growth|VUL|unit[- ]linked)\b", re.I),
         "satisfied": re.compile(r"\b(not a deposit|not guaranteed|subject to market|investment risk|value may (go down|fall))\b", re.I),
-        "nudge": "Investment mentioned. State that returns are not guaranteed and this is not a deposit.",
+        "nudge": "Investment is being pitched without the disclosure. State that returns are not guaranteed and this is not a deposit.",
     },
     {
         "id": "licensed_advisor",
         "trigger": re.compile(r"\b(recommend\w*|should (get|buy|take)|best (plan|option) for you|advis\w+)\b", re.I),
         "satisfied": re.compile(r"\b(licensed (advisor|agent)|financial adviser|subject to (assessment|underwriting))\b", re.I),
-        "nudge": "You are edging into advice. Note that a licensed advisor must confirm suitability.",
+        "nudge": "Advice given without the suitability caveat. Note that a licensed advisor must confirm it.",
     },
     {
         "id": "recording_notice",
         "trigger": re.compile(r"\b(personal|details|date of birth|address|ID number)\b", re.I),
         "satisfied": re.compile(r"\b(record(ed|ing)|data privacy|consent|Data Privacy Act)\b", re.I),
-        "nudge": "Personal details requested. Confirm the recording and data-privacy notice was given.",
+        "nudge": "Personal details discussed without the privacy notice. Give the recording and data-privacy notice now.",
     },
 ]
 
@@ -133,23 +133,64 @@ BUYING_CUES = re.compile(
     r"I'?m interested|sounds good|let'?s do it|how much would it be for me)\b", re.I)
 
 
-def rule_signals(agent_text: str, caller_text: str, at_seconds: float = 0.0) -> list[Signal]:
-    """Run every deterministic detector over the transcript so far."""
-    found: list[Signal] = []
-    combined = f"{agent_text}\n{caller_text}"
+def rule_signals(
+    agent_text: str,
+    caller_text: str,
+    at_seconds: float = 0.0,
+    turns: list[tuple[str, str]] | None = None,
+) -> list[Signal]:
+    """Run every deterministic detector.
 
-    for rule in DISCLOSURES:
-        if rule["trigger"].search(combined) and not rule["satisfied"].search(agent_text):
+    agent_text and caller_text are what is new in this pass - normally the one
+    utterance that has just finished. turns, when given, is the conversation so
+    far as (speaker, text) and is what disclosure timing is judged against.
+
+    A disclosure is not a gap the moment its trigger is said. The first version
+    fired "state that returns are not guaranteed" while the agent was still in
+    the sentence that mentioned investment - before they had any chance to give
+    it. A supervisor would not interrupt there. The gap is real once the agent
+    has spoken again and still not given it, so that is when this fires: the
+    trigger makes the disclosure due, and the agent's next turn without it makes
+    it overdue.
+    """
+    found: list[Signal] = []
+
+    if turns is not None:
+        agent_turns = [text for speaker, text in turns if speaker == "agent"]
+        for rule in DISCLOSURES:
+            trigger_at = next(
+                (i for i, (_, text) in enumerate(turns) if rule["trigger"].search(text)), None)
+            if trigger_at is None:
+                continue
+            if any(rule["satisfied"].search(text) for text in agent_turns):
+                continue
+            later_agent = [text for speaker, text in turns[trigger_at + 1:] if speaker == "agent"]
+            if not later_agent:
+                continue            # still within the agent's chance to give it
             found.append(Signal(
                 type=SignalType.COMPLIANCE_GAP,
                 confidence=0.95,
-                evidence=_first_match(rule["trigger"], combined),
+                evidence=_first_match(rule["trigger"], turns[trigger_at][1]),
                 nudge=rule["nudge"],
                 detector="rule",
                 speaker="agent",
                 at_seconds=at_seconds,
                 meta={"disclosure": rule["id"]},
             ))
+    else:
+        combined = f"{agent_text}\n{caller_text}"
+        for rule in DISCLOSURES:
+            if rule["trigger"].search(combined) and not rule["satisfied"].search(agent_text):
+                found.append(Signal(
+                    type=SignalType.COMPLIANCE_GAP,
+                    confidence=0.95,
+                    evidence=_first_match(rule["trigger"], combined),
+                    nudge=rule["nudge"],
+                    detector="rule",
+                    speaker="agent",
+                    at_seconds=at_seconds,
+                    meta={"disclosure": rule["id"]},
+                ))
 
     for pattern, nudge in RISKY_PHRASES:
         match = pattern.search(agent_text)

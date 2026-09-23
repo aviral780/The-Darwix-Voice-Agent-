@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-22",
+  "generated_at": "2026-09-23",
   "scenarios": [
     {
       "id": "live_01_missed_cross_sell",
@@ -11,7 +11,8 @@
         "missed_cross_sell"
       ],
       "fired": [
-        "missed_cross_sell"
+        "missed_cross_sell",
+        "buying_signal"
       ],
       "passed": true,
       "reason": "all expected signals detected",
@@ -25,138 +26,210 @@
           "detector": "rule",
           "priority": 50,
           "age_s": 0.0,
-          "at_seconds": 16.0,
-          "latency_ms": 499.2
+          "at_seconds": 20.9,
+          "utt": "c3",
+          "latency_ms": 1101.9
+        },
+        {
+          "id": "n002",
+          "type": "buying_signal",
+          "text": "Acknowledge the family context and pivot to discussing coverage options for dependents.",
+          "confidence": 0.9,
+          "evidence": "My wife has been asking about it, and we have two kids in school now.",
+          "detector": "model",
+          "priority": 60,
+          "age_s": 0.0,
+          "at_seconds": 31.0,
+          "utt": "c5",
+          "latency_ms": 1301.4
         }
       ],
       "transcript": [
         {
-          "at_s": 0.0,
+          "utt_id": "a1",
           "speaker": "agent",
-          "text": "Good morning, this is Maya from PruLife UK"
+          "text": "Good morning, this is Maya from ProLife UK",
+          "start_s": 0.2,
+          "end_s": 3.1,
+          "at_s": 3.1
         },
         {
-          "at_s": 4.0,
+          "utt_id": "a2",
           "speaker": "agent",
-          "text": "How can I help you today?"
+          "text": "How can I help you today?",
+          "start_s": 4.0,
+          "end_s": 5.4,
+          "at_s": 5.4
         },
         {
-          "at_s": 4.0,
+          "utt_id": "c1",
           "speaker": "caller",
-          "text": "Hi, I just want to check the"
+          "text": "Hi, I just want to check the status of my policy payment",
+          "start_s": 6.4,
+          "end_s": 9.6,
+          "at_s": 9.6
         },
         {
-          "at_s": 8.0,
+          "utt_id": "a3",
           "speaker": "agent",
-          "text": "Of course, I can help you"
+          "text": "Of course, I can help with that",
+          "start_s": 10.7,
+          "end_s": 12.5,
+          "at_s": 12.5
         },
         {
-          "at_s": 8.0,
-          "speaker": "caller",
-          "text": "status of my policy payment."
-        },
-        {
-          "at_s": 12.0,
+          "utt_id": "a4",
           "speaker": "agent",
-          "text": "Let me pull up your record"
+          "text": "Let me pull up your record",
+          "start_s": 13.5,
+          "end_s": 15.0,
+          "at_s": 15.0
         },
         {
-          "at_s": 16.0,
+          "utt_id": "c2",
           "speaker": "caller",
-          "text": "Thanks. My wife has been asking about it, and we have two"
+          "text": "Thanks",
+          "start_s": 16.1,
+          "end_s": 16.6,
+          "at_s": 16.6
         },
         {
-          "at_s": 20.0,
+          "utt_id": "c3",
+          "speaker": "caller",
+          "text": "My wife has been asking about it, and we have two kids in school now.",
+          "start_s": 17.5,
+          "end_s": 20.9,
+          "at_s": 20.9
+        },
+        {
+          "utt_id": "a5",
           "speaker": "agent",
-          "text": "Right, I can see the payment went through"
+          "text": "Right, I can see the payment went through last week",
+          "start_s": 21.9,
+          "end_s": 24.9,
+          "at_s": 24.9
         },
         {
-          "at_s": 20.0,
+          "utt_id": "c4",
           "speaker": "caller",
-          "text": "kids in school now."
+          "text": "good",
+          "start_s": 26.0,
+          "end_s": 26.4,
+          "at_s": 26.4
         },
         {
-          "at_s": 24.0,
+          "utt_id": "c5",
+          "speaker": "caller",
+          "text": "My father was in hospital last month, it made me think about all this",
+          "start_s": 27.3,
+          "end_s": 31.0,
+          "at_s": 31.0
+        },
+        {
+          "utt_id": "a6",
           "speaker": "agent",
-          "text": "through last week."
+          "text": "I understand",
+          "start_s": 31.9,
+          "end_s": 32.9,
+          "at_s": 32.9
         },
         {
-          "at_s": 24.0,
-          "speaker": "caller",
-          "text": "good. my father was"
-        },
-        {
-          "at_s": 28.0,
-          "speaker": "caller",
-          "text": "in hospital last month, it made me think about all this."
-        },
-        {
-          "at_s": 32.0,
+          "utt_id": "a7",
           "speaker": "agent",
-          "text": "I understand. Is there anything else you need today?"
+          "text": "Is there anything else you need today?",
+          "start_s": 33.8,
+          "end_s": 35.8,
+          "at_s": 35.8
         },
         {
-          "at_s": 36.0,
+          "utt_id": "c6",
           "speaker": "caller",
-          "text": "No, that's all. Thank you."
+          "text": "No, that's all",
+          "start_s": 36.9,
+          "end_s": 38.0,
+          "at_s": 38.0
         }
       ],
       "suppression": {
-        "signals_seen": 8,
+        "signals_seen": 3,
         "dropped_low_confidence": 0,
-        "dropped_duplicate": 1,
-        "dropped_cooldown": 6,
+        "dropped_duplicate": 0,
+        "dropped_cooldown": 1,
         "unsafe_text_rewritten": 0,
         "unsafe_text_dropped": 0,
-        "nudges_emitted": 1,
-        "suppression_rate": 0.875,
-        "asr_calls_made": 14,
-        "asr_calls_skipped_silent": 8
+        "nudges_emitted": 2,
+        "suppression_rate": 0.333,
+        "utterances": 13,
+        "asr_calls": 14
       },
       "latency": {
         "asr": {
-          "count": 11,
-          "p50_ms": 332.6,
-          "p95_ms": 608.8,
-          "min_ms": 0.0,
-          "max_ms": 702.8,
-          "mean_ms": 373.2
+          "count": 14,
+          "p50_ms": 226.9,
+          "p95_ms": 341.6,
+          "min_ms": 190.4,
+          "max_ms": 345.5,
+          "mean_ms": 242.6
+        },
+        "transcript_lag": {
+          "count": 13,
+          "p50_ms": 1000.8,
+          "p95_ms": 1043.6,
+          "min_ms": 900.6,
+          "max_ms": 1101.3,
+          "mean_ms": 964.1
         },
         "signals_rule": {
-          "count": 11,
+          "count": 13,
           "p50_ms": 0.2,
           "p95_ms": 0.4,
-          "min_ms": 0.0,
+          "min_ms": 0.1,
           "max_ms": 0.4,
           "mean_ms": 0.2
         },
         "nudge_control": {
-          "count": 11,
+          "count": 16,
           "p50_ms": 0.0,
-          "p95_ms": 0.1,
+          "p95_ms": 0.2,
           "min_ms": 0.0,
-          "max_ms": 0.1,
+          "max_ms": 0.2,
           "mean_ms": 0.0
         },
         "signal_llm": {
-          "count": 2,
-          "p50_ms": 178.7,
-          "p95_ms": 185.9,
-          "min_ms": 170.8,
-          "max_ms": 186.7,
-          "mean_ms": 178.7
+          "count": 3,
+          "p50_ms": 186.6,
+          "p95_ms": 350.9,
+          "min_ms": 182.8,
+          "max_ms": 369.2,
+          "mean_ms": 246.2
         },
         "end_to_end": {
-          "count": 1,
-          "p50_ms": 499.2,
-          "p95_ms": 499.2,
-          "min_ms": 499.2,
-          "max_ms": 499.2,
-          "mean_ms": 499.2
+          "count": 2,
+          "p50_ms": 1201.6,
+          "p95_ms": 1291.4,
+          "min_ms": 1101.9,
+          "max_ms": 1301.4,
+          "mean_ms": 1201.6
         }
       },
       "end_to_end_ms": [
-        499.2
+        1101.9,
+        1301.4
+      ],
+      "transcript_lag_ms": [
+        1004.4,
+        1001.2,
+        1001.3,
+        900.6,
+        903.0,
+        905.5,
+        1101.3,
+        1005.0,
+        1000.8,
+        901.1,
+        902.9,
+        1005.1,
+        901.5
       ]
     },
     {
@@ -171,7 +244,6 @@
       ],
       "fired": [
         "compliance_gap",
-        "buying_signal",
         "risky_statement"
       ],
       "passed": true,
@@ -180,30 +252,19 @@
         {
           "id": "n001",
           "type": "compliance_gap",
-          "text": "Investment mentioned. State that returns are not guaranteed and this is not a deposit.",
+          "text": "Investment is being pitched without the disclosure. State that returns are not guaranteed and this is not a deposit.",
           "confidence": 0.95,
           "evidence": "investment",
           "detector": "rule",
           "priority": 100,
           "age_s": 0.0,
-          "at_seconds": 4.0,
+          "at_seconds": 13.3,
           "disclosure": "not_a_deposit",
-          "latency_ms": 538.8
+          "utt": "a3",
+          "latency_ms": 1106.1
         },
         {
           "id": "n002",
-          "type": "buying_signal",
-          "text": "Interest signalled. Move to the next concrete step. Do not quote figures that are not in the approved material.",
-          "confidence": 0.9,
-          "evidence": "How much could I make?",
-          "detector": "model",
-          "priority": 60,
-          "age_s": 0.0,
-          "at_seconds": 12.0,
-          "latency_ms": 887.8
-        },
-        {
-          "id": "n003",
           "type": "risky_statement",
           "text": "Guarantee language used. Correct it now: returns and approval are never guaranteed.",
           "confidence": 0.97,
@@ -211,135 +272,170 @@
           "detector": "rule",
           "priority": 95,
           "age_s": 0.0,
-          "at_seconds": 16.0,
-          "latency_ms": 249.3
+          "at_seconds": 19.8,
+          "utt": "a4",
+          "latency_ms": 903.4
         }
       ],
       "transcript": [
         {
-          "at_s": 0.0,
+          "utt_id": "a1",
           "speaker": "agent",
-          "text": "Good afternoon. I wanted to tell you about our PRU"
+          "text": "Good afternoon",
+          "start_s": 0.2,
+          "end_s": 1.1,
+          "at_s": 1.1
         },
         {
-          "at_s": 4.0,
+          "utt_id": "a2",
           "speaker": "agent",
-          "text": "link investment funds."
+          "text": "I wanted to tell you about our PRULINK investment funds.",
+          "start_s": 2.0,
+          "end_s": 5.3,
+          "at_s": 5.3
         },
         {
-          "at_s": 4.0,
+          "utt_id": "c1",
           "speaker": "caller",
-          "text": "Okay, I'm listening"
+          "text": "Okay, I'm listening",
+          "start_s": 6.4,
+          "end_s": 7.8,
+          "at_s": 7.8
         },
         {
-          "at_s": 8.0,
+          "utt_id": "a3",
           "speaker": "agent",
-          "text": "These funds have shown very strong growth and I would recommend"
+          "text": "These funds have shown very strong growth and I would recommend the equity fund for you.",
+          "start_s": 8.8,
+          "end_s": 13.3,
+          "at_s": 13.3
         },
         {
-          "at_s": 12.0,
-          "speaker": "agent",
-          "text": "and the equity fund for you."
-        },
-        {
-          "at_s": 12.0,
+          "utt_id": "c2",
           "speaker": "caller",
-          "text": "How much could I make?"
+          "text": "How much could I make?",
+          "start_s": 14.3,
+          "end_s": 15.3,
+          "at_s": 15.3
         },
         {
-          "at_s": 16.0,
+          "utt_id": "a4",
           "speaker": "agent",
-          "text": "Honestly, it is guaranteed returns of around 10%"
+          "text": "Honestly, it is guaranteed returns of around 10%",
+          "start_s": 16.4,
+          "end_s": 19.8,
+          "at_s": 19.8
         },
         {
-          "at_s": 20.0,
+          "utt_id": "a5",
           "speaker": "agent",
-          "text": "there is no risk at all"
+          "text": "there is no risk at all",
+          "start_s": 20.8,
+          "end_s": 22.3,
+          "at_s": 22.3
         },
         {
-          "at_s": 20.0,
+          "utt_id": "c3",
           "speaker": "caller",
-          "text": "That sounds too good"
+          "text": "That sounds too good to be true.",
+          "start_s": 23.3,
+          "end_s": 25.1,
+          "at_s": 25.1
         },
         {
-          "at_s": 24.0,
+          "utt_id": "a6",
           "speaker": "agent",
-          "text": "Trust me, you will definitely be a"
+          "text": "Trust me, you will definitely be approved and it will definitely pay out",
+          "start_s": 26.1,
+          "end_s": 29.9,
+          "at_s": 29.9
         },
         {
-          "at_s": 24.0,
+          "utt_id": "c4",
           "speaker": "caller",
-          "text": "too good to be true."
-        },
-        {
-          "at_s": 28.0,
-          "speaker": "agent",
-          "text": "approve and it will definitely pay out."
-        },
-        {
-          "at_s": 28.0,
-          "speaker": "caller",
-          "text": "Let me think about it"
+          "text": "Let me think about it",
+          "start_s": 30.9,
+          "end_s": 32.1,
+          "at_s": 32.1
         }
       ],
       "suppression": {
-        "signals_seen": 27,
+        "signals_seen": 15,
         "dropped_low_confidence": 0,
-        "dropped_duplicate": 11,
-        "dropped_cooldown": 13,
-        "unsafe_text_rewritten": 1,
+        "dropped_duplicate": 6,
+        "dropped_cooldown": 7,
+        "unsafe_text_rewritten": 0,
         "unsafe_text_dropped": 0,
-        "nudges_emitted": 3,
-        "suppression_rate": 0.889,
-        "asr_calls_made": 13,
-        "asr_calls_skipped_silent": 5
+        "nudges_emitted": 2,
+        "suppression_rate": 0.867,
+        "utterances": 10,
+        "asr_calls": 10
       },
       "latency": {
         "asr": {
-          "count": 9,
-          "p50_ms": 453.7,
-          "p95_ms": 582.0,
-          "min_ms": 0.0,
-          "max_ms": 612.0,
-          "mean_ms": 380.4
+          "count": 10,
+          "p50_ms": 238.7,
+          "p95_ms": 309.8,
+          "min_ms": 218.7,
+          "max_ms": 336.0,
+          "mean_ms": 251.3
+        },
+        "transcript_lag": {
+          "count": 10,
+          "p50_ms": 954.0,
+          "p95_ms": 1060.6,
+          "min_ms": 903.0,
+          "max_ms": 1105.6,
+          "mean_ms": 964.1
         },
         "signals_rule": {
-          "count": 9,
-          "p50_ms": 0.3,
-          "p95_ms": 0.8,
-          "min_ms": 0.1,
-          "max_ms": 1.1,
+          "count": 10,
+          "p50_ms": 0.2,
+          "p95_ms": 0.9,
+          "min_ms": 0.0,
+          "max_ms": 1.4,
           "mean_ms": 0.3
         },
         "nudge_control": {
-          "count": 9,
-          "p50_ms": 0.1,
-          "p95_ms": 0.3,
+          "count": 12,
+          "p50_ms": 0.0,
+          "p95_ms": 0.1,
           "min_ms": 0.0,
-          "max_ms": 0.3,
+          "max_ms": 0.2,
           "mean_ms": 0.1
         },
         "end_to_end": {
-          "count": 3,
-          "p50_ms": 538.8,
-          "p95_ms": 852.9,
-          "min_ms": 249.3,
-          "max_ms": 887.8,
-          "mean_ms": 558.7
+          "count": 2,
+          "p50_ms": 1004.7,
+          "p95_ms": 1095.9,
+          "min_ms": 903.4,
+          "max_ms": 1106.1,
+          "mean_ms": 1004.7
         },
         "signal_llm": {
           "count": 2,
-          "p50_ms": 275.4,
-          "p95_ms": 362.8,
-          "min_ms": 178.4,
-          "max_ms": 372.5,
-          "mean_ms": 275.4
+          "p50_ms": 182.5,
+          "p95_ms": 188.5,
+          "min_ms": 175.9,
+          "max_ms": 189.2,
+          "mean_ms": 182.5
         }
       },
       "end_to_end_ms": [
-        538.8,
-        887.8,
-        249.3
+        1106.1,
+        903.4
+      ],
+      "transcript_lag_ms": [
+        907.2,
+        1001.9,
+        1002.8,
+        1105.6,
+        1005.5,
+        903.0,
+        903.0,
+        905.5,
+        1000.7,
+        905.5
       ]
     },
     {
@@ -352,8 +448,7 @@
         "rising_frustration"
       ],
       "fired": [
-        "rising_frustration",
-        "callback_needed"
+        "rising_frustration"
       ],
       "passed": true,
       "reason": "all expected signals detected",
@@ -363,155 +458,182 @@
           "type": "rising_frustration",
           "text": "Acknowledge the repeated effort and apologize for the inconvenience.",
           "confidence": 0.95,
-          "evidence": "three times already about this claim",
+          "evidence": "I have called three times already about this claim",
           "detector": "model",
           "priority": 80,
           "age_s": 0.0,
-          "at_seconds": 12.0,
-          "latency_ms": 805.8
-        },
-        {
-          "id": "n002",
-          "type": "callback_needed",
-          "text": "Confirm the callback details and set a specific expectation for follow-up.",
-          "confidence": 0.9,
-          "evidence": "Nobody ever calls me back",
-          "detector": "model",
-          "priority": 40,
-          "age_s": 0.0,
-          "at_seconds": 28.0,
-          "latency_ms": 709.3
+          "at_seconds": 12.9,
+          "utt": "c2",
+          "latency_ms": 1400.2
         }
       ],
       "transcript": [
         {
-          "at_s": 0.0,
+          "utt_id": "a1",
           "speaker": "agent",
-          "text": "Thanks for calling, how can I help?"
+          "text": "Thanks for calling, how can I help?",
+          "start_s": 0.2,
+          "end_s": 2.3,
+          "at_s": 2.3
         },
         {
-          "at_s": 0.0,
+          "utt_id": "c1",
           "speaker": "caller",
-          "text": "I have called"
+          "text": "I have called three times already about this claim",
+          "start_s": 3.4,
+          "end_s": 6.0,
+          "at_s": 6.0
         },
         {
-          "at_s": 4.0,
+          "utt_id": "a2",
           "speaker": "agent",
-          "text": "Let me check the reference"
+          "text": "Let me check the reference number for you",
+          "start_s": 6.9,
+          "end_s": 9.0,
+          "at_s": 9.0
         },
         {
-          "at_s": 4.0,
+          "utt_id": "c2",
           "speaker": "caller",
-          "text": "three times already about this claim."
+          "text": "I gave the reference number to the last two people I spoke to",
+          "start_s": 10.0,
+          "end_s": 12.9,
+          "at_s": 12.9
         },
         {
-          "at_s": 8.0,
+          "utt_id": "a3",
           "speaker": "agent",
-          "text": "number for you."
+          "text": "I understand",
+          "start_s": 13.9,
+          "end_s": 14.8,
+          "at_s": 14.8
         },
         {
-          "at_s": 8.0,
-          "speaker": "caller",
-          "text": "I gave the reference number to the last two pieces"
-        },
-        {
-          "at_s": 12.0,
+          "utt_id": "a4",
           "speaker": "agent",
-          "text": "I understand. Could you"
+          "text": "could you confirm it once more for me?",
+          "start_s": 15.7,
+          "end_s": 17.6,
+          "at_s": 17.6
         },
         {
-          "at_s": 12.0,
+          "utt_id": "c3",
           "speaker": "caller",
-          "text": "people I spoke to."
+          "text": "This is honestly ridiculous",
+          "start_s": 18.6,
+          "end_s": 20.3,
+          "at_s": 20.3
         },
         {
-          "at_s": 16.0,
+          "utt_id": "c4",
+          "speaker": "caller",
+          "text": "Nobody ever calls me back and I keep repeating myself",
+          "start_s": 21.2,
+          "end_s": 24.1,
+          "at_s": 24.1
+        },
+        {
+          "utt_id": "a5",
           "speaker": "agent",
-          "text": "confirm it once more for me."
+          "text": "I do apologize for the inconvenience",
+          "start_s": 25.2,
+          "end_s": 27.7,
+          "at_s": 27.7
         },
         {
-          "at_s": 16.0,
+          "utt_id": "c5",
           "speaker": "caller",
-          "text": "This is honestly ridiculous"
+          "text": "Fine, whatever",
+          "start_s": 28.8,
+          "end_s": 29.8,
+          "at_s": 29.8
         },
         {
-          "at_s": 20.0,
+          "utt_id": "c6",
           "speaker": "caller",
-          "text": "Nobody ever calls me back and I keep repeating myself"
-        },
-        {
-          "at_s": 24.0,
-          "speaker": "agent",
-          "text": "I do apologize for the inconvenience"
-        },
-        {
-          "at_s": 28.0,
-          "speaker": "caller",
-          "text": "Fine, whatever. Just tell me when it will be"
-        },
-        {
-          "at_s": 32.0,
-          "speaker": "caller",
-          "text": "be sorted."
+          "text": "Just tell me when it will be sorted",
+          "start_s": 30.8,
+          "end_s": 32.5,
+          "at_s": 32.5
         }
       ],
       "suppression": {
-        "signals_seen": 3,
+        "signals_seen": 2,
         "dropped_low_confidence": 0,
         "dropped_duplicate": 0,
         "dropped_cooldown": 1,
         "unsafe_text_rewritten": 0,
         "unsafe_text_dropped": 0,
-        "nudges_emitted": 2,
-        "suppression_rate": 0.333,
-        "asr_calls_made": 14,
-        "asr_calls_skipped_silent": 4
+        "nudges_emitted": 1,
+        "suppression_rate": 0.5,
+        "utterances": 11,
+        "asr_calls": 11
       },
       "latency": {
         "asr": {
-          "count": 9,
-          "p50_ms": 487.0,
-          "p95_ms": 574.6,
-          "min_ms": 204.9,
-          "max_ms": 578.9,
-          "mean_ms": 404.6
+          "count": 11,
+          "p50_ms": 224.2,
+          "p95_ms": 263.3,
+          "min_ms": 207.3,
+          "max_ms": 291.4,
+          "mean_ms": 229.3
+        },
+        "transcript_lag": {
+          "count": 11,
+          "p50_ms": 905.0,
+          "p95_ms": 1002.6,
+          "min_ms": 900.7,
+          "max_ms": 1002.9,
+          "mean_ms": 939.1
         },
         "signals_rule": {
-          "count": 9,
-          "p50_ms": 0.2,
-          "p95_ms": 0.5,
-          "min_ms": 0.1,
-          "max_ms": 0.6,
-          "mean_ms": 0.2
+          "count": 11,
+          "p50_ms": 0.1,
+          "p95_ms": 0.2,
+          "min_ms": 0.0,
+          "max_ms": 0.2,
+          "mean_ms": 0.1
         },
         "nudge_control": {
-          "count": 9,
+          "count": 13,
           "p50_ms": 0.0,
           "p95_ms": 0.1,
           "min_ms": 0.0,
-          "max_ms": 0.2,
+          "max_ms": 0.1,
           "mean_ms": 0.0
         },
         "signal_llm": {
           "count": 2,
-          "p50_ms": 389.8,
-          "p95_ms": 454.5,
-          "min_ms": 318.0,
-          "max_ms": 461.6,
-          "mean_ms": 389.8
+          "p50_ms": 339.6,
+          "p95_ms": 373.6,
+          "min_ms": 301.9,
+          "max_ms": 377.4,
+          "mean_ms": 339.6
         },
         "end_to_end": {
-          "count": 2,
-          "p50_ms": 757.6,
-          "p95_ms": 801.0,
-          "min_ms": 709.3,
-          "max_ms": 805.8,
-          "mean_ms": 757.6
+          "count": 1,
+          "p50_ms": 1400.2,
+          "p95_ms": 1400.2,
+          "min_ms": 1400.2,
+          "max_ms": 1400.2,
+          "mean_ms": 1400.2
         }
       },
       "end_to_end_ms": [
-        805.8,
-        709.3
+        1400.2
+      ],
+      "transcript_lag_ms": [
+        905.0,
+        900.7,
+        903.7,
+        1000.2,
+        1000.5,
+        1002.9,
+        905.1,
+        905.0,
+        1002.3,
+        901.6,
+        902.9
       ]
     },
     {
@@ -527,94 +649,124 @@
       "nudges": [],
       "transcript": [
         {
-          "at_s": 0.0,
+          "utt_id": "a1",
           "speaker": "agent",
-          "text": "Good morning, Maya speaking"
+          "text": "Good morning, Maya speaking",
+          "start_s": 0.2,
+          "end_s": 2.1,
+          "at_s": 2.1
         },
         {
-          "at_s": 0.0,
+          "utt_id": "c1",
           "speaker": "caller",
-          "text": "Hi, sorry"
+          "text": "Hi, sorry, one second, the signal here is not great",
+          "start_s": 3.1,
+          "end_s": 6.4,
+          "at_s": 6.4
         },
         {
-          "at_s": 4.0,
+          "utt_id": "a2",
           "speaker": "agent",
-          "text": "No problem."
+          "text": "No problem, take your time",
+          "start_s": 7.4,
+          "end_s": 9.3,
+          "at_s": 9.3
         },
         {
-          "at_s": 4.0,
+          "utt_id": "c2",
           "speaker": "caller",
-          "text": "one second, the signal here is not great"
+          "text": "Yeah so, um, I was just, well, I wanted to ask about, hold on",
+          "start_s": 10.3,
+          "end_s": 14.3,
+          "at_s": 14.3
         },
         {
-          "at_s": 8.0,
+          "utt_id": "a3",
           "speaker": "agent",
-          "text": "Take your time"
+          "text": "Take your time, I'm here",
+          "start_s": 15.3,
+          "end_s": 16.8,
+          "at_s": 16.8
         },
         {
-          "at_s": 8.0,
+          "utt_id": "c3",
           "speaker": "caller",
-          "text": "Yeah, so, um, I was just"
+          "text": "Sorry about that",
+          "start_s": 17.9,
+          "end_s": 18.9,
+          "at_s": 18.9
         },
         {
-          "at_s": 12.0,
+          "utt_id": "c4",
+          "speaker": "caller",
+          "text": "The traffic today is unbelievable",
+          "start_s": 19.8,
+          "end_s": 21.8,
+          "at_s": 21.8
+        },
+        {
+          "utt_id": "c5",
+          "speaker": "caller",
+          "text": "Anyway, where was I?",
+          "start_s": 22.7,
+          "end_s": 24.0,
+          "at_s": 24.0
+        },
+        {
+          "utt_id": "a4",
           "speaker": "agent",
-          "text": "Take your time"
+          "text": "You were about to ask me something",
+          "start_s": 25.0,
+          "end_s": 27.0,
+          "at_s": 27.0
         },
         {
-          "at_s": 12.0,
+          "utt_id": "c6",
           "speaker": "caller",
-          "text": "well, I wanted to ask about, hold on."
+          "text": "Right, yes, it was, hmm, actually I think I already sorted it out.",
+          "start_s": 28.0,
+          "end_s": 32.0,
+          "at_s": 32.0
         },
         {
-          "at_s": 16.0,
+          "utt_id": "c7",
+          "speaker": "caller",
+          "text": "Never mind",
+          "start_s": 32.9,
+          "end_s": 33.7,
+          "at_s": 33.7
+        },
+        {
+          "utt_id": "a5",
           "speaker": "agent",
-          "text": "I'm here"
+          "text": "not a problem at all",
+          "start_s": 34.7,
+          "end_s": 36.0,
+          "at_s": 36.0
         },
         {
-          "at_s": 16.0,
-          "speaker": "caller",
-          "text": "Sorry about that."
-        },
-        {
-          "at_s": 20.0,
-          "speaker": "caller",
-          "text": "Traffic today is unbelievable Anyway, where was I?"
-        },
-        {
-          "at_s": 24.0,
+          "utt_id": "a6",
           "speaker": "agent",
-          "text": "You were about to ask me something"
+          "text": "Anything else?",
+          "start_s": 36.9,
+          "end_s": 37.9,
+          "at_s": 37.9
         },
         {
-          "at_s": 28.0,
+          "utt_id": "c8",
           "speaker": "caller",
-          "text": "Right, yes, it was, hmm, actually I think I already sorted it out."
+          "text": "No, that's it",
+          "start_s": 38.9,
+          "end_s": 39.9,
+          "at_s": 39.9
         },
         {
-          "at_s": 32.0,
-          "speaker": "agent",
-          "text": "not a problem at all"
-        },
-        {
-          "at_s": 32.0,
+          "utt_id": "c9",
           "speaker": "caller",
-          "text": "Never mind"
-        },
-        {
-          "at_s": 36.0,
-          "speaker": "agent",
-          "text": "Anything else?"
-        },
-        {
-          "at_s": 36.0,
-          "speaker": "caller",
-          "text": "No, that's it"
-        },
-        {
-          "at_s": 40.0,
-          "speaker": "caller",
-          "text": "Thanks, bye"
+          "text": "Thanks, bye",
+          "start_s": 40.9,
+          "end_s": 41.8,
+          "at_s": 41.8
         }
       ],
       "suppression": {
@@ -626,28 +778,36 @@
         "unsafe_text_dropped": 0,
         "nudges_emitted": 0,
         "suppression_rate": 0.0,
-        "asr_calls_made": 18,
-        "asr_calls_skipped_silent": 4
+        "utterances": 15,
+        "asr_calls": 15
       },
       "latency": {
         "asr": {
-          "count": 11,
-          "p50_ms": 3336.8,
-          "p95_ms": 6699.8,
-          "min_ms": 473.2,
-          "max_ms": 6724.7,
-          "mean_ms": 2952.2
+          "count": 15,
+          "p50_ms": 226.8,
+          "p95_ms": 307.6,
+          "min_ms": 200.6,
+          "max_ms": 369.5,
+          "mean_ms": 238.2
+        },
+        "transcript_lag": {
+          "count": 15,
+          "p50_ms": 905.4,
+          "p95_ms": 1005.1,
+          "min_ms": 901.0,
+          "max_ms": 1005.4,
+          "mean_ms": 944.0
         },
         "signals_rule": {
-          "count": 11,
-          "p50_ms": 0.3,
-          "p95_ms": 0.4,
-          "min_ms": 0.1,
-          "max_ms": 0.4,
+          "count": 15,
+          "p50_ms": 0.2,
+          "p95_ms": 0.3,
+          "min_ms": 0.0,
+          "max_ms": 0.3,
           "mean_ms": 0.2
         },
         "nudge_control": {
-          "count": 11,
+          "count": 17,
           "p50_ms": 0.0,
           "p95_ms": 0.0,
           "min_ms": 0.0,
@@ -656,64 +816,94 @@
         },
         "signal_llm": {
           "count": 2,
-          "p50_ms": 177.1,
-          "p95_ms": 182.8,
-          "min_ms": 170.9,
-          "max_ms": 183.4,
-          "mean_ms": 177.1
+          "p50_ms": 217.0,
+          "p95_ms": 250.7,
+          "min_ms": 179.5,
+          "max_ms": 254.5,
+          "mean_ms": 217.0
         }
       },
-      "end_to_end_ms": []
+      "end_to_end_ms": [],
+      "transcript_lag_ms": [
+        1003.9,
+        1003.4,
+        1004.9,
+        1000.2,
+        902.5,
+        1001.4,
+        904.7,
+        905.4,
+        905.4,
+        901.0,
+        905.4,
+        905.4,
+        905.4,
+        1005.4,
+        905.4
+      ]
     }
   ],
   "passed": 4,
   "total": 4,
   "aggregate_latency": {
     "asr": {
-      "count": 40,
-      "p50_ms": 392.5,
-      "p95_ms": 2952.2,
-      "min_ms": 373.2,
-      "max_ms": 2952.2,
-      "mean_ms": 1091.1
+      "count": 50,
+      "p50_ms": 230.1,
+      "p95_ms": 337.9,
+      "min_ms": 190.4,
+      "max_ms": 369.5,
+      "mean_ms": 240.1
+    },
+    "transcript_lag": {
+      "count": 49,
+      "p50_ms": 905.5,
+      "p95_ms": 1005.5,
+      "min_ms": 900.6,
+      "max_ms": 1105.6,
+      "mean_ms": 952.3
     },
     "signals_rule": {
-      "count": 40,
+      "count": 49,
       "p50_ms": 0.2,
       "p95_ms": 0.3,
-      "min_ms": 0.2,
-      "max_ms": 0.3,
+      "min_ms": 0.0,
+      "max_ms": 1.4,
       "mean_ms": 0.2
     },
     "nudge_control": {
-      "count": 40,
+      "count": 58,
       "p50_ms": 0.0,
       "p95_ms": 0.1,
       "min_ms": 0.0,
-      "max_ms": 0.1,
+      "max_ms": 0.2,
       "mean_ms": 0.0
     },
     "signal_llm": {
-      "count": 8,
-      "p50_ms": 227.0,
-      "p95_ms": 389.8,
-      "min_ms": 177.1,
-      "max_ms": 389.8,
-      "mean_ms": 255.2
+      "count": 9,
+      "p50_ms": 189.2,
+      "p95_ms": 374.1,
+      "min_ms": 175.9,
+      "max_ms": 377.4,
+      "mean_ms": 246.3
     },
     "end_to_end": {
-      "count": 6,
-      "p50_ms": 558.7,
-      "p95_ms": 757.6,
-      "min_ms": 499.2,
-      "max_ms": 757.6,
-      "mean_ms": 615.1
+      "count": 5,
+      "p50_ms": 1106.1,
+      "p95_ms": 1380.4,
+      "min_ms": 903.4,
+      "max_ms": 1400.2,
+      "mean_ms": 1162.6
     }
   },
   "end_to_end": {
-    "count": 6,
-    "p50_ms": 624.0,
-    "p95_ms": 867.3,
-    "max_ms": 887.8
+    "count": 5,
+    "p50_ms": 1106.1,
+    "p95_ms": 1380.4,
+    "max_ms": 1400.2
+  },
+  "transcript_lag": {
+    "count": 49,
+    "p50_ms": 905.5,
+    "p95_ms": 1005.5
   }
 }

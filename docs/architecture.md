@@ -3,11 +3,13 @@
 One voice engine. Three market configurations. Two knowledge bases. The live
 nudge pipeline taps the same conversation the agent is already handling.
 
-It runs two ways. On a recorded call it consumes audio chunks and splits speakers
-by stereo channel. On a live call it consumes turns, where attribution is exact -
-the agent's words are generated here and the caller's come back from the
-transcriber already labelled - so none of the channel splitting is needed. Same
-detectors, same suppression, same safety check; only the segmentation differs.
+It runs two ways. On a recorded call it splits speakers by stereo channel and cuts
+each channel into utterances with a voice activity detector - an utterance opens
+when someone starts talking and closes when they pause - never looking at audio
+that has not played yet. On a live call it consumes turns, where attribution is
+exact: the agent's words are generated here and the caller's come back from the
+transcriber already labelled. Same detectors, same suppression, same safety
+check; only the segmentation differs.
 
 That reuse is the main design decision. Q1, Q3-Philippines and Q3-Indonesia are
 not three systems — they are one system reading three config files.
