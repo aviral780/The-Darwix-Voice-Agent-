@@ -1,0 +1,25 @@
+{
+  "lead_id": "lead_306d2e69f564",
+  "created_at": "2026-09-22T07:27:50.175770+00:00",
+  "source": "voice_agent",
+  "market": "id_ID",
+  "call_id": "306d2e69f564",
+  "contact": {
+    "name": "Budi Santoso",
+    "preferred_callback": ""
+  },
+  "qualification": {
+    "age_band": "",
+    "dependents": "",
+    "existing_cover": "",
+    "interest": ""
+  },
+  "score": 1,
+  "score_band": "cold",
+  "slots_filled": "3/6",
+  "objections_raised": [],
+  "escalated": true,
+  "grounded_answers_given": 0,
+  "refusals": 0,
+  "final_state": "escalated"
+}

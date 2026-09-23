@@ -1,0 +1,25 @@
+{
+  "lead_id": "lead_ebaec7f2be61",
+  "created_at": "2026-09-21T18:36:59.579286+00:00",
+  "source": "voice_agent",
+  "market": "en_PH",
+  "call_id": "ebaec7f2be61",
+  "contact": {
+    "name": "Paolo Santos",
+    "preferred_callback": ""
+  },
+  "qualification": {
+    "age_band": "late twenties",
+    "dependents": "",
+    "existing_cover": "",
+    "interest": ""
+  },
+  "score": 2,
+  "score_band": "cold",
+  "slots_filled": "2/6",
+  "objections_raised": [],
+  "escalated": true,
+  "grounded_answers_given": 0,
+  "refusals": 2,
+  "final_state": "escalated"
+}

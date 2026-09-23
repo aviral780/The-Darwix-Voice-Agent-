@@ -16,8 +16,7 @@ models/
 
 # Generated data - regenerate with the pipeline, don't version it
 data/raw/
-data/index/
-data/leads/
+data/leads/*
 
 # Audio working files. Curated evidence under evidence/ IS committed,
 # but scratch recordings are not.
@@ -31,6 +30,3 @@ tmp_audio/
 data/cleaned/chunks.json
 data/cleaned/records.json
 
-# Local tooling
-.claude/
-.gstack/

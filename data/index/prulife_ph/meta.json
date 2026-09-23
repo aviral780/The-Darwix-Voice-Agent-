@@ -1,0 +1,10 @@
+{
+  "source_key": "prulife_ph",
+  "language": "en",
+  "embed_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "dims": 384,
+  "chunks": 814,
+  "vector_weight": 0.6,
+  "bm25_weight": 0.4,
+  "min_retrieval_score": 0.499
+}

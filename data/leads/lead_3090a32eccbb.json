@@ -1,0 +1,25 @@
+{
+  "lead_id": "lead_3090a32eccbb",
+  "created_at": "2026-09-21T18:37:14.871682+00:00",
+  "source": "voice_agent",
+  "market": "en_PH",
+  "call_id": "3090a32eccbb",
+  "contact": {
+    "name": "Grace Lim",
+    "preferred_callback": ""
+  },
+  "qualification": {
+    "age_band": "fifties",
+    "dependents": "",
+    "existing_cover": "",
+    "interest": ""
+  },
+  "score": 2,
+  "score_band": "cold",
+  "slots_filled": "2/6",
+  "objections_raised": [],
+  "escalated": true,
+  "grounded_answers_given": 0,
+  "refusals": 0,
+  "final_state": "escalated"
+}

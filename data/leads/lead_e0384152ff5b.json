@@ -1,0 +1,27 @@
+{
+  "lead_id": "lead_e0384152ff5b",
+  "created_at": "2026-09-21T18:35:06.273983+00:00",
+  "source": "voice_agent",
+  "market": "en_PH",
+  "call_id": "e0384152ff5b",
+  "contact": {
+    "name": "Elena Cruz",
+    "preferred_callback": "Morning"
+  },
+  "qualification": {
+    "age_band": "Forties",
+    "dependents": "one son in college",
+    "existing_cover": "employer-provided insurance",
+    "interest": "savings"
+  },
+  "score": 11,
+  "score_band": "hot",
+  "slots_filled": "6/6",
+  "objections_raised": [
+    "too_expensive"
+  ],
+  "escalated": false,
+  "grounded_answers_given": 1,
+  "refusals": 0,
+  "final_state": "ended"
+}

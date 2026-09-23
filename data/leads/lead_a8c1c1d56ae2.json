@@ -1,0 +1,25 @@
+{
+  "lead_id": "lead_a8c1c1d56ae2",
+  "created_at": "2026-09-21T18:35:57.123884+00:00",
+  "source": "voice_agent",
+  "market": "en_PH",
+  "call_id": "a8c1c1d56ae2",
+  "contact": {
+    "name": "Dan",
+    "preferred_callback": ""
+  },
+  "qualification": {
+    "age_band": "thirty-one",
+    "dependents": "",
+    "existing_cover": "had insurance, lapsed last year",
+    "interest": ""
+  },
+  "score": 4,
+  "score_band": "cold",
+  "slots_filled": "3/6",
+  "objections_raised": [],
+  "escalated": false,
+  "grounded_answers_given": 0,
+  "refusals": 0,
+  "final_state": "qualifying"
+}

@@ -1,0 +1,25 @@
+{
+  "lead_id": "lead_63c20c8e8042",
+  "created_at": "2026-09-22T07:26:22.818037+00:00",
+  "source": "voice_agent",
+  "market": "fil_PH",
+  "call_id": "63c20c8e8042",
+  "contact": {
+    "name": "Marco Reyes",
+    "preferred_callback": "hapon"
+  },
+  "qualification": {
+    "age_band": "thirties",
+    "dependents": "asawa at dalawang anak",
+    "existing_cover": "company insurance only",
+    "interest": "protection"
+  },
+  "score": 11,
+  "score_band": "hot",
+  "slots_filled": "6/6",
+  "objections_raised": [],
+  "escalated": false,
+  "grounded_answers_given": 0,
+  "refusals": 0,
+  "final_state": "ended"
+}
