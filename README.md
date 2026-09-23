@@ -39,6 +39,8 @@ threshold separates them. That is why there are two gates instead of one.
 
 ## Running it yourself
 
+A step-by-step PDF is in [`Setup-Guide.pdf`](Setup-Guide.pdf).
+
 You need Python 3.11 or newer, `ffmpeg`, and a free Groq API key from
 [console.groq.com](https://console.groq.com) (no card required).
 
